@@ -30,7 +30,7 @@ public class PomodoroFrame extends JFrame {
     PomodoroTimerState pomodoroTimerState;
 
 
-    private JLabel timeLabel;
+    private JLabel timeLabel, messageLabel;
     private JButton startButton, stopButton, resetButton, jumpToNextButton;
     JToggleButton toggleFinishSoundButton, toggleRandomTickButton, toggleAlwaysOnTopButton
             , toggleAutoPlayButton, toggleTickSoundButton, isEndingSoundMutedButton, toggleHistoryLoggingButton
@@ -310,11 +310,29 @@ public class PomodoroFrame extends JFrame {
         // BURADAN asagisi frame in ust kismindaki sayac panalei. Sonra da JSplitepane ile ustteki ve alttaki ekleniyor.
 
 
-        JPanel panelForTimer = new JPanel();
+
+
+
+
+
+        JPanel panelForTimer = new JPanel(new BorderLayout());
+
+        JPanel timerSubPanel = new JPanel();
+        timerSubPanel.setLayout(new BoxLayout(timerSubPanel, BoxLayout.Y_AXIS)); // Dikey hizalama
 
         timeLabel = new JLabel(formatTime(remainingSeconds), SwingConstants.CENTER);
         timeLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        panelForTimer.add(timeLabel, BorderLayout.CENTER);
+        timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);  // MERKEZE HİZALA
+
+        messageLabel = new JLabel("Pomodoro", SwingConstants.CENTER);
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // MERKEZE HİZALA
+
+        timerSubPanel.add(timeLabel);
+        timerSubPanel.add(messageLabel);
+
+        panelForTimer.add(timerSubPanel, BorderLayout.CENTER);
+
 
         JSplitPane jSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelForTimer, tabbedPane);
 
@@ -652,7 +670,7 @@ public class PomodoroFrame extends JFrame {
                 appendMessageToHistory(getCurrentTimerLogMessage());
             }
 
-            this.setTitle(translate("frame.title") + " - " + getCurrentTimerLogMessage());
+            messageLabel.setText(getCurrentTimerScreenMessage());
 
             timer.start();
 
@@ -715,7 +733,7 @@ public class PomodoroFrame extends JFrame {
         if(isHistoryLoggingEnabled) {
             appendMessageToHistory(getCurrentTimerLogMessage());
         }
-        this.setTitle(translate("frame.title") + " - " + getCurrentTimerLogMessage());
+
 
 
 
@@ -735,6 +753,13 @@ public class PomodoroFrame extends JFrame {
     public String getCurrentTimerLogMessage() {
         currentTimerLogMessage = String.format("%s\t%d\t%d\t%s\t%b", getCurrentTimestamp(), pomodoroCount
                 , remainingSeconds, pomodoroTimerState, toggleWorkSession);
+
+        return currentTimerLogMessage;
+    }
+
+    public String getCurrentTimerScreenMessage() {
+        currentTimerLogMessage = String.format("Pomodoro %d of 4 %s", pomodoroCount
+                , pomodoroTimerState);
 
         return currentTimerLogMessage;
     }
