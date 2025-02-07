@@ -713,7 +713,7 @@ public class PomodoroFrame extends JFrame {
             }
 
             messageLabel.setText(getCurrentTimerScreenMessage());
-            jTextAreaForPomodoroSessionLog.append(getCurrentTimerScreenMessage());
+            jTextAreaForPomodoroSessionLog.append(getCurrentTimerScreenMessage() + "\n");
 
             timer.start();
 
