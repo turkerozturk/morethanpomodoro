@@ -1,5 +1,12 @@
 package org.example;
 
+import org.example.jpanels.speakertest.AudioOutputPanel;
+import org.example.jpanels.metronome.MetronomePanel;
+import org.example.jpanels.mididevice.MidiInstrumentPanel;
+import org.example.jpanels.noisegenerator.NoisePanel;
+import org.example.jpanels.mp3.Mp3PlayerFx;
+import org.example.sounds.AsyncBeep;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -157,6 +164,13 @@ public class PomodoroFrame extends JFrame {
 
         toggleBinauralBeatsButton = new JToggleButton(translate("button.binaural.beats.mute"));
         toggleBinauralBeatsButton.addActionListener(e -> toggleBinauralBeats());
+
+        toggleBinauralBeatsButton.setSelected(isBinauralBeatsEnabled);
+
+
+
+
+
         binauralBeatsPanel.add(toggleBinauralBeatsButton);
 
         binauralBaseFrequency = Integer.parseInt(props.getProperty("spinner.binaural.beats.base.frequency"
@@ -185,6 +199,9 @@ public class PomodoroFrame extends JFrame {
 
         binauralBeatsGenerator = new BinauralBeatsGenerator(binauralBaseFrequency,
                 binauralBeatFrequency,frequencySoundVolume);
+
+        //System.out.println(isBinauralBeatsEnabled);
+        processBinauralBeats();
 
         tabbedPane.addTab(translate("tab.panel.binaural.beats.title"), binauralBeatsPanel);
 
@@ -372,14 +389,17 @@ public class PomodoroFrame extends JFrame {
 
     private void toggleBinauralBeats() {
         isBinauralBeatsEnabled = !isBinauralBeatsEnabled;
+        processBinauralBeats();
+    }
+
+    private void processBinauralBeats() {
         if (isBinauralBeatsEnabled) {
-            toggleBinauralBeatsButton.setText(translate("button.binaural.beats.unmute"));
+            toggleBinauralBeatsButton.setText(translate("button.binaural.beats.mute"));
             binauralBeatsGenerator.start();
 
         } else {
             toggleBinauralBeatsButton.setText(translate("button.binaural.beats.unmute"));
             binauralBeatsGenerator.stop();
-
         }
     }
 
@@ -598,6 +618,11 @@ public class PomodoroFrame extends JFrame {
                 } else {
                     toggleAlwaysOnTopButton.setText(translate("button.alway.on.top.off"));
                 }
+
+                int binauralBetasAsInt = Integer.parseInt(props.getProperty("button.binaural.beats.mute", "1"));
+                isBinauralBeatsEnabled = (binauralBetasAsInt == 1);
+
+
 
             } else {
                // setDefaultValues();

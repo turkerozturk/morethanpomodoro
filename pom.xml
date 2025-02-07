@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -23,28 +24,28 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
-      <version>17</version>
+      <version>22</version>
     </dependency>
 
     <!-- JavaFX Swing entegrasyonu için (JFXPanel desteği) -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-swing</artifactId>
-      <version>17</version>
+      <version>22</version>
     </dependency>
 
     <!-- JavaFX Base (temel kütüphane) -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
-      <version>17</version>
+      <version>22</version>
     </dependency>
 
     <!-- JavaFX Controls (Gerekirse) -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>17</version>
+      <version>22</version>
     </dependency>
 
 
