@@ -21,6 +21,7 @@ import javax.swing.Timer;
 
 public class PomodoroFrame extends JFrame {
 
+    private final JTextArea jTextAreaForPomodoroSessionLog;
     Properties props = new Properties();
 
 
@@ -80,7 +81,7 @@ public class PomodoroFrame extends JFrame {
 
         setTitle(translate("frame.title"));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(700, 250);
+        setSize(700, 300);
         setLocationRelativeTo(null);
 
         remainingSeconds = pomodoroWorkDuration * 60; // initial timer in minutes.
@@ -91,6 +92,9 @@ public class PomodoroFrame extends JFrame {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
+        JTabbedPane jTabbedPaneForPomodoro = new JTabbedPane();
+
+
         JPanel pomodoroControlsPanel = new JPanel();
 
 
@@ -100,7 +104,7 @@ public class PomodoroFrame extends JFrame {
         pomodoroControlsPanel.add(jumpToNextButton);
         pomodoroControlsPanel.add(toggleAutoPlayButton);
 
-        tabbedPane.addTab(translate("tab.panel.controls.title"), pomodoroControlsPanel);
+        jTabbedPaneForPomodoro.addTab(translate("tab.panel.controls.title"), pomodoroControlsPanel);
 
 
         JPanel pomodoroTimingsPanel = new JPanel();
@@ -141,10 +145,139 @@ public class PomodoroFrame extends JFrame {
         pomodoroTimingsPanel.setBorder(
                 BorderFactory.createTitledBorder(bundle.getString("tab.panel.timings.description")));
 
-        tabbedPane.addTab(translate("tab.panel.timings.title"), pomodoroTimingsPanel);
+        jTabbedPaneForPomodoro.addTab(translate("tab.panel.timings.title"), pomodoroTimingsPanel);
 
 
-        // TODO butona basınca binaural çalışsın.
+
+
+
+
+
+
+
+
+
+
+
+
+        JPanel tickSoundPanel = new JPanel();
+
+        // https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemoProject/src/components/SliderDemo.java
+        tickSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, midiVolume);
+        tickSoundVolumeSlider.setMajorTickSpacing(10);
+        tickSoundVolumeSlider.setMinorTickSpacing(1);
+        tickSoundVolumeSlider.setPaintTicks(true);
+        tickSoundVolumeSlider.setPaintLabels(true);
+        tickSoundVolumeSlider.addChangeListener(e -> changeTickSoundVolume());
+        tickSoundVolumeSlider.setBorder(
+                BorderFactory.createTitledBorder(bundle.getString("slider.tick.sound.loudness")));
+        tickSoundPanel.add(tickSoundVolumeSlider);
+
+
+        tickSoundPanel.add(toggleTickSoundButton);
+        tickSoundPanel.add(toggleRandomTickButton);
+
+        SpinnerModel spinnerModel1 = new SpinnerNumberModel(0, 0, 100, 1);
+        spinnerSelectMidiInstrument = new JSpinner(spinnerModel1);
+        spinnerSelectMidiInstrument.setValue((int) midiInstrument);
+        spinnerSelectMidiInstrument.setPreferredSize(new Dimension(100, 40)); // Genişlik 80, yükseklik 25
+        spinnerSelectMidiInstrument.setBorder(
+                BorderFactory.createTitledBorder(bundle.getString("spinner.tick.sound.instrument")));
+        spinnerSelectMidiInstrument.addChangeListener(e -> changeTickSoundMidiInstrument());
+        tickSoundPanel.add(spinnerSelectMidiInstrument);
+
+        SpinnerModel spinnerModel2 = new SpinnerNumberModel(0, 0, 100, 1);
+        spinnerSelectMidiNote = new JSpinner(spinnerModel2);
+        spinnerSelectMidiNote.setValue((int) midiNote);
+        spinnerSelectMidiNote.setPreferredSize(new Dimension(100, 40)); // Genişlik 80, yükseklik 25
+        spinnerSelectMidiNote.setBorder(
+                BorderFactory.createTitledBorder(bundle.getString("spinner.tick.sound.note")));
+        spinnerSelectMidiNote.addChangeListener(e -> changeTickSoundMidiNote());
+        tickSoundPanel.add(spinnerSelectMidiNote);
+
+        jTabbedPaneForPomodoro.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
+
+
+
+        JPanel endingSoundPanel = new JPanel();
+
+        endingSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, frequencySoundVolume);
+        endingSoundVolumeSlider.setMajorTickSpacing(10);
+        endingSoundVolumeSlider.setMinorTickSpacing(1);
+        endingSoundVolumeSlider.setPaintTicks(true);
+        endingSoundVolumeSlider.setPaintLabels(true);
+        //Font font = new Font("Serif", Font.ITALIC, 15);
+        //endingSoundVolumeSlider.setFont(font);
+        endingSoundVolumeSlider.setBorder(
+                BorderFactory.createTitledBorder(bundle.getString("slider.ending.sound.loudness")));
+
+        isEndingSoundMutedButton = new JToggleButton(translate("button.ending.sound.mute"));
+
+
+        endingSoundPanel.add(isEndingSoundMutedButton);
+        endingSoundPanel.add(endingSoundVolumeSlider);
+        endingSoundPanel.add(toggleFinishSoundButton);
+
+        jTabbedPaneForPomodoro.addTab(translate("tab.panel.ending.sound.title"), endingSoundPanel);
+
+
+        JPanel pomodoroLoggingPanel = new JPanel();
+
+        jTextAreaForPomodoroSessionLog = new JTextArea();
+        //jTextAreaForPomodoroSessionLog.setMinimumSize(new Dimension(600, 200));
+        //jTextAreaForPomodoroSessionLog.setMaximumSize(new Dimension(600, 200));
+
+        jTextAreaForPomodoroSessionLog.setRows(7);
+        jTextAreaForPomodoroSessionLog.setColumns(40);
+        jTextAreaForPomodoroSessionLog.setLineWrap(false);
+
+        pomodoroLoggingPanel.add(jTextAreaForPomodoroSessionLog);
+
+        jTabbedPaneForPomodoro.addTab("Session Log", pomodoroLoggingPanel);
+
+
+
+
+
+
+
+
+
+        JPanel applicationSettingsPanel = new JPanel();
+
+        applicationSettingsPanel.add(toggleAlwaysOnTopButton);
+
+        toggleHistoryLoggingButton.addActionListener(e -> toggleHistoryLogging());
+        applicationSettingsPanel.add(toggleHistoryLoggingButton);
+
+        tabbedPane.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
+
+        JTabbedPane jTabbedPaneForMp3 = new JTabbedPane();
+        Mp3PlayerFx playerPanel = new Mp3PlayerFx("playlist1.txt");
+        jTabbedPaneForMp3.addTab("MP3 Player", playerPanel.getPlayerPanel());
+        Mp3PlayerFx playerPanel2 = new Mp3PlayerFx("playlist2.txt");
+        jTabbedPaneForMp3.addTab("MP3 Player2", playerPanel2.getPlayerPanel());
+        Mp3PlayerFx playerPanel3 = new Mp3PlayerFx("playlist3.txt");
+        jTabbedPaneForMp3.addTab("MP3 Player3", playerPanel3.getPlayerPanel());
+
+        tabbedPane.addTab("MP3 Player", jTabbedPaneForMp3);
+
+
+
+
+
+        JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
+
+        NoisePanel noisePanel = new NoisePanel();
+        jTabbedPaneForNoises.addTab("Noise Generator", noisePanel.getPlayerPanel());
+        MetronomePanel metronomePanel = new MetronomePanel();
+        jTabbedPaneForNoises.add("Metronome", metronomePanel.getPlayerPanel());
+
+
+
+
+
+
         JPanel binauralBeatsPanel = new JPanel();
 
 
@@ -203,118 +336,24 @@ public class PomodoroFrame extends JFrame {
         //System.out.println(isBinauralBeatsEnabled);
         processBinauralBeats();
 
-        tabbedPane.addTab(translate("tab.panel.binaural.beats.title"), binauralBeatsPanel);
+        jTabbedPaneForNoises.addTab(translate("tab.panel.binaural.beats.title"), binauralBeatsPanel);
+
+        tabbedPane.addTab("Noise Generators", jTabbedPaneForNoises);
 
 
 
 
-
-
-
-
-
-        JPanel tickSoundPanel = new JPanel();
-
-        // https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemoProject/src/components/SliderDemo.java
-        tickSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, midiVolume);
-        tickSoundVolumeSlider.setMajorTickSpacing(10);
-        tickSoundVolumeSlider.setMinorTickSpacing(1);
-        tickSoundVolumeSlider.setPaintTicks(true);
-        tickSoundVolumeSlider.setPaintLabels(true);
-        tickSoundVolumeSlider.addChangeListener(e -> changeTickSoundVolume());
-        tickSoundVolumeSlider.setBorder(
-                BorderFactory.createTitledBorder(bundle.getString("slider.tick.sound.loudness")));
-        tickSoundPanel.add(tickSoundVolumeSlider);
-
-
-        tickSoundPanel.add(toggleTickSoundButton);
-        tickSoundPanel.add(toggleRandomTickButton);
-
-        SpinnerModel spinnerModel1 = new SpinnerNumberModel(0, 0, 100, 1);
-        spinnerSelectMidiInstrument = new JSpinner(spinnerModel1);
-        spinnerSelectMidiInstrument.setValue((int) midiInstrument);
-        spinnerSelectMidiInstrument.setPreferredSize(new Dimension(100, 40)); // Genişlik 80, yükseklik 25
-        spinnerSelectMidiInstrument.setBorder(
-                BorderFactory.createTitledBorder(bundle.getString("spinner.tick.sound.instrument")));
-        spinnerSelectMidiInstrument.addChangeListener(e -> changeTickSoundMidiInstrument());
-        tickSoundPanel.add(spinnerSelectMidiInstrument);
-
-        SpinnerModel spinnerModel2 = new SpinnerNumberModel(0, 0, 100, 1);
-        spinnerSelectMidiNote = new JSpinner(spinnerModel2);
-        spinnerSelectMidiNote.setValue((int) midiNote);
-        spinnerSelectMidiNote.setPreferredSize(new Dimension(100, 40)); // Genişlik 80, yükseklik 25
-        spinnerSelectMidiNote.setBorder(
-                BorderFactory.createTitledBorder(bundle.getString("spinner.tick.sound.note")));
-        spinnerSelectMidiNote.addChangeListener(e -> changeTickSoundMidiNote());
-        tickSoundPanel.add(spinnerSelectMidiNote);
-
-        tabbedPane.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
-
-        JPanel endingSoundPanel = new JPanel();
-
-        endingSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, frequencySoundVolume);
-        endingSoundVolumeSlider.setMajorTickSpacing(10);
-        endingSoundVolumeSlider.setMinorTickSpacing(1);
-        endingSoundVolumeSlider.setPaintTicks(true);
-        endingSoundVolumeSlider.setPaintLabels(true);
-        //Font font = new Font("Serif", Font.ITALIC, 15);
-        //endingSoundVolumeSlider.setFont(font);
-        endingSoundVolumeSlider.setBorder(
-                BorderFactory.createTitledBorder(bundle.getString("slider.ending.sound.loudness")));
-
-        isEndingSoundMutedButton = new JToggleButton(translate("button.ending.sound.mute"));
-
-        // TODO butonu class degiskeni yap
-        endingSoundPanel.add(isEndingSoundMutedButton);
-        endingSoundPanel.add(endingSoundVolumeSlider);
-        endingSoundPanel.add(toggleFinishSoundButton);
-
-        tabbedPane.addTab(translate("tab.panel.ending.sound.title"), endingSoundPanel);
-
-
-
-        JPanel applicationSettingsPanel = new JPanel();
-
-        applicationSettingsPanel.add(toggleAlwaysOnTopButton);
-
-        toggleHistoryLoggingButton.addActionListener(e -> toggleHistoryLogging());
-        applicationSettingsPanel.add(toggleHistoryLoggingButton);
-
-        tabbedPane.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
-
-
-
-
-        Mp3PlayerFx playerPanel = new Mp3PlayerFx("playlist1.txt");
-        tabbedPane.addTab("MP3 Player", playerPanel.getPlayerPanel());
-
-        Mp3PlayerFx playerPanel2 = new Mp3PlayerFx("playlist2.txt");
-        tabbedPane.addTab("MP3 Player2", playerPanel2.getPlayerPanel());
-
-        Mp3PlayerFx playerPanel3 = new Mp3PlayerFx("playlist3.txt");
-        tabbedPane.addTab("MP3 Player3", playerPanel3.getPlayerPanel());
-
-        NoisePanel noisePanel = new NoisePanel();
-        tabbedPane.addTab("Noise Generator", noisePanel.getPlayerPanel());
-
-        MetronomePanel metronomePanel = new MetronomePanel();
-        tabbedPane.add("Metronome", metronomePanel.getPlayerPanel());
-
+        JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
         MidiInstrumentPanel midiInstrumentPanel = new MidiInstrumentPanel();
-        tabbedPane.add("MIDI test", midiInstrumentPanel);
-
+        jTabbedPaneForDeviceTesting.add("MIDI test", midiInstrumentPanel);
         AudioOutputPanel audioOutputPanel = new AudioOutputPanel();
-        tabbedPane.addTab("Speaker Test", audioOutputPanel);
+        jTabbedPaneForDeviceTesting.addTab("Speaker Test", audioOutputPanel);
+
+        tabbedPane.addTab("Device Tests", jTabbedPaneForDeviceTesting);
 
 
         // BURADAN asagisi frame in ust kismindaki sayac panalei. Sonra da JSplitepane ile ustteki ve alttaki ekleniyor.
-
-
-
-
-
-
-
+        // TODO bu panel ve spliti al tek tabbedPane ye ekle.
         JPanel panelForTimer = new JPanel(new BorderLayout());
 
         JPanel timerSubPanel = new JPanel();
@@ -334,9 +373,12 @@ public class PomodoroFrame extends JFrame {
         panelForTimer.add(timerSubPanel, BorderLayout.CENTER);
 
 
-        JSplitPane jSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelForTimer, tabbedPane);
+        JSplitPane jSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelForTimer, jTabbedPaneForPomodoro);
 
-        add(jSplitPane, BorderLayout.CENTER);
+        tabbedPane.addTab("Pomodoro", jSplitPane);
+
+
+        add(tabbedPane, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
 
         // Metronom ayarla
         metronomePlayer = new MetronomePlayer(metronomeInterval, soundType, soundFile, true);
@@ -671,6 +713,7 @@ public class PomodoroFrame extends JFrame {
             }
 
             messageLabel.setText(getCurrentTimerScreenMessage());
+            jTextAreaForPomodoroSessionLog.append(getCurrentTimerScreenMessage());
 
             timer.start();
 
