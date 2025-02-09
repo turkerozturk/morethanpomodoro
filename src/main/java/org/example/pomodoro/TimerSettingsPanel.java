@@ -42,6 +42,12 @@ public class TimerSettingsPanel extends JPanel {
         Locale locale = new Locale(language, country);
         bundle = ResourceBundle.getBundle("messages", locale);
 
+        pomodoroWorkDuration = Integer.parseInt(props.getProperty("work.duration", "25"));
+        pomodoroShortBreak = Integer.parseInt(props.getProperty("short.break", "5"));
+        pomodoroLongBreak = Integer.parseInt(props.getProperty("long.break", "15"));
+
+
+
         SpinnerModel spinnerModel3 = new SpinnerNumberModel(0, 0, 9999999, 1);
         spinnerPomodoroWorkDuration = new JSpinner(spinnerModel3);
         spinnerPomodoroWorkDuration.setValue((int) pomodoroWorkDuration);
@@ -109,5 +115,27 @@ public class TimerSettingsPanel extends JPanel {
         }
     }
 
+    public int getPomodoroWorkDuration() {
+        return pomodoroWorkDuration;
+    }
 
+    public void setPomodoroWorkDuration(int pomodoroWorkDuration) {
+        this.pomodoroWorkDuration = pomodoroWorkDuration;
+    }
+
+    public int getPomodoroShortBreak() {
+        return pomodoroShortBreak;
+    }
+
+    public void setPomodoroShortBreak(int pomodoroShortBreak) {
+        this.pomodoroShortBreak = pomodoroShortBreak;
+    }
+
+    public int getPomodoroLongBreak() {
+        return pomodoroLongBreak;
+    }
+
+    public void setPomodoroLongBreak(int pomodoroLongBreak) {
+        this.pomodoroLongBreak = pomodoroLongBreak;
+    }
 }

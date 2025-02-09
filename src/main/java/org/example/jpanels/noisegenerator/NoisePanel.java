@@ -11,6 +11,8 @@ public class NoisePanel extends JPanel {
     private JSlider volumeSlider;
     private NoiseGenerator noiseGenerator;
 
+    private String noiseType;
+
     public JPanel getPlayerPanel() {
         return this;
     }
@@ -45,10 +47,17 @@ public class NoisePanel extends JPanel {
         });
 
         volumeSlider.addChangeListener(e -> noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f));
+
+        noiseTypeComboBox.addActionListener(e -> changeNoise());
+    }
+
+    private void changeNoise() {
+        stopNoise();
+        playNoise();
     }
 
     private void playNoise() {
-        String noiseType = (String) noiseTypeComboBox.getSelectedItem();
+        noiseType = (String) noiseTypeComboBox.getSelectedItem();
         noiseGenerator.start(noiseType);
         playStopButton.setText("Stop");
     }

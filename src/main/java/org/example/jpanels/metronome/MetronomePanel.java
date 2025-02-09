@@ -44,8 +44,20 @@ public class MetronomePanel extends JPanel {
             }
         });
 
-        bpmSpinner.addChangeListener(e -> metronome.setBPM((Integer) bpmSpinner.getValue()));
-        volumeSlider.addChangeListener(e -> metronome.setVolume(volumeSlider.getValue() / 100.0f));
+        bpmSpinner.addChangeListener(e -> changeBPM());
+        volumeSlider.addChangeListener(e -> changeVolume());
+    }
+
+    public void changeBPM() {
+        metronome.setBPM((Integer) bpmSpinner.getValue());
+        stopMetronome();
+        startMetronome();
+    }
+
+    public void changeVolume() {
+        metronome.setVolume(volumeSlider.getValue() / 100.0f);
+        stopMetronome();
+        startMetronome();
     }
 
     private void startMetronome() {
@@ -57,4 +69,8 @@ public class MetronomePanel extends JPanel {
         metronome.stop();
         startStopButton.setText("Start");
     }
+
+
+
+
 }
