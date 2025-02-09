@@ -1,6 +1,8 @@
 package org.example.pomodoro;
 
 import org.example.PomodoroTimerState;
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -11,6 +13,13 @@ import java.util.ResourceBundle;
 
 public class TimerSettingsPanel extends JPanel {
 
+    private TimerSettingsListener listener;
+
+    // Üst panelin timer settings eventlerini dinlemesi için
+    public void setTimerSettingsListener(TimerSettingsListener listener) {
+        this.listener = listener;
+    }
+
     PomodoroTimerState pomodoroTimerState;
     private int remainingSeconds;
 
@@ -19,28 +28,21 @@ public class TimerSettingsPanel extends JPanel {
 
     private int pomodoroWorkDuration, pomodoroShortBreak, pomodoroLongBreak;
 
-    private Properties props = new Properties();
-
-    private String language;
-    private String country;
-
-    private ResourceBundle bundle;
 
 
-    public TimerSettingsPanel() {
 
-        language = props.getProperty("language.locale", "en");
-        country = props.getProperty("language.country", "EN");
+    TimerPanel timerPanel;
 
-        InputStream is = getClass().getResourceAsStream("/config.properties");
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    LanguageManager bundle = LanguageManager.getInstance();
+    ConfigManager props = ConfigManager.getInstance();
 
-        Locale locale = new Locale(language, country);
-        bundle = ResourceBundle.getBundle("messages", locale);
+    public TimerSettingsPanel(TimerPanel timerPanel) {
+
+        this.timerPanel = timerPanel;
+
+
+
+
 
         pomodoroWorkDuration = Integer.parseInt(props.getProperty("work.duration", "25"));
         pomodoroShortBreak = Integer.parseInt(props.getProperty("short.break", "5"));
@@ -103,15 +105,34 @@ public class TimerSettingsPanel extends JPanel {
     }
 
     public void setRemainingSeconds(int oldDurationAsMinutes, int newDurationAsMinutes, PomodoroTimerState timerState) {
+      //  System.out.printf("%d %d %s%n", oldDurationAsMinutes, newDurationAsMinutes, timerState);
+
         int differenceAsSeconds = (oldDurationAsMinutes - newDurationAsMinutes) * 60;
         if (pomodoroTimerState == null) {
             pomodoroTimerState = timerState;
-
+           // System.out.println("pomodoroTimerState == null, " + timerState);
         }
         if (pomodoroTimerState.equals(timerState)) {
+           // System.out.println("pomodoroTimerState.equals(timerState), " + timerState);
+            //System.out.println(this.timerPanel.getRemainingSeconds());
+           // this.timerPanel.setRemainingSeconds(1000);
+
             if (remainingSeconds - differenceAsSeconds > 1) {
                 remainingSeconds = remainingSeconds - differenceAsSeconds;
+                System.out.println(remainingSeconds);
+               // System.out.println(remainingSeconds);
+                this.timerPanel.setRemainingSeconds(remainingSeconds);
             }
+            /*
+            if (listener != null) {
+                int newValue = (int) spinnerPomodoroWorkDuration.getValue();
+                listener.pomodoroWorkDurationChanged(newValue);
+                System.out.println(newValue);
+            }
+*/
+
+
+
         }
     }
 

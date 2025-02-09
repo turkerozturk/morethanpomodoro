@@ -6,8 +6,7 @@ import org.example.jpanels.mididevice.MidiInstrumentPanel;
 import org.example.jpanels.mp3.Mp3PlayerFx;
 import org.example.jpanels.noisegenerator.NoisePanel;
 import org.example.jpanels.speakertest.AudioOutputPanel;
-import org.example.pomodoro.LoggingPanel;
-import org.example.pomodoro.PomodoroPanel;
+import org.example.pomodoro.PomodoroMainPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +17,9 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class ApplicationFrame extends JFrame {
+
+    private int frameWidth, frameHeight;
+
 
     JToggleButton toggleAlwaysOnTopButton, toggleHistoryLoggingButton;
     private boolean isAlwaysOnTop, isHistoryLoggingEnabled;
@@ -31,11 +33,6 @@ public class ApplicationFrame extends JFrame {
 
 
 
-
-
-        language = props.getProperty("language.locale", "en");
-        country = props.getProperty("language.country", "EN");
-
         InputStream is = getClass().getResourceAsStream("/config.properties");
         try {
             props.load(is);
@@ -43,12 +40,18 @@ public class ApplicationFrame extends JFrame {
             throw new RuntimeException(e);
         }
 
+        frameWidth = Integer.parseInt(props.getProperty("frame.width", "1024"));
+        frameHeight = Integer.parseInt(props.getProperty("frame.height", "768"));
+
+        language = props.getProperty("language.locale", "en");
+        country = props.getProperty("language.country", "EN");
+
         Locale locale = new Locale(language, country);
         bundle = ResourceBundle.getBundle("messages", locale);
 
         setTitle(translate("frame.title"));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1000, 400);
+        setSize(frameWidth, frameHeight);
         setLocationRelativeTo(null);
 
 
@@ -72,6 +75,10 @@ public class ApplicationFrame extends JFrame {
 
 
         JTabbedPane tabbedPane = new JTabbedPane();
+
+        PomodoroMainPanel pomodoroPanel = new PomodoroMainPanel();
+
+        tabbedPane.addTab("Pomodoro", pomodoroPanel);
 
 
         JPanel applicationSettingsPanel = new JPanel();
@@ -118,9 +125,7 @@ public class ApplicationFrame extends JFrame {
         tabbedPane.addTab("Device Tests", jTabbedPaneForDeviceTesting);
 
 
-        PomodoroPanel pomodoroPanel = new PomodoroPanel();
-
-        tabbedPane.addTab("Pomodoro", pomodoroPanel);
+      ;
 
 
         add(tabbedPane, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.

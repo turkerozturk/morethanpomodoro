@@ -2,23 +2,21 @@ package org.example.pomodoro;
 
 import org.example.FileUtil;
 import org.example.PomodoroTimerState;
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 
 
-public class PomodoroPanel extends JPanel {
+public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
 
     private LoggingPanel loggingPanel;
+
+    private int pomodoroLimit; // TODO make adjustable by config file.
 
 
     PomodoroTimerState pomodoroTimerState;
@@ -26,50 +24,36 @@ public class PomodoroPanel extends JPanel {
 
     JToggleButton toggleAutoPlayButton;
 
-    private JLabel timeLabel, messageLabel;
     private JButton startButton, stopButton, resetButton, jumpToNextButton;
-
-
 
     private Timer timer;
 
     private boolean isAutoPlay, isAlwaysOnTop, isHistoryLoggingEnabled;
 
-
-
-    private Properties props = new Properties();
-
-    private String language;
-    private String country;
-
-    private ResourceBundle bundle;
-
     int wavSoundVolume, frequencySoundVolume;
-
 
     private String currentTimerLogMessage;
 
     private int remainingSeconds;
     private boolean toggleWorkSession = true;
-    private int pomodoroCount = 0; // onemli. 0 olarak kalsin.
+    private int pomodoroCurrentNumber = 0; // onemli. 0 olarak kalsin.
 
-    private int endingSoundVolume;
+    TimerPanel timerPanel;
+
+    LanguageManager langManager = LanguageManager.getInstance();
+    ConfigManager props = ConfigManager.getInstance();
+    private String currentTimerScreenMessage;
+
+    public PomodoroMainPanel() {
 
 
-    public PomodoroPanel() {
+        pomodoroLimit = Integer.parseInt(ConfigManager.getInstance().getProperty("default.pomodoro.cycle.count","4"));
+        pomodoroTimerState = PomodoroTimerState.WORK_TIME;
 
-        language = props.getProperty("language.locale", "en");
-        country = props.getProperty("language.country", "EN");
 
-        InputStream is = getClass().getResourceAsStream("/config.properties");
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        Locale locale = new Locale(language, country);
-        bundle = ResourceBundle.getBundle("messages", locale);
+       // Locale locale = new Locale(language, country);
+       // bundle = ResourceBundle.getBundle("messages", locale);
 
         startButton = new JButton(translate("timer.start"));
         stopButton = new JButton(translate("timer.stop"));
@@ -81,7 +65,7 @@ public class PomodoroPanel extends JPanel {
 
         frequencySoundVolume = Integer.parseInt(props.getProperty("sound.frequency.volume", "100"));
 
-        endingSoundVolume = Integer.parseInt(props.getProperty("sound.ending.volume", "100"));
+        //endingSoundVolume = Integer.parseInt(props.getProperty("sound.ending.volume", "100"));
 
 
         int autoPlayAsInt = Integer.parseInt(props.getProperty("pomodoro.autoplay.toggle", "1"));
@@ -93,10 +77,10 @@ public class PomodoroPanel extends JPanel {
 
         JTabbedPane jTabbedPaneForPomodoro = new JTabbedPane();
 
-
-        pomodoroTimingsPanel = new TimerSettingsPanel();
-
+        timerPanel = new TimerPanel();
+        pomodoroTimingsPanel = new TimerSettingsPanel(timerPanel);
         remainingSeconds = pomodoroTimingsPanel.getPomodoroWorkDuration() * 60; // initial timer in minutes.
+        timerPanel.setRemainingSeconds(remainingSeconds);
 
         jTabbedPaneForPomodoro.addTab(translate("tab.panel.timings.title"), pomodoroTimingsPanel);
 
@@ -133,12 +117,15 @@ public class PomodoroPanel extends JPanel {
         loggingPanel = new LoggingPanel();
         jTabbedPaneForPomodoro.addTab("Session Log", loggingPanel);
 
-
+        setScreenMessageForWorkTime(); // todo
+        System.out.println(timerPanel.getMessageLabel().getText());
+        timerPanel.getMessageLabel().setText("dssdsdf");
 
         // Geri sayım
         timer = new Timer(1000, (ActionEvent e) -> {
             remainingSeconds--;
-            timeLabel.setText(formatTime(remainingSeconds));
+            timerPanel.getTimeLabel().setText(formatTime(remainingSeconds));
+
 
             // Her saniyede metronom kontrolü
             tickSoundPanel.tick();
@@ -165,36 +152,24 @@ public class PomodoroPanel extends JPanel {
         toggleAutoPlayButton.addActionListener(e -> toggleAutoPlay());
 
 
-        // BURADAN asagisi frame in ust kismindaki sayac panalei. Sonra da JSplitepane ile ustteki ve alttaki ekleniyor.
-        // TODO bu panel ve spliti al tek tabbedPane ye ekle.
-        JPanel panelForTimer = new JPanel();
 
-        JPanel timerSubPanel = new JPanel();
-        timerSubPanel.setLayout(new BoxLayout(timerSubPanel, BoxLayout.Y_AXIS)); // Dikey hizalama
 
-        timeLabel = new JLabel(formatTime(remainingSeconds), SwingConstants.CENTER);
-        timeLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);  // MERKEZE HİZALA
-
-        messageLabel = new JLabel("Pomodoro", SwingConstants.CENTER);
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // MERKEZE HİZALA
-
-        timerSubPanel.add(timeLabel);
-        timerSubPanel.add(messageLabel);
-
-        panelForTimer.add(timerSubPanel, BorderLayout.CENTER);
 
 
        // JSplitPane jSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         JPanel jSplitPane = new JPanel();
         jSplitPane.setLayout(new BoxLayout(jSplitPane, BoxLayout.Y_AXIS));
-        jSplitPane.add(panelForTimer);
+        jSplitPane.add(timerPanel);
         jSplitPane.add(pomodoroControlsPanel);
         jSplitPane.add(jTabbedPaneForPomodoro);
 
         this.add(jSplitPane);
 
+        // TimerSettingsPanel'e kendi listener'ımızı setliyoruz
+        pomodoroTimingsPanel.setTimerSettingsListener(this);
+
+
+        setScreenMessageForWorkTime();
 
     }
 
@@ -215,6 +190,7 @@ public class PomodoroPanel extends JPanel {
 
 
     private void startTimer() {
+
         if (!timer.isRunning()) {
             // currentTimerLogMessage = getCurrentTimestamp() + "\t" + (pomodoroCount +1) + "\t" +
             //         pomodoroWorkDuration + "\t" + toggleWorkSession;
@@ -223,7 +199,7 @@ public class PomodoroPanel extends JPanel {
                 appendMessageToHistory(getCurrentTimerLogMessage());
             }
 
-            messageLabel.setText(getCurrentTimerScreenMessage());
+            //timerPanel.getMessageLabel().setText(getCurrentTimerScreenMessage());
             loggingPanel.appendLog(getCurrentTimerScreenMessage());
 
             timer.start();
@@ -252,43 +228,70 @@ public class PomodoroPanel extends JPanel {
 
     private void resetTimer() {
         stopTimer();
+        switch(pomodoroTimerState) {
+            case STOPPED:
+                break;
+            case PAUSED:
+                break;
+            case WORK_TIME:
+                remainingSeconds = pomodoroTimingsPanel.getPomodoroWorkDuration()  * 60; // Süreyi başa al
+                break;
+            case SHORT_BREAK:
+                remainingSeconds = pomodoroTimingsPanel.getPomodoroShortBreak()  * 60; // Süreyi başa al
+                break;
+            case LONG_BREAK:
+                remainingSeconds = pomodoroTimingsPanel.getPomodoroLongBreak()  * 60; // Süreyi başa al
+                break;
+        }
+
         pomodoroTimerState = PomodoroTimerState.STOPPED;
-        remainingSeconds = pomodoroTimingsPanel.getPomodoroWorkDuration()  * 60; // Süreyi başa al
-        timeLabel.setText(formatTime(remainingSeconds));
+        timerPanel.getTimeLabel().setText(formatTime(remainingSeconds));
     }
 
     private void cycleNext() {
         // Pomodoro turu bittiğinde mola veya yeni çalışma süresi ayarla
         if (toggleWorkSession) {
-            pomodoroCount++;
-            if (pomodoroCount % 4 == 0) {
+            pomodoroCurrentNumber++;
+            if (pomodoroCurrentNumber % pomodoroLimit == 0) {
+                pomodoroCurrentNumber = 0; // birkac pomodoroluk bir dongu bitince sayac bastan baslar cunku.
                 pomodoroTimerState = PomodoroTimerState.LONG_BREAK;
                 remainingSeconds = pomodoroTimingsPanel.getPomodoroLongBreak() * 60;
-                //currentTimerLogMessage = getCurrentTimestamp() + ", " + pomodoroCount + ", " + pomodoroLongBreak + ", " + inWorkSession;
+                setCurrentTimerScreenMessage(String.format("%s", langManager.getString("LONG_BREAK")));
+                appendMessageToHistory(getCurrentTimerLogMessage());
 
 
             } else {
                 pomodoroTimerState = PomodoroTimerState.SHORT_BREAK;
                 remainingSeconds = pomodoroTimingsPanel.getPomodoroShortBreak() * 60;
-                //currentTimerLogMessage = getCurrentTimestamp() + ", " + pomodoroCount + ", " + pomodoroShortBreak + ", " + inWorkSession;
+                setCurrentTimerScreenMessage(String.format("%s", langManager.getString("SHORT_BREAK")));
                 appendMessageToHistory(getCurrentTimerLogMessage());
 
             }
         } else {
             pomodoroTimerState = PomodoroTimerState.WORK_TIME;
             remainingSeconds = pomodoroTimingsPanel.getPomodoroWorkDuration() * 60;
+            setScreenMessageForWorkTime();
+
+
             //currentTimerLogMessage = getCurrentTimestamp() + ", " + pomodoroCount + ", " + pomodoroWorkDuration + ", " + inWorkSession;
             appendMessageToHistory(getCurrentTimerLogMessage());
 
         }
         toggleWorkSession = !toggleWorkSession;
-        timeLabel.setText(formatTime(remainingSeconds));
+        timerPanel.getTimeLabel().setText(formatTime(remainingSeconds));
 
         if (isHistoryLoggingEnabled) {
             appendMessageToHistory(getCurrentTimerLogMessage());
         }
 
 
+    }
+
+    private void setScreenMessageForWorkTime() {
+        String message = String.format(langManager.getString("timer.screen.message.format")
+                , langManager.getString("WORK_TIME"), pomodoroCurrentNumber + 1, pomodoroLimit);
+        setCurrentTimerScreenMessage(message);
+        System.out.println(message);
     }
 
     private String formatTime(int totalSeconds) {
@@ -302,17 +305,16 @@ public class PomodoroPanel extends JPanel {
     }
 
     public String getCurrentTimerLogMessage() {
-        currentTimerLogMessage = String.format("%s\t%d\t%d\t%s\t%b", getCurrentTimestamp(), pomodoroCount
+        currentTimerLogMessage = String.format("%s\t%d\t%d\t%s\t%b", getCurrentTimestamp(), pomodoroCurrentNumber
                 , remainingSeconds, pomodoroTimerState, toggleWorkSession);
 
         return currentTimerLogMessage;
     }
 
     public String getCurrentTimerScreenMessage() {
-        currentTimerLogMessage = String.format("Pomodoro %d of 4 %s", pomodoroCount
-                , pomodoroTimerState);
 
-        return currentTimerLogMessage;
+
+        return currentTimerScreenMessage;
     }
 
 
@@ -328,13 +330,33 @@ public class PomodoroPanel extends JPanel {
         stopTimer();
 
         cycleNext();
+        timerPanel.getMessageLabel().setText(getCurrentTimerScreenMessage());
 
 
     }
 
     public String translate(String key) {
-        return bundle.getString(key);
+       // return bundle.getString(key);
+        return langManager.getString(key);
+    }
+
+    // TimerSettingsListener arayüzünde tanımladığımız metodu implemente ediyoruz
+    @Override
+    public void pomodoroWorkDurationChanged(int newValue) {
+        // Spinner değerinin değiştiğini burada yakalıyoruz
+        System.out.println("Yeni pomodoro süresi: " + newValue);
+
+        // TODO bunu uygun mesajla degistir
+        //  timerPanel.getMessageLabel().setText(String.valueOf(newValue));
+        remainingSeconds = timerPanel.getRemainingSeconds();
+        System.out.println(remainingSeconds);
+
+        // Burada üst panelde istediğiniz işlemleri yapabilirsiniz
     }
 
 
+    public void setCurrentTimerScreenMessage(String currentTimerScreenMessage) {
+        this.currentTimerScreenMessage = currentTimerScreenMessage;
+        timerPanel.getMessageLabel().setText(currentTimerScreenMessage);
+    }
 }
