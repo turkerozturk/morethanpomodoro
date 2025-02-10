@@ -1,4 +1,4 @@
-package org.example.pomodoro;
+package org.example.jpanels.pomodoro;
 
 import org.example.MetronomePlayer;
 

@@ -1,12 +1,17 @@
 package org.example;
 
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
+import org.example.jpanels.about.AboutPanel;
 import org.example.jpanels.binaural.BinauralPanel;
+import org.example.jpanels.calculator.CalculatorPanel;
 import org.example.jpanels.metronome.MetronomePanel;
 import org.example.jpanels.mididevice.MidiInstrumentPanel;
 import org.example.jpanels.mp3.Mp3PlayerFx;
 import org.example.jpanels.noisegenerator.NoisePanel;
+import org.example.jpanels.notes.NotesPanel;
 import org.example.jpanels.speakertest.AudioOutputPanel;
-import org.example.pomodoro.PomodoroMainPanel;
+import org.example.jpanels.pomodoro.PomodoroMainPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,31 +28,22 @@ public class ApplicationFrame extends JFrame {
 
     JToggleButton toggleAlwaysOnTopButton, toggleHistoryLoggingButton;
     private boolean isAlwaysOnTop, isHistoryLoggingEnabled;
-    Properties props = new Properties();
-    private ResourceBundle bundle;
-    private String language;
-    private String country;
+
+    LanguageManager bundle = LanguageManager.getInstance();
+    ConfigManager props = ConfigManager.getInstance();
 
     public ApplicationFrame() {
 
 
 
 
-        InputStream is = getClass().getResourceAsStream("/config.properties");
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+
 
         frameWidth = Integer.parseInt(props.getProperty("frame.width", "1024"));
         frameHeight = Integer.parseInt(props.getProperty("frame.height", "768"));
 
-        language = props.getProperty("language.locale", "en");
-        country = props.getProperty("language.country", "EN");
 
-        Locale locale = new Locale(language, country);
-        bundle = ResourceBundle.getBundle("messages", locale);
 
         setTitle(translate("frame.title"));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -67,38 +63,31 @@ public class ApplicationFrame extends JFrame {
         isAlwaysOnTop = (alwaysOnTopAsInt == 1);
         toggleAlwaysOnTopButton.setSelected(isAlwaysOnTop);
         if (toggleAlwaysOnTopButton.isSelected()) {
-            toggleAlwaysOnTopButton.setText(translate("button.alway.on.top.on"));
+            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.on"));
             setAlwaysOnTop(isAlwaysOnTop);
         } else {
-            toggleAlwaysOnTopButton.setText(translate("button.alway.on.top.off"));
+            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.off"));
         }
 
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+        JTabbedPane tabbedPanel = new JTabbedPane();
 
         PomodoroMainPanel pomodoroPanel = new PomodoroMainPanel();
 
-        tabbedPane.addTab("Pomodoro", pomodoroPanel);
+        tabbedPanel.addTab("Pomodoro", pomodoroPanel);
 
 
-        JPanel applicationSettingsPanel = new JPanel();
 
-        applicationSettingsPanel.add(toggleAlwaysOnTopButton);
-
-        toggleHistoryLoggingButton.addActionListener(e -> toggleHistoryLogging());
-        applicationSettingsPanel.add(toggleHistoryLoggingButton);
-
-        tabbedPane.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
 
         JTabbedPane jTabbedPaneForMp3 = new JTabbedPane();
-        Mp3PlayerFx playerPanel = new Mp3PlayerFx("playlist1.txt");
+        Mp3PlayerFx playerPanel = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player", playerPanel.getPlayerPanel());
-        Mp3PlayerFx playerPanel2 = new Mp3PlayerFx("playlist2.txt");
+        Mp3PlayerFx playerPanel2 = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.2.file.location", "playlist2.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player2", playerPanel2.getPlayerPanel());
-        Mp3PlayerFx playerPanel3 = new Mp3PlayerFx("playlist3.txt");
+        Mp3PlayerFx playerPanel3 = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.3.file.location", "playlist3.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player3", playerPanel3.getPlayerPanel());
 
-        tabbedPane.addTab("MP3 Player", jTabbedPaneForMp3);
+        tabbedPanel.addTab("MP3 Players", jTabbedPaneForMp3);
 
 
         JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
@@ -113,7 +102,7 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForNoises.addTab(translate("tab.panel.binaural.beats.title"), binauralPanel);
 
 
-        tabbedPane.addTab("Noise Generators", jTabbedPaneForNoises);
+        tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
 
 
         JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
@@ -122,13 +111,35 @@ public class ApplicationFrame extends JFrame {
         AudioOutputPanel audioOutputPanel = new AudioOutputPanel();
         jTabbedPaneForDeviceTesting.addTab("Speaker Test", audioOutputPanel);
 
-        tabbedPane.addTab("Device Tests", jTabbedPaneForDeviceTesting);
+        tabbedPanel.addTab("Device Tests", jTabbedPaneForDeviceTesting);
 
 
-      ;
 
 
-        add(tabbedPane, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
+        NotesPanel notesPanel = new NotesPanel();
+        tabbedPanel.addTab("Notes", notesPanel); 
+
+        CalculatorPanel calculatorPanel = new CalculatorPanel();
+        tabbedPanel.addTab("Calculator", calculatorPanel);
+
+        JPanel applicationSettingsPanel = new JPanel();
+
+        applicationSettingsPanel.add(toggleAlwaysOnTopButton);
+
+        toggleHistoryLoggingButton.addActionListener(e -> toggleHistoryLogging());
+        applicationSettingsPanel.add(toggleHistoryLoggingButton);
+
+        tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
+
+        AboutPanel aboutPanel = new AboutPanel();
+        tabbedPanel.addTab("About", aboutPanel);
+
+
+
+
+
+
+        add(tabbedPanel, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
 
         toggleAlwaysOnTopButton.addActionListener(e -> toggleAlwaysOnTop());
 

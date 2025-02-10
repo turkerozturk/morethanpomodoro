@@ -5,14 +5,20 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Mp3PlayerFx extends JPanel {
+
+    Timer timer; // gecen sureyi saniyede bir gostermesi icin.
     private MediaPlayer mediaPlayer;
     private List<String> playlist;
     private int currentSongIndex = 0;
@@ -21,9 +27,8 @@ public class Mp3PlayerFx extends JPanel {
     private boolean isPlaying = false;
     private final JFXPanel jfxPanel; // JavaFX başlatmak için
 
-    private JButton playAndPauseAndContinueButton, stopButton, nextButton, prevButton;
+    private JButton playAndPauseAndContinueButton, stopButton, nextButton, prevButton, fastButton, slowButton;
 
-    private JButton fastButton, slowButton; // Yeni hız düğmeleri
     private JLabel timeLabel; // Geçen Süre / Toplam Süre
     private JSlider seekSlider; // Müziği ileri / geri almak için slider
     private JSlider volumeSlider;
@@ -31,7 +36,8 @@ public class Mp3PlayerFx extends JPanel {
 
     private String playlistFileLocation;
 
-
+    LanguageManager bundle = LanguageManager.getInstance();
+    ConfigManager props = ConfigManager.getInstance();
 
     public String getPlaylistFileLocation() {
         return playlistFileLocation;
@@ -60,7 +66,7 @@ public class Mp3PlayerFx extends JPanel {
         nextButton = new JButton("\u23ED"); // ⏭ (Next)
         prevButton = new JButton("\u23EE"); // ⏮ (Previous)
         volumeSlider = new JSlider(0, 100, 100);
-        songLabel = new JLabel("Song not loaded");
+        songLabel = new JLabel(bundle.getString("mp3.not.loaded"));
 
         // Action Listeners
         playAndPauseAndContinueButton.addActionListener(e -> start());
@@ -107,7 +113,7 @@ public class Mp3PlayerFx extends JPanel {
         verticalPanel.add(controlsPanel);
 
         JPanel volumePanel = new JPanel();
-        volumePanel.add(new JLabel("Sound Volume:"));
+        volumePanel.add(new JLabel(bundle.getString("mp3.sound.volume")));
         volumePanel.add(volumeSlider);
         volumePanel.add(fastButton);
         volumePanel.add(slowButton);
@@ -121,6 +127,17 @@ public class Mp3PlayerFx extends JPanel {
 
         //add(panel1);
         add(verticalPanel);
+
+        // 1 saniyede bir tetiklenecek timer yarat
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // timeLabel'i yeni süre bilgisiyle güncelle
+                double currentTimeSeconds = mediaPlayer.getCurrentTime().toSeconds();
+                System.out.println(currentTimeSeconds);
+                timeLabel.setText(formatTime(Duration.seconds(currentTimeSeconds)));
+            }
+        });
 
         addEventListeners();
 
@@ -151,7 +168,9 @@ public class Mp3PlayerFx extends JPanel {
         playlist = new ArrayList<>();
         File playlistFile = new File(playlistFileLocation);
         if (!playlistFile.exists()) {
-            JOptionPane.showMessageDialog(this, playlistFile + " not found!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, playlistFile
+                    + bundle.getString("mp3.not.found"), bundle.getString("mp3.error")
+                    , JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -170,7 +189,7 @@ public class Mp3PlayerFx extends JPanel {
         if (mediaPlayer == null) {
             isPlaying = true;
             playerThread = new Thread(() -> {
-                // **ÖNEMLİ**: JavaFX kodlarını `Platform.runLater()` içinde çalıştırmalıyız
+                // bilgi: **ÖNEMLİ**: JavaFX kodlarını `Platform.runLater()` içinde çalıştırmalıyız
                 Platform.runLater(() -> playSong(currentSongIndex));
 
             });
@@ -183,70 +202,60 @@ public class Mp3PlayerFx extends JPanel {
 
             if (currentStatus == null) {
                 if (playlist.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Playlist empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, bundle.getString("mp3.playlist.empty")
+                            , bundle.getString("mp3.error")
+                            , JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                isPlaying = true;
 
                 //System.out.println("Player will start at: " + mediaPlayer.getCurrentTime());
                 mediaPlayer.play();
+                isPlaying = true;
+
+                timer.start();
                // playAndPauseAndContinueButton.setText("\u23F8"); // Pause (⏸)
             } else if (currentStatus == MediaPlayer.Status.PLAYING) {
                 mediaPlayer.pause();
                 isPlaying = false;
                 playAndPauseAndContinueButton.setText("\u23F8"); // Pause (⏸)
+                timer.stop();
 
             } else if (currentStatus == MediaPlayer.Status.PAUSED || currentStatus == MediaPlayer.Status.STOPPED) {
                 mediaPlayer.play();
                 playAndPauseAndContinueButton.setText("\u23F5"); // Continue (⏵)
 
                 isPlaying = true;
-
+                timer.start();
                 //System.out.println("Player will start at: " + mediaPlayer.getCurrentTime());
 
             }
 
         }
 
+        // baslangicta mp3 toplam suresini dogru gostermesi icin gecikme suresi.
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        updateTimeLabel();
+        updateSeekSlider();
 
     }
 
     public void stop() {
         if (mediaPlayer != null) {
+            mediaPlayer.seek(Duration.seconds(0));
+            seekSlider.setValue(0);
             Platform.runLater(() -> mediaPlayer.stop());
             isPlaying = false;
+            updateTimeLabel();
+            updateSeekSlider();
+
         }
     }
 
-/*
-    // https://stackoverflow.com/questions/38819690/javafx-media-pause-method-makes-mediaplayer-fast-forward
-    public void playPause() {
-        MediaPlayer.Status currentStatus = mediaPlayer.getStatus();
 
-        if (currentStatus == MediaPlayer.Status.PLAYING) {
-            mediaPlayer.pause();
-            pauseContinueButton.setText("\u23F5"); // Continue (⏵)
-
-        } else if(currentStatus == MediaPlayer.Status.PAUSED || currentStatus == MediaPlayer.Status.STOPPED) {
-            //System.out.println("Player will start at: " + mediaPlayer.getCurrentTime());
-            mediaPlayer.play();
-            pauseContinueButton.setText("\u23F8"); // Pause (⏸)
-
-        }
-
-
-
-    }
-*/
-
-    /*
-    public void continuePlaying() {
-        if (mediaPlayer != null) {
-            Platform.runLater(() -> mediaPlayer.play());
-            isPlaying = true;
-        }
-    }
-    */
 
     public void setVolume(int volume) {
         float newVolume = volume / 100.0f;
@@ -273,7 +282,7 @@ public class Mp3PlayerFx extends JPanel {
 
         currentSongIndex = songIndex % playlist.size();
         String songPath = playlist.get(currentSongIndex);
-        songLabel.setText("Playing: " + new File(songPath).getName());
+        songLabel.setText(bundle.getString("mp3.now.playing") + new File(songPath).getName());
 
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -285,6 +294,10 @@ public class Mp3PlayerFx extends JPanel {
         mediaPlayer.setOnEndOfMedia(this::nextSong);
 
         Platform.runLater(() -> mediaPlayer.play());
+
+        updateTimeLabel();
+        updateSeekSlider();
+
     }
 
     public JPanel getPlayerPanel() {
@@ -318,11 +331,14 @@ public class Mp3PlayerFx extends JPanel {
             }
         });
 
+
+
+
+
     }
 
         // Süreyi etikete güncelleyen metot
     private void updateTimeLabel() {
-        System.out.println("time");
         if (mediaPlayer != null) {
             Duration currentTime = mediaPlayer.getCurrentTime();
             Duration totalTime = mediaPlayer.getTotalDuration();
@@ -341,7 +357,6 @@ public class Mp3PlayerFx extends JPanel {
                 int sliderValue = (int) ((currentTimeSeconds / totalTimeSeconds) * 100);
                 seekSlider.setValue(sliderValue);
             }
-           // updateTimeLabel();
         }
     }
 
@@ -365,6 +380,43 @@ public class Mp3PlayerFx extends JPanel {
         int seconds = (int) duration.toSeconds() % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
+
+
+}
+
+
+/*
+    // https://stackoverflow.com/questions/38819690/javafx-media-pause-method-makes-mediaplayer-fast-forward
+    public void playPause() {
+        MediaPlayer.Status currentStatus = mediaPlayer.getStatus();
+
+        if (currentStatus == MediaPlayer.Status.PLAYING) {
+            mediaPlayer.pause();
+            pauseContinueButton.setText("\u23F5"); // Continue (⏵)
+
+        } else if(currentStatus == MediaPlayer.Status.PAUSED || currentStatus == MediaPlayer.Status.STOPPED) {
+            //System.out.println("Player will start at: " + mediaPlayer.getCurrentTime());
+            mediaPlayer.play();
+            pauseContinueButton.setText("\u23F8"); // Pause (⏸)
+
+        }
+
+
+
+    }
+*/
+
+    /*
+    public void continuePlaying() {
+        if (mediaPlayer != null) {
+            Platform.runLater(() -> mediaPlayer.play());
+            isPlaying = true;
+        }
+    }
+    */
+
+
+    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("MP3 Player FX");
@@ -375,4 +427,4 @@ public class Mp3PlayerFx extends JPanel {
             frame.setVisible(true);
         });
     }
-}
+    */

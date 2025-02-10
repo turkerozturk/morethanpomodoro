@@ -1,15 +1,10 @@
-package org.example.pomodoro;
+package org.example.jpanels.pomodoro;
 
 import org.example.PomodoroTimerState;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class TimerSettingsPanel extends JPanel {
 
