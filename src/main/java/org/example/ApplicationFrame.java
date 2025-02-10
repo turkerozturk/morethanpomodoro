@@ -5,13 +5,17 @@ import org.example.initial.LanguageManager;
 import org.example.jpanels.about.AboutPanel;
 import org.example.jpanels.binaural.BinauralPanel;
 import org.example.jpanels.calculator.CalculatorPanel;
+import org.example.jpanels.datetime.DateTimePanel;
 import org.example.jpanels.metronome.MetronomePanel;
 import org.example.jpanels.mididevice.MidiInstrumentPanel;
 import org.example.jpanels.mp3.Mp3PlayerFx;
 import org.example.jpanels.noisegenerator.NoisePanel;
 import org.example.jpanels.notes.NotesPanel;
+import org.example.jpanels.paint.CanvasPanel;
+import org.example.jpanels.piano.PianoPanel;
 import org.example.jpanels.speakertest.AudioOutputPanel;
 import org.example.jpanels.pomodoro.PomodoroMainPanel;
+import org.example.jpanels.taptempo.TapTempoTool;
 
 import javax.swing.*;
 import java.awt.*;
@@ -94,15 +98,37 @@ public class ApplicationFrame extends JFrame {
 
         NoisePanel noisePanel = new NoisePanel();
         jTabbedPaneForNoises.addTab("Noise Generator", noisePanel.getPlayerPanel());
-        MetronomePanel metronomePanel = new MetronomePanel();
-        jTabbedPaneForNoises.add("Metronome", metronomePanel.getPlayerPanel());
-
-
         BinauralPanel binauralPanel = new BinauralPanel();
         jTabbedPaneForNoises.addTab(translate("tab.panel.binaural.beats.title"), binauralPanel);
+        MetronomePanel metronomePanel = new MetronomePanel();
+        jTabbedPaneForNoises.addTab("Metronome", metronomePanel.getPlayerPanel());
 
 
         tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
+
+
+
+
+        JTabbedPane jTabbedPaneForOtherTools = new JTabbedPane();
+
+
+        NotesPanel notesPanel = new NotesPanel();
+        jTabbedPaneForOtherTools.addTab("Notes", notesPanel);
+        CanvasPanel canvasPanel = new CanvasPanel();
+        jTabbedPaneForOtherTools.addTab("Paint", canvasPanel);
+        CalculatorPanel calculatorPanel = new CalculatorPanel();
+        jTabbedPaneForOtherTools.addTab("Calculator", calculatorPanel);
+        TapTempoTool tapTempoTool = new TapTempoTool();
+        jTabbedPaneForOtherTools.addTab("Tap Tempo", tapTempoTool);
+        PianoPanel pianoPanel = new PianoPanel();
+        jTabbedPaneForOtherTools.addTab("Piano", pianoPanel);
+        DateTimePanel dateTimePanel = new DateTimePanel();
+        jTabbedPaneForOtherTools.addTab("Date Diff", dateTimePanel);
+
+        tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
+
+
+
 
 
         JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
@@ -116,11 +142,7 @@ public class ApplicationFrame extends JFrame {
 
 
 
-        NotesPanel notesPanel = new NotesPanel();
-        tabbedPanel.addTab("Notes", notesPanel); 
 
-        CalculatorPanel calculatorPanel = new CalculatorPanel();
-        tabbedPanel.addTab("Calculator", calculatorPanel);
 
         JPanel applicationSettingsPanel = new JPanel();
 
