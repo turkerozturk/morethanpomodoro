@@ -7,6 +7,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.example.playlist.PlayListManagerPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +28,8 @@ public class Mp3PlayerFx extends JPanel {
     private boolean isPlaying = false;
     private final JFXPanel jfxPanel; // JavaFX başlatmak için
 
-    private JButton playAndPauseAndContinueButton, stopButton, nextButton, prevButton, fastButton, slowButton;
+    private JButton playAndPauseAndContinueButton, stopButton, nextButton, prevButton, fastButton, slowButton,
+            playListButton;
 
     private JLabel timeLabel; // Geçen Süre / Toplam Süre
     private JSlider seekSlider; // Müziği ileri / geri almak için slider
@@ -38,6 +40,7 @@ public class Mp3PlayerFx extends JPanel {
 
     LanguageManager bundle = LanguageManager.getInstance();
     ConfigManager props = ConfigManager.getInstance();
+
 
     public String getPlaylistFileLocation() {
         return playlistFileLocation;
@@ -59,6 +62,9 @@ public class Mp3PlayerFx extends JPanel {
 
         // Playlist yükle
         loadPlaylist();
+
+        playListButton = new JButton("Manage Playlist");
+        playListButton.addActionListener(e -> showPlayListPanel());
 
         // UI oluştur
         playAndPauseAndContinueButton = new JButton("\u25B6"); // ▶ (Play)
@@ -93,6 +99,7 @@ public class Mp3PlayerFx extends JPanel {
         verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS)); // Dikey hizalama
 
         verticalPanel.add(songLabel);
+        verticalPanel.add(playListButton);
 
 
         JPanel timePanel = new JPanel();
@@ -380,6 +387,28 @@ public class Mp3PlayerFx extends JPanel {
         int seconds = (int) duration.toSeconds() % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
+
+    private void showPlayListPanel() {
+        // Yeni bir JDialog oluştur (parent frame’i modal yapar)
+        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this),
+                "Playlist Manager " + playlistFileLocation, true);
+
+        // PlayListPanel'i oluştur ve JDialog içine ekle
+        PlayListManagerPanel playListPanel = new PlayListManagerPanel(playlistFileLocation);
+        dialog.getContentPane().add(playListPanel);
+
+        // JDialog özellikleri
+        dialog.setSize(800, 400);
+        dialog.setLocationRelativeTo(this); // Parent'a göre ortala
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Kapatınca hafızadan silinsin
+
+        // Görüntüle
+        dialog.setVisible(true);
+
+        loadPlaylist();
+
+    }
+
 
 
 }
