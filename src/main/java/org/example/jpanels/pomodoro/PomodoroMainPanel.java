@@ -77,6 +77,16 @@ public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
 
         JTabbedPane jTabbedPaneForPomodoro = new JTabbedPane();
 
+
+        TickSoundPanel tickSoundPanel = new TickSoundPanel();
+        jTabbedPaneForPomodoro.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
+        EndingSoundPanel endingSoundPanel = new EndingSoundPanel();
+        jTabbedPaneForPomodoro.addTab(translate("tab.panel.ending.sound.title"), endingSoundPanel);
+
+
+
+
+
         timerPanel = new TimerPanel();
         pomodoroTimingsPanel = new TimerSettingsPanel(timerPanel);
         remainingSeconds = pomodoroTimingsPanel.getPomodoroWorkDuration() * 60; // initial timer in minutes.
@@ -101,17 +111,7 @@ public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
 
 
 
-        TickSoundPanel tickSoundPanel = new TickSoundPanel();
 
-
-        jTabbedPaneForPomodoro.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
-
-
-        EndingSoundPanel endingSoundPanel = new EndingSoundPanel();
-
-
-
-        jTabbedPaneForPomodoro.addTab(translate("tab.panel.ending.sound.title"), endingSoundPanel);
 
 
         loggingPanel = new LoggingPanel();

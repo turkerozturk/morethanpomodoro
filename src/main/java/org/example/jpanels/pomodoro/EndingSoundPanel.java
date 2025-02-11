@@ -1,111 +1,100 @@
 package org.example.jpanels.pomodoro;
 
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
 import org.example.sounds.AsyncBeep;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
+
 
 public class EndingSoundPanel extends JPanel {
 
-    JToggleButton toggleFinishSoundButton, isEndingSoundMutedButton;
+    private JToggleButton endingSoundToggleButton;
+    private JSlider endingSoundVolumeSlider;
+    private boolean isEndingSoundEnabled;
+    private int endingSoundVolume;
+    private final LanguageManager bundle = LanguageManager.getInstance();
+    private final ConfigManager props = ConfigManager.getInstance();
 
-
-    JSlider endingSoundVolumeSlider;
-    int wavSoundVolume, frequencySoundVolume;
-
-    private Properties props = new Properties();
-
-    private String language;
-    private String country;
-
-    private ResourceBundle bundle;
     public EndingSoundPanel() {
 
-        language = props.getProperty("language.locale", "en");
-        country = props.getProperty("language.country", "EN");
+        loadVariablesFromConfig();
 
-        InputStream is = getClass().getResourceAsStream("/config.properties");
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        initializeEndingSound();
 
-        Locale locale = new Locale(language, country);
-        bundle = ResourceBundle.getBundle("messages", locale);
+        preparePlayToggleButton();
+        endingSoundToggleButton.addActionListener(e -> toggleEndingSound());
 
+        prepareVolumeSlider();
+        endingSoundVolumeSlider.addChangeListener(e -> changeEndingSoundVolume());
 
+    }
 
+    private void loadVariablesFromConfig() {
+        isEndingSoundEnabled = Integer.parseInt(
+                props.getProperty("pomodoro.ending.sound.is.enabled", "1")) == 1;
 
+        endingSoundVolume = Integer.parseInt(
+                props.getProperty("pomodoro.ending.sound.volume", "45"));
+    }
 
-        toggleFinishSoundButton = new JToggleButton(translate("button.ending.sound.initial"));
-        toggleFinishSoundButton.addActionListener(e -> toggleFinishSound());
-        toggleFinishSoundButton.setSelected(true);
+    private void initializeEndingSound() {
+            // intentionally empty
+    }
 
-
-        endingSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, frequencySoundVolume);
+    private void prepareVolumeSlider() {
+        endingSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, endingSoundVolume);
         endingSoundVolumeSlider.setMajorTickSpacing(10);
         endingSoundVolumeSlider.setMinorTickSpacing(1);
         endingSoundVolumeSlider.setPaintTicks(true);
         endingSoundVolumeSlider.setPaintLabels(true);
-        //Font font = new Font("Serif", Font.ITALIC, 15);
-        //endingSoundVolumeSlider.setFont(font);
+
         endingSoundVolumeSlider.setBorder(
-                BorderFactory.createTitledBorder(bundle.getString("slider.ending.sound.loudness")));
-
-        isEndingSoundMutedButton = new JToggleButton(translate("button.ending.sound.mute"));
-
-
-        this.add(isEndingSoundMutedButton);
+                BorderFactory.createTitledBorder(bundle.getString("slider.ending.sound.volume")));
         this.add(endingSoundVolumeSlider);
-        this.add(toggleFinishSoundButton);
+    }
 
-        endingSoundVolumeSlider.addChangeListener(e -> changeEndingSoundVolume());
+    private void preparePlayToggleButton() {
+        endingSoundToggleButton = new JToggleButton();
+        this.add(endingSoundToggleButton);
 
+        processEndingSound();
 
     }
 
     public void changeEndingSoundVolume() {
         if (!endingSoundVolumeSlider.getValueIsAdjusting()) {
-            frequencySoundVolume = endingSoundVolumeSlider.getValue();
+            endingSoundVolume = endingSoundVolumeSlider.getValue();
             playFrequencyBeep();
         }
     }
 
     public void playFrequencyBeep() {
         //  System.out.println("Sinüs dalgası çalıyor...");
-        // System.out.println("PomodoroFrame frequencySoundVolume: " + frequencySoundVolume);
-        AsyncBeep.generateToneAsync(1000, 2000, false, frequencySoundVolume);
-        // System.out.println("Kare dalga çalıyor...");
-        //AsyncBeep.generateToneAsync(1000, 6000, true, frequencySoundVolume);
-
+        AsyncBeep.generateToneAsync(1000, 2000, false, endingSoundVolume);
     }
 
     public void playFrequencyBeepIfSelected() {
-        if (toggleFinishSoundButton.isSelected()) {
+        if (endingSoundToggleButton.isSelected()) {
             playFrequencyBeep();
         }
     }
 
-
-
-        private void toggleFinishSound() {
-
-
-        if (toggleFinishSoundButton.isSelected()) {
-            toggleFinishSoundButton.setText(translate("timer.end.sound.on"));
-        } else {
-            toggleFinishSoundButton.setText(translate("timer.end.sound.off"));
-        }
-
-
+    private void toggleEndingSound() {
+        isEndingSoundEnabled = !isEndingSoundEnabled;
+        processEndingSound();
     }
 
+    public void processEndingSound() {
+        endingSoundToggleButton.setSelected(isEndingSoundEnabled);
 
+        if (isEndingSoundEnabled) {
+            endingSoundToggleButton.setText(translate("button.ending.sound.deactivate"));
+        } else {
+            endingSoundToggleButton.setText(translate("button.ending.sound.activate"));
+        }
+
+    }
 
     public String translate(String key) {
         return bundle.getString(key);
