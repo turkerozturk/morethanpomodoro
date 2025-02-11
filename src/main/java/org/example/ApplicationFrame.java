@@ -13,17 +13,12 @@ import org.example.jpanels.noisegenerator.NoisePanel;
 import org.example.jpanels.notes.NotesPanel;
 import org.example.jpanels.paint.CanvasPanel;
 import org.example.jpanels.piano.PianoPanel;
-import org.example.jpanels.speakertest.AudioOutputPanel;
 import org.example.jpanels.pomodoro.PomodoroMainPanel;
+import org.example.jpanels.speakertest.AudioOutputPanel;
 import org.example.jpanels.taptempo.TapTempoTool;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class ApplicationFrame extends JFrame {
 
@@ -83,6 +78,22 @@ public class ApplicationFrame extends JFrame {
 
 
 
+
+
+
+        JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
+
+        BinauralPanel binauralPanel = new BinauralPanel();
+        jTabbedPaneForNoises.addTab(translate("tab.panel.binaural.beats.title"), binauralPanel);
+        NoisePanel noisePanel = new NoisePanel();
+        jTabbedPaneForNoises.addTab("Noise Generator", noisePanel.getPlayerPanel());
+        MetronomePanel metronomePanel = new MetronomePanel();
+        jTabbedPaneForNoises.addTab("Metronome", metronomePanel.getPlayerPanel());
+
+
+        tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
+
+
         JTabbedPane jTabbedPaneForMp3 = new JTabbedPane();
         Mp3PlayerFx playerPanel = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player", playerPanel.getPlayerPanel());
@@ -92,19 +103,6 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForMp3.addTab("MP3 Player3", playerPanel3.getPlayerPanel());
 
         tabbedPanel.addTab("MP3 Players", jTabbedPaneForMp3);
-
-
-        JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
-
-        NoisePanel noisePanel = new NoisePanel();
-        jTabbedPaneForNoises.addTab("Noise Generator", noisePanel.getPlayerPanel());
-        BinauralPanel binauralPanel = new BinauralPanel();
-        jTabbedPaneForNoises.addTab(translate("tab.panel.binaural.beats.title"), binauralPanel);
-        MetronomePanel metronomePanel = new MetronomePanel();
-        jTabbedPaneForNoises.addTab("Metronome", metronomePanel.getPlayerPanel());
-
-
-        tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
 
 
 

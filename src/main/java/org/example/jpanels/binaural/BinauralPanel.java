@@ -1,68 +1,78 @@
 package org.example.jpanels.binaural;
 
 import org.example.BinauralBeatsGenerator;
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class BinauralPanel extends JPanel {
 
-    private float frequencySoundVolume;
-    private int binauralBaseFrequency;
+
     private BinauralBeatsGenerator binauralBeatsGenerator;
-
     private JSlider sliderBinauralBeatSlider;
+    private JSpinner spinnerBinauralBaseFrequency;
+    private JSpinner spinnerBinauralBeatFrequency;
+    private JToggleButton playToggleButton;
+    private boolean isBinauralBeatsPlaying;
+    private int binauralBaseFrequency, binauralBeatFrequency, binauralBeatsVolume;
 
-    private JSpinner spinnerBinauralBaseFrequency, spinnerBinauralBeatFrequency;
-
-
-    private int binauralBeatsVolume;
-
-
-
-    private int binauralBeatFrequency;
-
-    private JToggleButton toggleBinauralBeatsButton;
-
-    private boolean isBinauralBeatsEnabled;
-
-
-    private Properties props = new Properties();
-
-    private String language;
-    private String country;
-
-    private ResourceBundle bundle;
+    LanguageManager bundle = LanguageManager.getInstance();
+    ConfigManager props = ConfigManager.getInstance();
 
     public BinauralPanel() {
 
+        loadVariablesFromConfig();
 
+        initializeBinauralBeatsGenerator();
 
-        language = props.getProperty("language.locale", "en");
-        country = props.getProperty("language.country", "EN");
+        preparePlayToggleButton();
+        playToggleButton.addActionListener(e -> toggleBinauralBeats());
 
-        InputStream is = getClass().getResourceAsStream("/config.properties");
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        prepareVolumeSlider();
+        sliderBinauralBeatSlider.addChangeListener(e -> changeBinauralSoundVolume());
 
-        Locale locale = new Locale(language, country);
-        bundle = ResourceBundle.getBundle("messages", locale);
+        prepareBaseFrequencySpinner();
+        spinnerBinauralBaseFrequency.addChangeListener(e -> changeBinauralBaseFrequency());
 
-        int binauralBetasAsInt = Integer.parseInt(props.getProperty("button.binaural.beats.mute", "1"));
-        isBinauralBeatsEnabled = (binauralBetasAsInt == 1);
+        prepareBeatFrequencySpinner();
+        spinnerBinauralBeatFrequency.addChangeListener(e -> changeBinauralBeatFrequency());
 
+    }
 
+    private void loadVariablesFromConfig() {
+        isBinauralBeatsPlaying = Integer.parseInt(
+                props.getProperty("binaural.beats.is.playing", "0")) == 1;
 
+        binauralBeatsVolume = Integer.parseInt(
+                props.getProperty("binaural.beats.sound.volume", "25"));
 
-        binauralBeatsVolume = Integer.parseInt(props.getProperty("slider.binaural.beats.loudness"));
+        binauralBaseFrequency = Integer.parseInt(props.getProperty("binaural.beats.base.frequency"
+                , "440"));
+
+        binauralBeatFrequency = Integer.parseInt(props.getProperty("binaural.beats.beat.frequency"
+                , "5"));
+    }
+
+    private void initializeBinauralBeatsGenerator() {
+        binauralBeatsGenerator = new BinauralBeatsGenerator(binauralBaseFrequency,
+                binauralBeatFrequency, binauralBeatsVolume);
+    }
+
+    private void preparePlayToggleButton() {
+
+        playToggleButton = new JToggleButton(translate("button.binaural.beats.deactivate"));
+
+        this.add(playToggleButton);
+
+        processBinauralBeats();
+
+    }
+
+    private void prepareVolumeSlider() {
+
         sliderBinauralBeatSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, binauralBeatsVolume);
+
         sliderBinauralBeatSlider.setMajorTickSpacing(10);
         sliderBinauralBeatSlider.setMinorTickSpacing(1);
         sliderBinauralBeatSlider.setPaintTicks(true);
@@ -70,50 +80,32 @@ public class BinauralPanel extends JPanel {
         sliderBinauralBeatSlider.setBorder(
                 BorderFactory.createTitledBorder(bundle.getString("slider.binaural.beats.loudness")));
         this.add(sliderBinauralBeatSlider);
-        sliderBinauralBeatSlider.addChangeListener(e -> changeBinauralSoundVolume());
 
-        toggleBinauralBeatsButton = new JToggleButton(translate("button.binaural.beats.mute"));
-        toggleBinauralBeatsButton.addActionListener(e -> toggleBinauralBeats());
+    }
 
-        toggleBinauralBeatsButton.setSelected(isBinauralBeatsEnabled);
+    private void prepareBaseFrequencySpinner() {
 
-
-
-
-
-        this.add(toggleBinauralBeatsButton);
-
-        binauralBaseFrequency = Integer.parseInt(props.getProperty("spinner.binaural.beats.base.frequency"
-                , "440"));
         SpinnerModel spinnerModel6 = new SpinnerNumberModel(0, 0, 44100, 1);
         spinnerBinauralBaseFrequency = new JSpinner(spinnerModel6);
         spinnerBinauralBaseFrequency.setValue((int) binauralBaseFrequency);
-        spinnerBinauralBaseFrequency.addChangeListener(e -> changeBinauralBaseFrequency());
         //spinnerPomodoroShortBreak.setPreferredSize(new Dimension(100, 40));
         JPanel panel3 = new JPanel();
         panel3.add(new JLabel(bundle.getString("spinner.binaural.beats.base.frequency")));
         panel3.add(spinnerBinauralBaseFrequency);
         this.add(panel3);
 
-        binauralBeatFrequency = Integer.parseInt(props.getProperty("spinner.binaural.beats.beat.frequency"
-                , "5"));
+    }
+
+    private void prepareBeatFrequencySpinner() {
+
         SpinnerModel spinnerModel7 = new SpinnerNumberModel(0, 0, 44100, 1);
         spinnerBinauralBeatFrequency = new JSpinner(spinnerModel7);
         spinnerBinauralBeatFrequency.setValue((int) binauralBeatFrequency);
-        spinnerBinauralBeatFrequency.addChangeListener(e -> changeBinauralBeatFrequency());
         //spinnerPomodoroShortBreak.setPreferredSize(new Dimension(100, 40));
         JPanel panel4 = new JPanel();
         panel4.add(new JLabel(bundle.getString("spinner.binaural.beats.beat.frequency")));
         panel4.add(spinnerBinauralBeatFrequency);
         this.add(panel4);
-
-        binauralBeatsGenerator = new BinauralBeatsGenerator(binauralBaseFrequency,
-                binauralBeatFrequency,frequencySoundVolume);
-
-        //System.out.println(isBinauralBeatsEnabled);
-        processBinauralBeats();
-
-
 
     }
 
@@ -136,17 +128,16 @@ public class BinauralPanel extends JPanel {
     }
 
     private void toggleBinauralBeats() {
-        isBinauralBeatsEnabled = !isBinauralBeatsEnabled;
+        isBinauralBeatsPlaying = !isBinauralBeatsPlaying;
         processBinauralBeats();
     }
 
     private void processBinauralBeats() {
-        if (isBinauralBeatsEnabled) {
-            toggleBinauralBeatsButton.setText(translate("button.binaural.beats.mute"));
+        if (isBinauralBeatsPlaying) {
+            playToggleButton.setText(translate("button.binaural.beats.deactivate"));
             binauralBeatsGenerator.start();
-
         } else {
-            toggleBinauralBeatsButton.setText(translate("button.binaural.beats.unmute"));
+            playToggleButton.setText(translate("button.binaural.beats.activate"));
             binauralBeatsGenerator.stop();
         }
     }
