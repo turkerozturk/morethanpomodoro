@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.example.initial.jpanels.sound.controller.SoundController;
 import org.example.jpanels.about.AboutPanel;
 import org.example.jpanels.binaural.BinauralPanel;
 import org.example.jpanels.calculator.CalculatorPanel;
@@ -19,9 +20,14 @@ import org.example.jpanels.taptempo.TapTempoTool;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ApplicationFrame extends JFrame {
 
+    private final Mp3PlayerFx playerPanel;
+    private final Mp3PlayerFx playerPanel2;
+    private final Mp3PlayerFx playerPanel3;
     private int frameWidth, frameHeight;
 
 
@@ -71,6 +77,8 @@ public class ApplicationFrame extends JFrame {
 
         JTabbedPane tabbedPanel = new JTabbedPane();
 
+
+
         PomodoroMainPanel pomodoroPanel = new PomodoroMainPanel();
 
         tabbedPanel.addTab("Pomodoro", pomodoroPanel);
@@ -95,11 +103,11 @@ public class ApplicationFrame extends JFrame {
 
 
         JTabbedPane jTabbedPaneForMp3 = new JTabbedPane();
-        Mp3PlayerFx playerPanel = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
+         playerPanel = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player", playerPanel.getPlayerPanel());
-        Mp3PlayerFx playerPanel2 = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.2.file.location", "playlist2.txt"));
+         playerPanel2 = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.2.file.location", "playlist2.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player2", playerPanel2.getPlayerPanel());
-        Mp3PlayerFx playerPanel3 = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.3.file.location", "playlist3.txt"));
+         playerPanel3 = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.3.file.location", "playlist3.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player3", playerPanel3.getPlayerPanel());
 
         tabbedPanel.addTab("MP3 Players", jTabbedPaneForMp3);
@@ -164,6 +172,34 @@ public class ApplicationFrame extends JFrame {
         toggleAlwaysOnTopButton.addActionListener(e -> toggleAlwaysOnTop());
 
 
+        // Global Mute/Unmute butonu
+        JButton globalMuteButton = new JButton("Global Mute");
+        globalMuteButton.addActionListener(e -> toggleGlobalMute(globalMuteButton));
+
+        applicationSettingsPanel.add(globalMuteButton);
+
+
+
+        soundControllers.add(playerPanel);
+        soundControllers.add(playerPanel2);
+        soundControllers.add(playerPanel3);
+
+        soundControllers.add(binauralPanel);
+        soundControllers.add(noisePanel);
+        soundControllers.add(metronomePanel);
+
+        soundControllers.add(pomodoroPanel.getTickSoundPanel());
+        soundControllers.add(pomodoroPanel.getEndingSoundPanel());
+
+
+
+        // soundControllers.add(pomodoroPanel); // tick sound + ending sound
+        // piano, speaker test, device test
+
+
+
+
+
     }
 
 
@@ -196,5 +232,41 @@ public class ApplicationFrame extends JFrame {
             FileUtil.appendToHistory(text);
         }
     }
+
+
+    private static boolean isGlobalMuted = false;
+    private static final java.util.List<SoundController> soundControllers = new ArrayList<>();
+    private static final List<Boolean> previousMuteStates = new ArrayList<>();
+    private void toggleGlobalMute(JButton button) {
+        if (isGlobalMuted) {
+            // Global Unmute
+            for (int i = 0; i < soundControllers.size(); i++) {
+                if (!previousMuteStates.get(i)) { // Eski durumu kontrol et
+                    soundControllers.get(i).unmute();
+                }
+            }
+            isGlobalMuted = false;
+            button.setText("Global Mute");
+            System.out.println(this.prepareGlobalSoundReport());
+        } else {
+            // Global Mute
+            previousMuteStates.clear();
+            for (SoundController controller : soundControllers) {
+                previousMuteStates.add(controller.isMuted());
+                controller.mute();
+            }
+            isGlobalMuted = true;
+            button.setText("Global Unmute");
+        }
+    }
+
+    private String prepareGlobalSoundReport() {
+        StringBuilder sb = new StringBuilder();
+
+
+
+        return sb.toString();
+    }
+
 
 }

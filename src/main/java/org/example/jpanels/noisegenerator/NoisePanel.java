@@ -1,11 +1,13 @@
 package org.example.jpanels.noisegenerator;
 
+import org.example.initial.jpanels.sound.controller.SoundController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class NoisePanel extends JPanel {
+public class NoisePanel extends JPanel implements SoundController {
     private JComboBox<String> noiseTypeComboBox;
     private JToggleButton playStopButton;
     private JSlider volumeSlider;
@@ -65,5 +67,24 @@ public class NoisePanel extends JPanel {
     private void stopNoise() {
         noiseGenerator.stop();
         playStopButton.setText("Play");
+    }
+
+    @Override
+    public void mute() {
+        if (playStopButton.isSelected()) {
+            stopNoise();
+        }
+    }
+
+    @Override
+    public void unmute() {
+        if (playStopButton.isSelected()) {
+            playNoise();
+        }
+    }
+
+    @Override
+    public boolean isMuted() {
+        return false;
     }
 }

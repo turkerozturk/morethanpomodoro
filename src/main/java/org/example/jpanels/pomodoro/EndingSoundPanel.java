@@ -2,12 +2,13 @@ package org.example.jpanels.pomodoro;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.example.initial.jpanels.sound.controller.SoundController;
 import org.example.sounds.AsyncBeep;
 
 import javax.swing.*;
 
 
-public class EndingSoundPanel extends JPanel {
+public class EndingSoundPanel extends JPanel implements SoundController {
 
     private JToggleButton endingSoundToggleButton;
     private JSlider endingSoundVolumeSlider;
@@ -75,7 +76,7 @@ public class EndingSoundPanel extends JPanel {
     }
 
     public void playFrequencyBeepIfSelected() {
-        if (endingSoundToggleButton.isSelected()) {
+        if (isEndingSoundEnabled) {
             playFrequencyBeep();
         }
     }
@@ -100,4 +101,25 @@ public class EndingSoundPanel extends JPanel {
         return bundle.getString(key);
     }
 
+    @Override
+    public void mute() {
+            isEndingSoundEnabled = false;
+            endingSoundToggleButton.setText(translate("button.ending.sound.activate"));
+
+
+    }
+
+    @Override
+    public void unmute() {
+            isEndingSoundEnabled = true;
+            endingSoundToggleButton.setText(translate("button.ending.sound.deactivate"));
+
+
+
+    }
+
+    @Override
+    public boolean isMuted() {
+        return false;
+    }
 }

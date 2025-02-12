@@ -7,6 +7,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.example.initial.jpanels.sound.controller.SoundController;
 import org.example.playlist.PlayListManagerPanel;
 
 import javax.swing.*;
@@ -17,7 +18,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mp3PlayerFx extends JPanel {
+public class Mp3PlayerFx extends JPanel implements SoundController {
 
     Timer timer; // gecen sureyi saniyede bir gostermesi icin.
     private MediaPlayer mediaPlayer;
@@ -410,7 +411,24 @@ public class Mp3PlayerFx extends JPanel {
     }
 
 
+    @Override
+    public void mute() {
+        if (mediaPlayer != null) {
+            Platform.runLater(() -> mediaPlayer.setVolume(0));
+        }
+    }
 
+    @Override
+    public void unmute() {
+        if (mediaPlayer != null) {
+            Platform.runLater(() -> mediaPlayer.setVolume(50));
+        }
+    }
+
+    @Override
+    public boolean isMuted() {
+        return false;
+    }
 }
 
 

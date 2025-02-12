@@ -3,10 +3,11 @@ package org.example.jpanels.binaural;
 import org.example.BinauralBeatsGenerator;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.example.initial.jpanels.sound.controller.SoundController;
 
 import javax.swing.*;
 
-public class BinauralPanel extends JPanel {
+public class BinauralPanel extends JPanel implements SoundController {
 
 
     private BinauralBeatsGenerator binauralBeatsGenerator;
@@ -147,4 +148,24 @@ public class BinauralPanel extends JPanel {
     }
 
 
+    @Override
+    public void mute() {
+        if (isBinauralBeatsPlaying) {
+            playToggleButton.setText(translate("button.binaural.beats.activate"));
+            binauralBeatsGenerator.stop();
+        }
+    }
+
+    @Override
+    public void unmute() {
+        if (isBinauralBeatsPlaying) {
+            playToggleButton.setText(translate("button.binaural.beats.deactivate"));
+            binauralBeatsGenerator.start();
+        }
+    }
+
+    @Override
+    public boolean isMuted() {
+        return false;
+    }
 }

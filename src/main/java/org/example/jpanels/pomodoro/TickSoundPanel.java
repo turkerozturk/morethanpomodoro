@@ -1,6 +1,7 @@
 package org.example.jpanels.pomodoro;
 
 import org.example.MetronomePlayer;
+import org.example.initial.jpanels.sound.controller.SoundController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-public class TickSoundPanel extends JPanel {
+public class TickSoundPanel extends JPanel implements SoundController {
 
     private final MetronomePlayer metronomePlayer;
     private int metronomeInterval; // saniye
@@ -189,4 +190,18 @@ public class TickSoundPanel extends JPanel {
     }
 
 
+    @Override
+    public void mute() {
+        muteUnmute();
+    }
+
+    @Override
+    public void unmute() {
+        muteUnmute();
+    }
+
+    @Override
+    public boolean isMuted() {
+        return false;
+    }
 }

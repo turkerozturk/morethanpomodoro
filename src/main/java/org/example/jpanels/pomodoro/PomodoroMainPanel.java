@@ -12,8 +12,10 @@ import java.time.format.DateTimeFormatter;
 
 
 
-public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
+public class PomodoroMainPanel extends JPanel implements TimerSettingsListener {
 
+    private final TickSoundPanel tickSoundPanel;
+    private final EndingSoundPanel endingSoundPanel;
     private LoggingPanel loggingPanel;
 
     private int pomodoroLimit; // TODO make adjustable by config file.
@@ -78,9 +80,10 @@ public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
         JTabbedPane jTabbedPaneForPomodoro = new JTabbedPane();
 
 
-        TickSoundPanel tickSoundPanel = new TickSoundPanel();
+        tickSoundPanel = new TickSoundPanel();
         jTabbedPaneForPomodoro.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
-        EndingSoundPanel endingSoundPanel = new EndingSoundPanel();
+
+        endingSoundPanel = new EndingSoundPanel();
         jTabbedPaneForPomodoro.addTab(translate("tab.panel.ending.sound.title"), endingSoundPanel);
 
 
@@ -118,8 +121,8 @@ public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
         jTabbedPaneForPomodoro.addTab("Session Log", loggingPanel);
 
         setScreenMessageForWorkTime(); // todo
-        System.out.println(timerPanel.getMessageLabel().getText());
-        timerPanel.getMessageLabel().setText("dssdsdf");
+        //System.out.println(timerPanel.getMessageLabel().getText());
+
 
         // Geri sayım
         timer = new Timer(1000, (ActionEvent e) -> {
@@ -291,7 +294,7 @@ public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
         String message = String.format(langManager.getString("timer.screen.message.format")
                 , langManager.getString("WORK_TIME"), pomodoroCurrentNumber + 1, pomodoroLimit);
         setCurrentTimerScreenMessage(message);
-        System.out.println(message);
+        // System.out.println(message);
     }
 
     private String formatTime(int totalSeconds) {
@@ -344,12 +347,12 @@ public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
     @Override
     public void pomodoroWorkDurationChanged(int newValue) {
         // Spinner değerinin değiştiğini burada yakalıyoruz
-        System.out.println("Yeni pomodoro süresi: " + newValue);
+       // System.out.println("Yeni pomodoro süresi: " + newValue);
 
         // TODO bunu uygun mesajla degistir
         //  timerPanel.getMessageLabel().setText(String.valueOf(newValue));
         remainingSeconds = timerPanel.getRemainingSeconds();
-        System.out.println(remainingSeconds);
+     //   System.out.println(remainingSeconds);
 
         // Burada üst panelde istediğiniz işlemleri yapabilirsiniz
     }
@@ -358,5 +361,13 @@ public class PomodoroMainPanel extends JPanel  implements TimerSettingsListener{
     public void setCurrentTimerScreenMessage(String currentTimerScreenMessage) {
         this.currentTimerScreenMessage = currentTimerScreenMessage;
         timerPanel.getMessageLabel().setText(currentTimerScreenMessage);
+    }
+
+    public TickSoundPanel getTickSoundPanel() {
+        return tickSoundPanel;
+    }
+
+    public EndingSoundPanel getEndingSoundPanel() {
+        return endingSoundPanel;
     }
 }
