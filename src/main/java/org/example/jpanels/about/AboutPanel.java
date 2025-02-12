@@ -20,10 +20,10 @@ public class AboutPanel extends JPanel {
         add(new JLabel(bundle.getString("app.date")));
         add(new JLabel(bundle.getString("app.description")));
         add(new JLabel(bundle.getString("contact.name")));
-        add(createLinkLabel(bundle.getString("contact.email"), "mailto:" + bundle.getString("contact.email")));
+       // add(createLinkLabel(bundle.getString("contact.email"), "mailto:" + bundle.getString("contact.email")));
         add(createLinkLabel(bundle.getString("contact.github"), bundle.getString("contact.github")));
-        add(createLinkLabel(bundle.getString("contact.help"), bundle.getString("contact.help")));
-        add(createLinkLabel(bundle.getString("usermanual"), "file:./usermanual.pdf"));
+       // add(createLinkLabel(bundle.getString("contact.help"), bundle.getString("contact.help")));
+       // add(createLinkLabel(bundle.getString("usermanual"), "file:./usermanual.pdf"));
     }
 
     private JLabel createLinkLabel(String text, String url) {

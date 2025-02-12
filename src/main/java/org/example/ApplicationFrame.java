@@ -28,6 +28,10 @@ public class ApplicationFrame extends JFrame {
     private final Mp3PlayerFx playerPanel;
     private final Mp3PlayerFx playerPanel2;
     private final Mp3PlayerFx playerPanel3;
+    private JButton globalMuteButton;
+
+    private JButton muteButtonAtTab;
+
     private int frameWidth, frameHeight;
 
 
@@ -162,6 +166,7 @@ public class ApplicationFrame extends JFrame {
         AboutPanel aboutPanel = new AboutPanel();
         tabbedPanel.addTab("About", aboutPanel);
 
+        tabbedPanel.setTabComponentAt(5, createTabHeader(tabbedPanel, 5));
 
 
 
@@ -173,7 +178,7 @@ public class ApplicationFrame extends JFrame {
 
 
         // Global Mute/Unmute butonu
-        JButton globalMuteButton = new JButton("Global Mute");
+        globalMuteButton = new JButton("Global Mute");
         globalMuteButton.addActionListener(e -> toggleGlobalMute(globalMuteButton));
 
         applicationSettingsPanel.add(globalMuteButton);
@@ -266,6 +271,80 @@ public class ApplicationFrame extends JFrame {
 
 
         return sb.toString();
+    }
+
+
+    /**
+     * Sekme başlığını özel bir panel olarak oluşturur (Label + Mute Button).
+     */
+    private JPanel createTabHeader(JTabbedPane tabbedPane, int tabIndex) {
+
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+        panel.setOpaque(false); // Arka planı şeffaf yap
+
+        // Sekme başlığı (Tab adı)
+        JLabel titleLabel = new JLabel(tabbedPane.getTitleAt(tabIndex));
+       // titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 1)); // Butonla aralık bırak
+
+        // Mute/Unmute butonu
+        muteButtonAtTab = new JButton("🔊"); // Varsayılan: Ses açık
+        muteButtonAtTab.setBorderPainted(false);
+        muteButtonAtTab.setContentAreaFilled(false);
+        muteButtonAtTab.setFocusPainted(false);
+        muteButtonAtTab.setOpaque(false);
+        muteButtonAtTab.setToolTipText("Mute/Unmute");
+
+        muteButtonAtTab.addActionListener(e -> toggleGlobalMuteAtTab());
+
+
+        /* todo
+        // Butona basılınca ikon değişecek
+        muteButton.addActionListener(new ActionListener() {
+            private boolean isMuted = false;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isMuted = !isMuted;
+                muteButton.setText(isMuted ? "🔇" : "🔊"); // 🔊 Ses Açık, 🔇 Ses Kapalı
+                // System.out.println("Tab " + (tabIndex + 1) + " " + (isMuted ? "Muted" : "Unmuted"));
+            }
+        });
+        */
+
+        // Panel içine label ve butonu ekleyelim
+        panel.add(titleLabel);
+        panel.add(muteButtonAtTab);
+
+        return panel;
+    }
+
+
+    private void toggleGlobalMuteAtTab() {
+        if (isGlobalMuted) {
+            // Global Unmute
+            for (int i = 0; i < soundControllers.size(); i++) {
+                if (!previousMuteStates.get(i)) { // Eski durumu kontrol et
+                    soundControllers.get(i).unmute();
+                }
+            }
+            isGlobalMuted = false;
+            //muteButtonAtTab.setText("Global Mute");
+            muteButtonAtTab.setText("🔊"); // 🔊 Ses Açık, 🔇 Ses Kapalı
+
+            System.out.println(this.prepareGlobalSoundReport());
+        } else {
+            // Global Mute
+            previousMuteStates.clear();
+            for (SoundController controller : soundControllers) {
+                previousMuteStates.add(controller.isMuted());
+                controller.mute();
+            }
+            isGlobalMuted = true;
+            //muteButtonAtTab.setText("Global Unmute");
+            muteButtonAtTab.setText("🔇"); // 🔊 Ses Açık, 🔇 Ses Kapalı
+
+        }
     }
 
 
