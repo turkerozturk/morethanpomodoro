@@ -1,5 +1,12 @@
 package org.example;
 
+import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatMonokaiProIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatSolarizedDarkIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
+import com.formdev.flatlaf.intellijthemes.*;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.*;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.example.initial.jpanels.sound.controller.SoundController;
@@ -20,6 +27,8 @@ import org.example.jpanels.taptempo.TapTempoTool;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,30 +43,54 @@ public class ApplicationFrame extends JFrame {
 
     private int frameWidth, frameHeight;
 
+    private static final String[] themes = {
+            //"FlatLightLaf", "FlatDarkLaf", "FlatIntelliJLaf", "FlatDarculaLaf",
+            "Swing (Metal)",
+            "FlatArcIJTheme", "FlatArcOrangeIJTheme", "FlatArcDarkIJTheme", "FlatArcDarkOrangeIJTheme",
+            "FlatCarbonIJTheme", "FlatCobalt2IJTheme", "FlatCyanLightIJTheme", "FlatDarkFlatIJTheme",
+            "FlatDarkPurpleIJTheme", "FlatDraculaIJTheme", "FlatGradiantoDarkFuchsiaIJTheme",
+            "FlatGradiantoDeepOceanIJTheme", "FlatGradiantoMidnightBlueIJTheme",
+            "FlatGradiantoNatureGreenIJTheme", "FlatGrayIJTheme", "FlatGruvboxDarkHardIJTheme",
+            "FlatGruvboxDarkMediumIJTheme", "FlatGruvboxDarkSoftIJTheme", "FlatHiberbeeDarkIJTheme",
+            "FlatHighContrastIJTheme", "FlatLightFlatIJTheme", "FlatMaterialDesignDarkIJTheme",
+            "FlatMonocaiIJTheme", "FlatMonokaiProIJTheme", "FlatNordIJTheme", "FlatOneDarkIJTheme",
+            "FlatSolarizedDarkIJTheme", "FlatSolarizedLightIJTheme", "FlatSpacegrayIJTheme",
+            "FlatVuesionIJTheme", "FlatXcodeDarkIJTheme", "FlatAtomOneDarkIJTheme",
+            "FlatAtomOneLightIJTheme", "FlatGitHubIJTheme", "FlatGitHubDarkIJTheme",
+            "FlatLightOwlIJTheme", "FlatMaterialDarkerIJTheme", "FlatMaterialDeepOceanIJTheme",
+            "FlatMaterialLighterIJTheme", "FlatMaterialOceanicIJTheme", "FlatMaterialPalenightIJTheme",
+            "FlatMoonlightIJTheme", "FlatNightOwlIJTheme"
+    };
+
 
     JToggleButton toggleAlwaysOnTopButton, toggleHistoryLoggingButton;
     private boolean isAlwaysOnTop, isHistoryLoggingEnabled;
 
+    Dimension defaultFrameDimension;
+
+
     LanguageManager bundle = LanguageManager.getInstance();
     ConfigManager props = ConfigManager.getInstance();
 
-    public ApplicationFrame() {
+    private void loadVariablesFromConfig() {
+        frameWidth = Integer.parseInt(props.getProperty("frame.width", "700"));
+        frameHeight = Integer.parseInt(props.getProperty("frame.height", "350"));
+    }
 
-
-
-
-
-
-
-        frameWidth = Integer.parseInt(props.getProperty("frame.width", "1024"));
-        frameHeight = Integer.parseInt(props.getProperty("frame.height", "768"));
-
-
-
+    private void initializeApplicationFrame() {
         setTitle(translate("frame.title"));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(frameWidth, frameHeight);
+        setSize(frameWidth , frameHeight);
+        defaultFrameDimension = getSize();
         setLocationRelativeTo(null);
+    }
+
+    public ApplicationFrame() {
+
+        loadVariablesFromConfig();
+
+        initializeApplicationFrame();
+
 
 
         toggleAlwaysOnTopButton = new JToggleButton(translate("frame.always.on.top"));
@@ -82,15 +115,9 @@ public class ApplicationFrame extends JFrame {
         JTabbedPane tabbedPanel = new JTabbedPane();
 
 
-
         PomodoroMainPanel pomodoroPanel = new PomodoroMainPanel();
 
         tabbedPanel.addTab("Pomodoro", pomodoroPanel);
-
-
-
-
-
 
 
         JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
@@ -161,6 +188,45 @@ public class ApplicationFrame extends JFrame {
         toggleHistoryLoggingButton.addActionListener(e -> toggleHistoryLogging());
         applicationSettingsPanel.add(toggleHistoryLoggingButton);
 
+        JButton resetFrameResolutionButton = new JButton("Reset Window Dimension");
+        resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
+        applicationSettingsPanel.add(resetFrameResolutionButton);
+
+
+
+
+
+        // basla flatpak bilgi: flatpak tema
+
+        JPanel themePanel = new JPanel();
+
+        JLabel label = new JLabel(bundle.getString("settings.select.theme"));
+        JComboBox<String> themeSelector = new JComboBox<String>(themes);
+
+        // Seçenekler Arayüze Ekleniyor
+        themePanel.add(label);
+        themePanel.add(themeSelector);
+
+        ;
+
+        String fullClassName = UIManager.getLookAndFeel().getClass().getCanonicalName();
+        String simpleClassName = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
+        themeSelector.setSelectedItem(simpleClassName);
+
+        // Buton Tıklanınca Seçili Temayı Uygula
+        themeSelector.addActionListener(e -> applyTheme((String) themeSelector.getSelectedItem(),
+                ApplicationFrame.this));
+
+        applicationSettingsPanel.add(themePanel);
+
+        // bitti flatpak
+
+
+
+
+
+
+
         tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
 
         AboutPanel aboutPanel = new AboutPanel();
@@ -196,15 +262,13 @@ public class ApplicationFrame extends JFrame {
         soundControllers.add(pomodoroPanel.getTickSoundPanel());
         soundControllers.add(pomodoroPanel.getEndingSoundPanel());
 
-
-
         // soundControllers.add(pomodoroPanel); // tick sound + ending sound
         // piano, speaker test, device test
 
+    }
 
-
-
-
+    private void resetFrameResolution() {
+        setSize(defaultFrameDimension);
     }
 
 
@@ -217,16 +281,10 @@ public class ApplicationFrame extends JFrame {
         }
     }
 
-
     private void toggleAlwaysOnTop() {
         boolean isSelected = toggleAlwaysOnTopButton.isSelected();
         setAlwaysOnTop(isSelected);
     }
-
-
-
-
-
 
     public String translate(String key) {
         return bundle.getString(key);
@@ -346,6 +404,172 @@ public class ApplicationFrame extends JFrame {
 
         }
     }
+
+
+    private static void applyTheme(String theme, JFrame frame) {
+
+        Dimension oldSize = frame.getSize();
+
+
+        try {
+            switch (theme) {
+                case "Swing (Metal)":
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                    break;
+                case "FlatArcIJTheme":
+                    UIManager.setLookAndFeel(new FlatArcIJTheme());
+                    break;
+                case "FlatArcOrangeIJTheme":
+                    UIManager.setLookAndFeel(new FlatArcOrangeIJTheme());
+                    break;
+                case "FlatArcDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatArcDarkIJTheme());
+                    break;
+                case "FlatArcDarkOrangeIJTheme":
+                    UIManager.setLookAndFeel(new FlatArcDarkOrangeIJTheme());
+                    break;
+                case "FlatCarbonIJTheme":
+                    UIManager.setLookAndFeel(new FlatCarbonIJTheme());
+                    break;
+                case "FlatCobalt2IJTheme":
+                    UIManager.setLookAndFeel(new FlatCobalt2IJTheme());
+                    break;
+                case "FlatCyanLightIJTheme":
+                    UIManager.setLookAndFeel(new FlatCyanLightIJTheme());
+                    break;
+                case "FlatDarkFlatIJTheme":
+                    UIManager.setLookAndFeel(new FlatDarkFlatIJTheme());
+                    break;
+                case "FlatDarkPurpleIJTheme":
+                    UIManager.setLookAndFeel(new FlatDarkPurpleIJTheme());
+                    break;
+                case "FlatDraculaIJTheme":
+                    UIManager.setLookAndFeel(new FlatDraculaIJTheme());
+                    break;
+                case "FlatGradiantoDarkFuchsiaIJTheme":
+                    UIManager.setLookAndFeel(new FlatGradiantoDarkFuchsiaIJTheme());
+                    break;
+                case "FlatGradiantoDeepOceanIJTheme":
+                    UIManager.setLookAndFeel(new FlatGradiantoDeepOceanIJTheme());
+                    break;
+                case "FlatGradiantoMidnightBlueIJTheme":
+                    UIManager.setLookAndFeel(new FlatGradiantoMidnightBlueIJTheme());
+                    break;
+                case "FlatGradiantoNatureGreenIJTheme":
+                    UIManager.setLookAndFeel(new FlatGradiantoNatureGreenIJTheme());
+                    break;
+                case "FlatGrayIJTheme":
+                    UIManager.setLookAndFeel(new FlatGrayIJTheme());
+                    break;
+                case "FlatGruvboxDarkHardIJTheme":
+                    UIManager.setLookAndFeel(new FlatGruvboxDarkHardIJTheme());
+                    break;
+                case "FlatGruvboxDarkMediumIJTheme":
+                    UIManager.setLookAndFeel(new FlatGruvboxDarkMediumIJTheme());
+                    break;
+                case "FlatGruvboxDarkSoftIJTheme":
+                    UIManager.setLookAndFeel(new FlatGruvboxDarkSoftIJTheme());
+                    break;
+                case "FlatHiberbeeDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatHiberbeeDarkIJTheme());
+                    break;
+                case "FlatHighContrastIJTheme":
+                    UIManager.setLookAndFeel(new FlatHighContrastIJTheme());
+                    break;
+                case "FlatLightFlatIJTheme":
+                    UIManager.setLookAndFeel(new FlatLightFlatIJTheme());
+                    break;
+                case "FlatMaterialDesignDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatMaterialDesignDarkIJTheme());
+                    break;
+                case "FlatMonocaiIJTheme":
+                    UIManager.setLookAndFeel(new FlatMonocaiIJTheme());
+                    break;
+                case "FlatMonokaiProIJTheme":
+                    UIManager.setLookAndFeel(new FlatMonokaiProIJTheme());
+                    break;
+                case "FlatNordIJTheme":
+                    UIManager.setLookAndFeel(new FlatNordIJTheme());
+                    break;
+                case "FlatOneDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatOneDarkIJTheme());
+                    break;
+                case "FlatSolarizedDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatSolarizedDarkIJTheme());
+                    break;
+                case "FlatSolarizedLightIJTheme":
+                    UIManager.setLookAndFeel(new FlatSolarizedLightIJTheme());
+                    break;
+                case "FlatSpacegrayIJTheme":
+                    UIManager.setLookAndFeel(new FlatSpacegrayIJTheme());
+                    break;
+                case "FlatVuesionIJTheme":
+                    UIManager.setLookAndFeel(new FlatVuesionIJTheme());
+                    break;
+                case "FlatXcodeDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatXcodeDarkIJTheme());
+                    break;
+                case "FlatAtomOneDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatAtomOneDarkIJTheme());
+                    break;
+                case "FlatAtomOneLightIJTheme":
+                    UIManager.setLookAndFeel(new FlatAtomOneLightIJTheme());
+                    break;
+                case "FlatGitHubIJTheme":
+                    UIManager.setLookAndFeel(new FlatGitHubIJTheme());
+                    break;
+                case "FlatGitHubDarkIJTheme":
+                    UIManager.setLookAndFeel(new FlatGitHubDarkIJTheme());
+                    break;
+                case "FlatLightOwlIJTheme":
+                    UIManager.setLookAndFeel(new FlatLightOwlIJTheme());
+                    break;
+                case "FlatMaterialDarkerIJTheme":
+                    UIManager.setLookAndFeel(new FlatMaterialDarkerIJTheme());
+                    break;
+                case "FlatMaterialDeepOceanIJTheme":
+                    UIManager.setLookAndFeel(new FlatMaterialDeepOceanIJTheme());
+                    break;
+                case "FlatMaterialLighterIJTheme":
+                    UIManager.setLookAndFeel(new FlatMaterialLighterIJTheme());
+                    break;
+                case "FlatMaterialOceanicIJTheme":
+                    UIManager.setLookAndFeel(new FlatMaterialOceanicIJTheme());
+                    break;
+                case "FlatMaterialPalenightIJTheme":
+                    UIManager.setLookAndFeel(new FlatMaterialPalenightIJTheme());
+                    break;
+                case "FlatMonokaiProIJTheme2":
+                    UIManager.setLookAndFeel(new FlatMonokaiProIJTheme());
+                    break;
+                case "FlatMoonlightIJTheme":
+                    UIManager.setLookAndFeel(new FlatMoonlightIJTheme());
+                    break;
+                case "FlatNightOwlIJTheme":
+                    UIManager.setLookAndFeel(new FlatNightOwlIJTheme());
+                    break;
+                case "FlatSolarizedDarkIJTheme2":
+                    UIManager.setLookAndFeel(new FlatSolarizedDarkIJTheme());
+                    break;
+                case "FlatSolarizedLightIJTheme2":
+                    UIManager.setLookAndFeel(new FlatSolarizedLightIJTheme());
+                    break;
+                default:
+                    return;
+            }
+        // Arayüzü güncelle
+        SwingUtilities.updateComponentTreeUI(frame);
+
+            // Pencere boyutunu eski haline getir
+            frame.setSize(oldSize);
+            frame.setPreferredSize(oldSize);
+            frame.pack(); // UI elemanlarını günceller
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+}
+
 
 
 }
