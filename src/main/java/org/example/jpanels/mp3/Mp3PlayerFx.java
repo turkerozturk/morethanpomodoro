@@ -2,12 +2,15 @@ package org.example.jpanels.mp3;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.AudioEqualizer;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.example.initial.jpanels.sound.controller.SoundController;
+import org.example.jpanels.equaliser.EqualiserPanel;
 import org.example.playlist.PlayListManagerPanel;
 
 import javax.swing.*;
@@ -301,7 +304,17 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
         mediaPlayer.setVolume(volume);
         mediaPlayer.setOnEndOfMedia(this::nextSong);
 
-        Platform.runLater(() -> mediaPlayer.play());
+        Platform.runLater(() -> {
+
+            mediaPlayer.play();
+            // Ekolayzer Toggle butonu
+            JButton toggleEqualizerButton = new JButton("Equalizer");
+            toggleEqualizerButton.addActionListener(e -> toggleEqualizer());
+
+            add(toggleEqualizerButton, BorderLayout.SOUTH);
+            revalidate();
+            repaint();
+        });
 
         updateTimeLabel();
         updateSeekSlider();
@@ -406,7 +419,45 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
         // Görüntüle
         dialog.setVisible(true);
 
+        // Seçili playlist değerini al
+        String selectedPlaylistItem = playListPanel.getSelectedPlaylistItem();
+
+        if (selectedPlaylistItem != null) {
+            System.out.println("Seçilen Playlist: " + selectedPlaylistItem); // Parent pencereye iletebilirsin
+        }
+
+        /*
+        stop();
+        songLabel.setText(selectedPlaylistItem);
+        seekSlider.setValue(0);
+
+        */
         loadPlaylist();
+
+
+        /*
+        stop();
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        loadPlaylist();
+
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        currentSongIndex = playlist.indexOf(selectedPlaylistItem);
+
+        start();
+
+        */
+
 
     }
 
@@ -429,6 +480,38 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
     public boolean isMuted() {
         return false;
     }
+
+
+    private JFrame equalizerFrame;
+    private EqualiserPanel equalizerPanel;
+    private boolean isEqualizerEnabled = true;
+    // Ekolayzeri açıp kapatan metot
+    private void toggleEqualizer() {
+        if (equalizerFrame == null) {
+            equalizerFrame = new JFrame("Equalizer");
+            equalizerPanel = new EqualiserPanel(mediaPlayer);
+
+            // Ekolayzer Enable/Disable Toggle Butonu
+            JToggleButton enableDisableToggle = new JToggleButton("Enable Equalizer", isEqualizerEnabled);
+            enableDisableToggle.addActionListener(e -> {
+                isEqualizerEnabled = enableDisableToggle.isSelected();
+                equalizerPanel.setEnabled(isEqualizerEnabled);
+            });
+
+            equalizerFrame.setLayout(new BorderLayout());
+            equalizerFrame.add(equalizerPanel, BorderLayout.CENTER);
+            equalizerFrame.add(enableDisableToggle, BorderLayout.SOUTH);
+            equalizerFrame.setSize(400, 300);
+            equalizerFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        }
+
+        equalizerFrame.setVisible(!equalizerFrame.isVisible());
+    }
+
+
+
+
+
 }
 
 

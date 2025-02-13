@@ -6,20 +6,13 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 
 public class PlayListManagerPanel extends JPanel {
+
+    private String selectedPlaylistItem = null; // Seçilen öğeyi saklayan değişken
 
     private String playlistFilePath;  // Örneğin "playlist1.txt"
     private File lastChosenDirectory = null;
@@ -132,6 +125,24 @@ public class PlayListManagerPanel extends JPanel {
         copyFullPathButton.addActionListener(e -> onCopyFullPath());
         openInExplorerButton.addActionListener(e -> onOpenInExplorer());
         savePlaylistButton.addActionListener(e -> onSavePlaylist());
+
+        // Çift tıklama olayını yakala
+        playlistList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) { // Çift tıklama kontrolü
+                    selectedPlaylistItem = playlistList.getSelectedValue(); // Seçilen öğeyi al
+
+                    onSavePlaylist();
+                    SwingUtilities.getWindowAncestor(PlayListManagerPanel.this).dispose(); // JDialog'u kapat
+                }
+            }
+        });
+
+
+
+
+
     }
 
     /**
@@ -323,4 +334,11 @@ public class PlayListManagerPanel extends JPanel {
             frame.setVisible(true);
         });
     }
+
+
+    // Seçili playlist değerini döndüren metod
+    public String getSelectedPlaylistItem() {
+        return selectedPlaylistItem;
+    }
+
 }
