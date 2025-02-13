@@ -299,7 +299,7 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
             mediaPlayer.stop();
         }
 
-        Media media = new Media(new File(songPath).toURI().toString());
+        Media media = new Media(new File(songPath).toURI().toASCIIString());
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setVolume(volume);
         mediaPlayer.setOnEndOfMedia(this::nextSong);
