@@ -178,20 +178,24 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
     private void loadPlaylist() {
         playlist = new ArrayList<>();
         File playlistFile = new File(playlistFileLocation);
+        /*
         if (!playlistFile.exists()) {
             JOptionPane.showMessageDialog(this, playlistFile
                     + bundle.getString("mp3.not.found"), bundle.getString("mp3.error")
                     , JOptionPane.ERROR_MESSAGE);
             return;
         }
+        */
+        if (playlistFile.exists()) {
 
-        try (BufferedReader br = new BufferedReader(new FileReader(playlistFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                playlist.add(line.trim());
+            try (BufferedReader br = new BufferedReader(new FileReader(playlistFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    playlist.add(line.trim());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
