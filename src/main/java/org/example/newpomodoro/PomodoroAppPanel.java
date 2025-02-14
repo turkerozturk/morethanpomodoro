@@ -18,11 +18,10 @@ public class PomodoroAppPanel extends JPanel{
     private TickSoundPanel tickSoundPanel;
     private EndingSoundPanel endingSoundPanel;
     private JLabel remainingLabel, sessionLabel;
-    private JButton startStopButton;
+    private JToggleButton startStopButton;
     private JButton resetButton;
     private JButton nextButton;
     private JToggleButton autoPlayToggle;
-    private JButton pauseButton; // İsteğe bağlı; burada stop() gibi işlev görebilir.
 
     private JSpinner workSpinner;
     private JSpinner shortBreakSpinner;
@@ -36,6 +35,25 @@ public class PomodoroAppPanel extends JPanel{
 
     // Durum takibi için: Timer çalışıyorsa "stop" butonuyla durdurulmalı
     private boolean isRunning = false;
+
+    private void prepareNExt() {
+        service.next();
+        // Butonlardan gelen reset sonrasında spinner'ları da güncelleyelim
+        updateSpinnersFromService();
+        //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+        updateDisplay();
+        // Timer durduysa, isRunning false olarak kalır.
+        if(autoPlayToggle.isSelected()) {
+            service.start();
+            isRunning = true;
+            startStopButton.setText("Stop");
+            startStopButton.setSelected(true);
+        } else {
+            isRunning = false;
+            startStopButton.setText("Start");
+            startStopButton.setSelected(false);
+        }
+    }
 
     public PomodoroAppPanel() {
         service = new PomodoroService();
@@ -57,6 +75,7 @@ public class PomodoroAppPanel extends JPanel{
             @Override
             public void onTimerFinished() {
                 endingSoundPanel.playFrequencyBeepIfSelected();
+                prepareNExt();
             }
         });
         // end ending sound related code
@@ -104,14 +123,12 @@ public class PomodoroAppPanel extends JPanel{
 
         // Buton paneli
         JPanel buttonPanel = new JPanel();
-        startStopButton = new JButton("Start");
+        startStopButton = new JToggleButton("Start");
         resetButton = new JButton("Reset");
         nextButton = new JButton("Next");
         autoPlayToggle = new JToggleButton("AutoPlay OFF");
-        pauseButton = new JButton("Pause");
 
         buttonPanel.add(startStopButton);
-        buttonPanel.add(pauseButton);
         buttonPanel.add(resetButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(autoPlayToggle);
@@ -133,15 +150,7 @@ public class PomodoroAppPanel extends JPanel{
             }
         });
 
-        pauseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Pause işlemi, burada stop ile aynı mantıkta çalışıyor.
-                service.stop();
-                isRunning = false;
-                startStopButton.setText("Start");
-            }
-        });
+
 
         resetButton.addActionListener(new ActionListener() {
             @Override
@@ -158,20 +167,16 @@ public class PomodoroAppPanel extends JPanel{
                 service.reset();
                 //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                 updateDisplay();
+                isRunning = false;
+                startStopButton.setText("Start");
+                startStopButton.setSelected(false);
             }
         });
 
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                service.next();
-                // Butonlardan gelen reset sonrasında spinner'ları da güncelleyelim
-                updateSpinnersFromService();
-                //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
-                updateDisplay();
-                // Timer durduysa, isRunning false olarak kalır.
-                isRunning = false;
-                startStopButton.setText("Start");
+                prepareNExt();
             }
         });
 
