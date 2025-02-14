@@ -1,5 +1,9 @@
 package org.example.newpomodoro;
 
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
+import org.example.jpanels.pomodoro.TickSoundPanel;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -9,6 +13,9 @@ import java.awt.event.ActionListener;
 
 // PomodoroService sınıfını daha önce verdiğimiz kodla oluşturduğunuzu varsayıyoruz.
 public class PomodoroApp extends JPanel{
+
+    private TickSoundPanel tickSoundPanel;
+
 
     private JLabel remainingLabel;
     private JButton startStopButton;
@@ -34,6 +41,18 @@ public class PomodoroApp extends JPanel{
         service = new PomodoroService();
         initialize();
         startDisplayUpdater();
+
+        // GUI initialize kısmında:
+        service.addTimerTickListener(new TimerTickListener() {
+            @Override
+            public void onTick(int remainingSeconds) {
+                // İsterseniz kalan süre güncellenirken tick sound efektini çalıştırın.
+                tickSoundPanel.tick();
+            }
+        });
+
+
+
     }
 
     private void initialize() {
@@ -223,6 +242,10 @@ public class PomodoroApp extends JPanel{
             }
         });
 
+        tickSoundPanel = new TickSoundPanel();
+        tabbedPane.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
+
+
 
         splitPane.setBottomComponent(tabbedPane);
         //setVisible(true);
@@ -253,6 +276,7 @@ public class PomodoroApp extends JPanel{
         longBreakSpinner.setValue(service.getLongBreakDurationMinutes());
     }
 
+    /*
     public static void main(String[] args) {
         // Swing UI Event Dispatch Thread üzerinde çalıştır.
         SwingUtilities.invokeLater(new Runnable() {
@@ -262,5 +286,16 @@ public class PomodoroApp extends JPanel{
             }
         });
     }
+    */
+    LanguageManager bundle = LanguageManager.getInstance();
+    ConfigManager props = ConfigManager.getInstance();
+
+    public String translate(String key) {
+        return bundle.getString(key);
+    }
+
+
+
+
 }
 

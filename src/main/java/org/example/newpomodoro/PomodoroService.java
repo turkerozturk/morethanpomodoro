@@ -1,5 +1,7 @@
 package org.example.newpomodoro;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,6 +29,19 @@ public class PomodoroService {
     // Aktif zamanlayıcı bilgileri
     private PomodoroTimerType activeTimerType = PomodoroTimerType.WORK_TIME;
     private PomodoroTimerStatus timerStatus = PomodoroTimerStatus.STOPPED;
+
+    private List<TimerTickListener> listeners = new ArrayList<>();
+
+    public void addTimerTickListener(TimerTickListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyTick() {
+        for (TimerTickListener listener : listeners) {
+            listener.onTick(remainingSeconds);
+        }
+    }
+
 
     // Kalan süre (saniye cinsinden)
     private int remainingSeconds;
@@ -104,10 +119,9 @@ public class PomodoroService {
             @Override
             public void run() {
                 remainingSeconds--;
-                // Burada GUI tarafına update sinyali gönderilebilir (observer pattern vb.)
+                notifyTick(); // GUI güncellenebilir
                 if(remainingSeconds <= 0) {
-                    stop(); // zamanlayıcıyı durdur
-                    // Zamanlayıcı bittiğinde otomatik geçiş varsa uygulansın
+                    stop();
                     if(autoPlayEnabled) {
                         next();
                         start();
