@@ -24,7 +24,7 @@ import org.example.jpanels.piano.PianoPanel;
 import org.example.jpanels.pomodoro.PomodoroMainPanel;
 import org.example.jpanels.speakertest.AudioOutputPanel;
 import org.example.jpanels.taptempo.TapTempoTool;
-import org.example.newpomodoro.PomodoroApp;
+import org.example.newpomodoro.PomodoroAppPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -262,8 +262,8 @@ public class ApplicationFrame extends JFrame {
         soundControllers.add(pomodoroPanel.getEndingSoundPanel());
 
 
-        PomodoroApp pomodoroAppPanel = new PomodoroApp();
-        tabbedPanel.addTab("P", pomodoroAppPanel);
+        PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
+        tabbedPanel.addTab("Pomodoro", pomodoroApp);
 
         // soundControllers.add(pomodoroPanel); // tick sound + ending sound
         // piano, speaker test, device test

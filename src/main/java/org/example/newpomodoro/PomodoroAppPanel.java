@@ -13,11 +13,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 // PomodoroService sınıfını daha önce verdiğimiz kodla oluşturduğunuzu varsayıyoruz.
-public class PomodoroApp extends JPanel{
+public class PomodoroAppPanel extends JPanel{
 
     private TickSoundPanel tickSoundPanel;
     private EndingSoundPanel endingSoundPanel;
-    private JLabel remainingLabel;
+    private JLabel remainingLabel, sessionLabel;
     private JButton startStopButton;
     private JButton resetButton;
     private JButton nextButton;
@@ -37,7 +37,7 @@ public class PomodoroApp extends JPanel{
     // Durum takibi için: Timer çalışıyorsa "stop" butonuyla durdurulmalı
     private boolean isRunning = false;
 
-    public PomodoroApp() {
+    public PomodoroAppPanel() {
         service = new PomodoroService();
         initialize();
         startDisplayUpdater();
@@ -71,7 +71,7 @@ public class PomodoroApp extends JPanel{
         // JSplitPane: Üst (display) ve alt (tabbed) paneller
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setDividerLocation(100);
-        splitPane.setResizeWeight(0.4);
+        //splitPane.setResizeWeight(0.2);
         add(splitPane);
 
         // Üst Panel: Display Panel
@@ -80,8 +80,27 @@ public class PomodoroApp extends JPanel{
 
         // Kalan süreyi gösteren etiket
         remainingLabel = new JLabel(formatTime(service.getRemainingSeconds()), SwingConstants.CENTER);
-        remainingLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        displayPanel.add(remainingLabel, BorderLayout.CENTER);
+        remainingLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        remainingLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Çalışma seans bilgisini gösterecek etiket
+        sessionLabel = new JLabel(getSessionInfo(), SwingConstants.CENTER);
+        sessionLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        sessionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Üst kısmı iki label olacak şekilde alt alta ekleyelim:
+        JPanel timePanel = new JPanel();
+        timePanel.setLayout(new BoxLayout(timePanel, BoxLayout.Y_AXIS));
+        timePanel.add(remainingLabel);
+        timePanel.add(sessionLabel);
+
+
+        // timePanel'in displayPanel içinde ortalanması için
+        JPanel wrapperPanel = new JPanel(new GridBagLayout());
+        wrapperPanel.add(timePanel);
+
+        displayPanel.add(wrapperPanel, BorderLayout.CENTER);
+
 
         // Buton paneli
         JPanel buttonPanel = new JPanel();
@@ -137,7 +156,8 @@ public class PomodoroApp extends JPanel{
                     service.setLongBreakDurationMinutes((Integer) longBreakSpinner.getValue());
                 }
                 service.reset();
-                remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                updateDisplay();
             }
         });
 
@@ -147,7 +167,8 @@ public class PomodoroApp extends JPanel{
                 service.next();
                 // Butonlardan gelen reset sonrasında spinner'ları da güncelleyelim
                 updateSpinnersFromService();
-                remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                updateDisplay();
                 // Timer durduysa, isRunning false olarak kalır.
                 isRunning = false;
                 startStopButton.setText("Start");
@@ -200,7 +221,7 @@ public class PomodoroApp extends JPanel{
                     if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.WORK_TIME) {
                         // Aktifse updateActiveTimerDuration kullanarak kalan süreyi de güncelleyelim
                         service.updateActiveTimerDuration(newVal);
-                        remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                        //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                     } else {
                         service.setWorkDurationMinutes(newVal);
                     }
@@ -208,7 +229,7 @@ public class PomodoroApp extends JPanel{
                     int newVal = (Integer) shortBreakSpinner.getValue();
                     if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.SHORT_BREAK) {
                         service.updateActiveTimerDuration(newVal);
-                        remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                        //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                     } else {
                         service.setShortBreakDurationMinutes(newVal);
                     }
@@ -216,11 +237,12 @@ public class PomodoroApp extends JPanel{
                     int newVal = (Integer) longBreakSpinner.getValue();
                     if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.LONG_BREAK) {
                         service.updateActiveTimerDuration(newVal);
-                        remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                        //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                     } else {
                         service.setLongBreakDurationMinutes(newVal);
                     }
                 }
+                updateDisplay();
             }
         };
 
@@ -238,16 +260,17 @@ public class PomodoroApp extends JPanel{
                 if (selectedIndex == 0 && service.getActiveTimerType() != PomodoroService.PomodoroTimerType.WORK_TIME) {
                     service.setWorkDurationMinutes((Integer) workSpinner.getValue());
                     //service.reset();
-                    remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                    //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                 } else if (selectedIndex == 1 && service.getActiveTimerType() != PomodoroService.PomodoroTimerType.SHORT_BREAK) {
                     service.setShortBreakDurationMinutes((Integer) shortBreakSpinner.getValue());
                     //service.reset();
-                    remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                    //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                 } else if (selectedIndex == 2 && service.getActiveTimerType() != PomodoroService.PomodoroTimerType.LONG_BREAK) {
                     service.setLongBreakDurationMinutes((Integer) longBreakSpinner.getValue());
                     //service.reset();
-                    remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                    //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                 }
+                updateDisplay();
             }
         });
 
@@ -266,7 +289,8 @@ public class PomodoroApp extends JPanel{
         displayUpdater = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+                updateDisplay();
             }
         });
         displayUpdater.start();
@@ -304,7 +328,28 @@ public class PomodoroApp extends JPanel{
         return bundle.getString(key);
     }
 
+    // start session info text
 
+    // Display panelde kalan süre ve session label'ı güncelleyen metot
+    private void updateDisplay() {
+        remainingLabel.setText(formatTime(service.getRemainingSeconds()));
+        sessionLabel.setText(getSessionInfo());
+    }
+
+    // Aktif timer türüne göre seans bilgisini döner
+    private String getSessionInfo() {
+        PomodoroService.PomodoroTimerType type = service.getActiveTimerType();
+        if (type == PomodoroService.PomodoroTimerType.WORK_TIME) {
+            return "Work Time " + service.getCurrentWorkSession() + " of " + service.getTotalWorkSessions();
+        } else if (type == PomodoroService.PomodoroTimerType.SHORT_BREAK) {
+            return "Short Break " + service.getCurrentWorkSession() + " of " + service.getTotalWorkSessions();
+        } else { // LONG_BREAK
+            return "Long Break";
+        }
+    }
+
+
+    // end session info text
 
 
 }

@@ -201,7 +201,8 @@ public class PomodoroService {
 
     // "pomodoro X of Y" bilgisini döner.
     public String getCurrentWorkSession() {
-        return "pomodoro " + currentWorkSession + " of " + totalWorkSessions;
+        return "Pomodoro " + currentWorkSession;
+        //return "Pomodoro " + currentWorkSession + " of " + totalWorkSessions;
     }
 
     // Aktif timer'ın türünü döner.
