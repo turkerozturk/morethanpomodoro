@@ -30,6 +30,7 @@ public class PomodoroService {
     private PomodoroTimerType activeTimerType = PomodoroTimerType.WORK_TIME;
     private PomodoroTimerStatus timerStatus = PomodoroTimerStatus.STOPPED;
 
+    // start tick sound related code
     private List<TimerTickListener> listeners = new ArrayList<>();
 
     public void addTimerTickListener(TimerTickListener listener) {
@@ -41,6 +42,21 @@ public class PomodoroService {
             listener.onTick(remainingSeconds);
         }
     }
+    // end tick sound related code
+
+    // start ending sound related code
+    private List<TimerFinishedListener> finishedListeners = new ArrayList<>();
+
+    public void addTimerFinishedListener(TimerFinishedListener listener) {
+        finishedListeners.add(listener);
+    }
+
+    private void notifyTimerFinished() {
+        for (TimerFinishedListener listener : finishedListeners) {
+            listener.onTimerFinished();
+        }
+    }
+    // end ending sound related code
 
 
     // Kalan süre (saniye cinsinden)
@@ -122,6 +138,7 @@ public class PomodoroService {
                 notifyTick(); // GUI güncellenebilir
                 if(remainingSeconds <= 0) {
                     stop();
+                    notifyTimerFinished();
                     if(autoPlayEnabled) {
                         next();
                         start();

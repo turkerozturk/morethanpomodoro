@@ -2,6 +2,7 @@ package org.example.newpomodoro;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.example.jpanels.pomodoro.EndingSoundPanel;
 import org.example.jpanels.pomodoro.TickSoundPanel;
 
 import javax.swing.*;
@@ -15,8 +16,7 @@ import java.awt.event.ActionListener;
 public class PomodoroApp extends JPanel{
 
     private TickSoundPanel tickSoundPanel;
-
-
+    private EndingSoundPanel endingSoundPanel;
     private JLabel remainingLabel;
     private JButton startStopButton;
     private JButton resetButton;
@@ -42,7 +42,7 @@ public class PomodoroApp extends JPanel{
         initialize();
         startDisplayUpdater();
 
-        // GUI initialize kısmında:
+        // start tick sound related code
         service.addTimerTickListener(new TimerTickListener() {
             @Override
             public void onTick(int remainingSeconds) {
@@ -50,7 +50,16 @@ public class PomodoroApp extends JPanel{
                 tickSoundPanel.tick();
             }
         });
+        // end tick sound related code
 
+        // start ending sound related code
+        service.addTimerFinishedListener(new TimerFinishedListener() {
+            @Override
+            public void onTimerFinished() {
+                endingSoundPanel.playFrequencyBeepIfSelected();
+            }
+        });
+        // end ending sound related code
 
 
     }
@@ -245,7 +254,8 @@ public class PomodoroApp extends JPanel{
         tickSoundPanel = new TickSoundPanel();
         tabbedPane.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
 
-
+        endingSoundPanel = new EndingSoundPanel();
+        tabbedPane.addTab(translate("tab.panel.ending.sound.title"), endingSoundPanel);
 
         splitPane.setBottomComponent(tabbedPane);
         //setVisible(true);
