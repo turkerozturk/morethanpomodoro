@@ -75,7 +75,7 @@ public class PomodoroAppPanel extends JPanel{
             @Override
             public void onTimerFinished() {
                 endingSoundPanel.playFrequencyBeepIfSelected();
-                prepareNExt();
+                //prepareNExt();
             }
         });
         // end ending sound related code
