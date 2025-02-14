@@ -358,5 +358,12 @@ public class PomodoroAppPanel extends JPanel{
     // end session info text
 
 
+    public TickSoundPanel getTickSoundPanel() {
+        return tickSoundPanel;
+    }
+
+    public EndingSoundPanel getEndingSoundPanel() {
+        return endingSoundPanel;
+    }
 }
 
