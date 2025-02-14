@@ -1,4 +1,4 @@
-package org.example.jpanels.pomodoro;
+package org.example.jpanels.pomodoro.subpanels;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;

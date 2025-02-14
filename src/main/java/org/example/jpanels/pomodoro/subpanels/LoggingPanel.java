@@ -1,4 +1,4 @@
-package org.example.jpanels.pomodoro;
+package org.example.jpanels.pomodoro.subpanels;
 
 import javax.swing.*;
 

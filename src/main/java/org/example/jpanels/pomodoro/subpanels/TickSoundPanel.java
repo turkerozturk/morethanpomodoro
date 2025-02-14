@@ -1,4 +1,4 @@
-package org.example.jpanels.pomodoro;
+package org.example.jpanels.pomodoro.subpanels;
 
 import org.example.MetronomePlayer;
 import org.example.initial.jpanels.sound.controller.SoundController;

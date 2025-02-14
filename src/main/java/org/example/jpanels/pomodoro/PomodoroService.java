@@ -1,4 +1,4 @@
-package org.example.newpomodoro;
+package org.example.jpanels.pomodoro;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class PomodoroService {
     // Süreler dakika cinsinden; GUI üzerinden spinner ile ayarlanır.
     private int workDurationMinutes = 25;
     private int shortBreakDurationMinutes = 5;
-    private int longBreakDurationMinutes = 15;
+    private int longBreakDurationMinutes = 20;
 
     // Toplam pomodoro sayısı (örneğin 4) ve mevcut çalışma seansı sayısı.
     private int totalWorkSessions = 4;

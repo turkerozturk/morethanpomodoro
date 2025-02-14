@@ -21,10 +21,9 @@ import org.example.jpanels.noisegenerator.NoisePanel;
 import org.example.jpanels.notes.NotesPanel;
 import org.example.jpanels.paint.CanvasPanel;
 import org.example.jpanels.piano.PianoPanel;
-import org.example.jpanels.pomodoro.PomodoroMainPanel;
 import org.example.jpanels.speakertest.AudioOutputPanel;
 import org.example.jpanels.taptempo.TapTempoTool;
-import org.example.newpomodoro.PomodoroAppPanel;
+import org.example.jpanels.pomodoro.PomodoroAppPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -113,10 +112,10 @@ public class ApplicationFrame extends JFrame {
 
         JTabbedPane tabbedPanel = new JTabbedPane();
 
+        PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
+        tabbedPanel.addTab("Pomodoro", pomodoroApp);
 
-        PomodoroMainPanel pomodoroPanel = new PomodoroMainPanel();
 
-        tabbedPanel.addTab("Pomodoro", pomodoroPanel);
 
 
         JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
@@ -258,12 +257,11 @@ public class ApplicationFrame extends JFrame {
         soundControllers.add(noisePanel);
         soundControllers.add(metronomePanel);
 
-        soundControllers.add(pomodoroPanel.getTickSoundPanel());
-        soundControllers.add(pomodoroPanel.getEndingSoundPanel());
+       // soundControllers.add(pomodoroPanel.getTickSoundPanel());
+       // soundControllers.add(pomodoroPanel.getEndingSoundPanel());
 
 
-        PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
-        tabbedPanel.addTab("Pomodoro", pomodoroApp);
+
 
         // soundControllers.add(pomodoroPanel); // tick sound + ending sound
         // piano, speaker test, device test

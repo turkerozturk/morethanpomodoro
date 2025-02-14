@@ -1,9 +1,9 @@
-package org.example.newpomodoro;
+package org.example.jpanels.pomodoro;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
-import org.example.jpanels.pomodoro.EndingSoundPanel;
-import org.example.jpanels.pomodoro.TickSoundPanel;
+import org.example.jpanels.pomodoro.subpanels.EndingSoundPanel;
+import org.example.jpanels.pomodoro.subpanels.TickSoundPanel;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -281,6 +281,7 @@ public class PomodoroAppPanel extends JPanel{
 
         tickSoundPanel = new TickSoundPanel();
         tabbedPane.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
+        tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(tickSoundPanel));
 
         endingSoundPanel = new EndingSoundPanel();
         tabbedPane.addTab(translate("tab.panel.ending.sound.title"), endingSoundPanel);
