@@ -178,6 +178,7 @@ public class PomodoroService {
         return activeTimerType;
     }
 
+    /*
     // GUI spinner'ından aktif timer süresi değiştirildiğinde çağrılabilir.
     // Yeni dakika değerine göre kalan süreyi hemen günceller.
     public void updateActiveTimerDuration(int newMinutes) {
@@ -200,6 +201,51 @@ public class PomodoroService {
         remainingSeconds += delta;
         // Eğer reset yapılırsa, kesin olarak yeni değeri alır.
     }
+    */
+
+    // PomodoroService.java içinde
+    public void updateActiveTimerDuration(int newMinutes) {
+        // Önce, eski (aktif) süreyi (dakika cinsinden) alalım.
+        int oldMinutes = 0;
+        switch(activeTimerType) {
+            case WORK_TIME:
+                oldMinutes = workDurationMinutes;
+                break;
+            case SHORT_BREAK:
+                oldMinutes = shortBreakDurationMinutes;
+                break;
+            case LONG_BREAK:
+                oldMinutes = longBreakDurationMinutes;
+                break;
+        }
+
+        // Eski başlangıç saniyelerini ve geçen süreyi hesaplayalım.
+        int oldInitialSeconds = oldMinutes * 60;
+        int elapsed = oldInitialSeconds - remainingSeconds;
+
+        // Şimdi yeni dakika değerini ilgili alana aktaralım.
+        switch(activeTimerType) {
+            case WORK_TIME:
+                workDurationMinutes = newMinutes;
+                break;
+            case SHORT_BREAK:
+                shortBreakDurationMinutes = newMinutes;
+                break;
+            case LONG_BREAK:
+                longBreakDurationMinutes = newMinutes;
+                break;
+        }
+
+        // Yeni başlangıç saniyelerini alalım.
+        int newInitialSeconds = newMinutes * 60;
+
+        // Kalan süreyi, o ana kadar geçen süreyi koruyarak güncelleyelim.
+        remainingSeconds = Math.max(0, newInitialSeconds - elapsed);
+    }
+
+
+
+
 
     // Getters for durations (dakika cinsinden)
     public int getWorkDurationMinutes() {
