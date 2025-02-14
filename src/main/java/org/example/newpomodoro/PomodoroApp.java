@@ -202,6 +202,7 @@ public class PomodoroApp {
         shortBreakSpinner.addChangeListener(spinnerListener);
         longBreakSpinner.addChangeListener(spinnerListener);
 
+
         // Tab değiştiğinde, aktif timer türüyle ilgili spinner'ı göstermek amacıyla
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
@@ -210,19 +211,20 @@ public class PomodoroApp {
                 // Eğer aktif timer tipi farklı ise, değiştirilmiş spinner değerinin display'e yansıması için reset çağırabilirsiniz.
                 if (selectedIndex == 0 && service.getActiveTimerType() != PomodoroService.PomodoroTimerType.WORK_TIME) {
                     service.setWorkDurationMinutes((Integer) workSpinner.getValue());
-                    service.reset();
+                    //service.reset();
                     remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                 } else if (selectedIndex == 1 && service.getActiveTimerType() != PomodoroService.PomodoroTimerType.SHORT_BREAK) {
                     service.setShortBreakDurationMinutes((Integer) shortBreakSpinner.getValue());
-                    service.reset();
+                    //service.reset();
                     remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                 } else if (selectedIndex == 2 && service.getActiveTimerType() != PomodoroService.PomodoroTimerType.LONG_BREAK) {
                     service.setLongBreakDurationMinutes((Integer) longBreakSpinner.getValue());
-                    service.reset();
+                    //service.reset();
                     remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                 }
             }
         });
+
 
         splitPane.setBottomComponent(tabbedPane);
         frame.setVisible(true);
