@@ -8,9 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 // PomodoroService sınıfını daha önce verdiğimiz kodla oluşturduğunuzu varsayıyoruz.
-public class PomodoroApp {
+public class PomodoroApp extends JPanel{
 
-    private JFrame frame;
     private JLabel remainingLabel;
     private JButton startStopButton;
     private JButton resetButton;
@@ -38,15 +37,14 @@ public class PomodoroApp {
     }
 
     private void initialize() {
-        frame = new JFrame("Pomodoro Timer");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+
+
 
         // JSplitPane: Üst (display) ve alt (tabbed) paneller
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setDividerLocation(100);
         splitPane.setResizeWeight(0.4);
-        frame.getContentPane().add(splitPane);
+        add(splitPane);
 
         // Üst Panel: Display Panel
         JPanel displayPanel = new JPanel();
@@ -227,7 +225,7 @@ public class PomodoroApp {
 
 
         splitPane.setBottomComponent(tabbedPane);
-        frame.setVisible(true);
+        //setVisible(true);
     }
 
     // Swing Timer ile display panelde kalan süreyi periyodik güncelle
