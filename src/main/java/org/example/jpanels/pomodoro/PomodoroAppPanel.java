@@ -75,7 +75,9 @@ public class PomodoroAppPanel extends JPanel{
             @Override
             public void onTimerFinished() {
                 endingSoundPanel.playFrequencyBeepIfSelected();
-                //prepareNExt();
+                if(!autoPlayToggle.isSelected()) {
+                    prepareNExt();
+                } // else autoplay is  switching to next already. This if block prevents from double forward.
             }
         });
         // end ending sound related code
