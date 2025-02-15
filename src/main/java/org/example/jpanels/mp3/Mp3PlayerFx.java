@@ -14,6 +14,7 @@ import org.example.jpanels.equaliser.EqualiserPanel;
 import org.example.playlist.PlayListManagerPanel;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,16 +68,22 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
         // Playlist yükle
         loadPlaylist();
 
+
         playListButton = new JButton("Manage Playlist");
         playListButton.addActionListener(e -> showPlayListPanel());
 
         // UI oluştur
-        playAndPauseAndContinueButton = new JButton("\u25B6"); // ▶ (Play)
-        stopButton = new JButton("\u25A0"); // ■ (Stop)
-        nextButton = new JButton("\u23ED"); // ⏭ (Next)
-        prevButton = new JButton("\u23EE"); // ⏮ (Previous)
+        playAndPauseAndContinueButton = new JButton("▶ " + "Play"); // ▶ (Play)
+        stopButton = new JButton("■ "+ "Stop"); // ■ (Stop)
+        nextButton = new JButton("⏭ " + "Next"); // ⏭ (Next)
+        prevButton = new JButton( "⏮ " + "Previous"); // ⏮ (Previous)
         volumeSlider = new JSlider(0, 100, 100);
         songLabel = new JLabel(bundle.getString("mp3.not.loaded"));
+        if(!playlist.isEmpty()) {
+            String songPath = playlist.get(0);
+            songLabel.setText(songPath);
+        }
+
 
         // Action Listeners
         playAndPauseAndContinueButton.addActionListener(e -> start());
@@ -100,17 +107,21 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
         slowButton.addActionListener(e -> slow());
 
         JPanel verticalPanel = new JPanel();
-        verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS)); // Dikey hizalama
-
-        verticalPanel.add(songLabel);
-        verticalPanel.add(playListButton);
+       // JPanel panel = new JPanel();
+        verticalPanel.setLayout(new GridLayout(10, 1, 5, 5));
+        // Ust tarafta 20 piksel bsşluk birak
+        verticalPanel.setBorder(new EmptyBorder(40, 0, 0, 0));
+        verticalPanel.add(playListButton, BorderLayout.CENTER);
 
 
         JPanel timePanel = new JPanel();
         timePanel.add(seekSlider);
+
         timePanel.add(timeLabel);
 
         verticalPanel.add(timePanel);
+
+        verticalPanel.add(songLabel);
 
 
         JPanel controlsPanel = new JPanel();
@@ -131,13 +142,14 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
 
 
 
-        verticalPanel.add(volumePanel);
+        verticalPanel.add(volumePanel, BorderLayout.CENTER);
 
 
-
+        JPanel wrapperPanel = new JPanel(new GridBagLayout());
+        wrapperPanel.add(verticalPanel);
 
         //add(panel1);
-        add(verticalPanel);
+        add(wrapperPanel);
 
         // 1 saniyede bir tetiklenecek timer yarat
         timer = new Timer(1000, new ActionListener() {
@@ -232,12 +244,12 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
             } else if (currentStatus == MediaPlayer.Status.PLAYING) {
                 mediaPlayer.pause();
                 isPlaying = false;
-                playAndPauseAndContinueButton.setText("\u23F8"); // Pause (⏸)
+                playAndPauseAndContinueButton.setText("⏸ " + "Pause"); // Pause (⏸)
                 timer.stop();
 
             } else if (currentStatus == MediaPlayer.Status.PAUSED || currentStatus == MediaPlayer.Status.STOPPED) {
                 mediaPlayer.play();
-                playAndPauseAndContinueButton.setText("\u23F5"); // Continue (⏵)
+                playAndPauseAndContinueButton.setText("▶ " + "Play"); // Continue (⏵)
 
                 isPlaying = true;
                 timer.start();
@@ -430,37 +442,12 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
             System.out.println("Seçilen Playlist: " + selectedPlaylistItem); // Parent pencereye iletebilirsin
         }
 
-        /*
-        stop();
-        songLabel.setText(selectedPlaylistItem);
-        seekSlider.setValue(0);
 
-        */
-        loadPlaylist();
-
-
-        /*
-        stop();
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
         loadPlaylist();
 
 
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        currentSongIndex = playlist.indexOf(selectedPlaylistItem);
 
-        start();
-
-        */
 
 
     }
@@ -518,47 +505,3 @@ public class Mp3PlayerFx extends JPanel implements SoundController {
 
 }
 
-
-/*
-    // https://stackoverflow.com/questions/38819690/javafx-media-pause-method-makes-mediaplayer-fast-forward
-    public void playPause() {
-        MediaPlayer.Status currentStatus = mediaPlayer.getStatus();
-
-        if (currentStatus == MediaPlayer.Status.PLAYING) {
-            mediaPlayer.pause();
-            pauseContinueButton.setText("\u23F5"); // Continue (⏵)
-
-        } else if(currentStatus == MediaPlayer.Status.PAUSED || currentStatus == MediaPlayer.Status.STOPPED) {
-            //System.out.println("Player will start at: " + mediaPlayer.getCurrentTime());
-            mediaPlayer.play();
-            pauseContinueButton.setText("\u23F8"); // Pause (⏸)
-
-        }
-
-
-
-    }
-*/
-
-    /*
-    public void continuePlaying() {
-        if (mediaPlayer != null) {
-            Platform.runLater(() -> mediaPlayer.play());
-            isPlaying = true;
-        }
-    }
-    */
-
-
-    /*
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MP3 Player FX");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1400, 700);
-            Mp3PlayerFx playerPanel = new Mp3PlayerFx("playlist1.txt");
-            frame.add(playerPanel);
-            frame.setVisible(true);
-        });
-    }
-    */
