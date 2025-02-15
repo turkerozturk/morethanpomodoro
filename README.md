@@ -28,20 +28,29 @@ JAR file:
 
 https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.0/morethanpomodoro20250210.jar
 
-### Release Notes
-
-https://github.com/turkerozturk/morethanpomodoro/commits/v1.0.0
-
-![Screenshot](screenshot.png)
-
-### Run the Application:
+### Running the Application Without Character Encoding Issues
 
 Open a terminal or command prompt and navigate to the directory where the JAR file is saved.
 Run the following command:
 
-java -jar morethanpomodoro20250210.jar
+    java -Dfile.encoding=UTF-8 -jar morethanpomodoro20250210.jar
+
+
+### Release Notes
+
+https://github.com/turkerozturk/morethanpomodoro/commits/v1.0.0
+
+### Screenshots
+
+2025-02-15
+![Screenshot](screenshot20250215.png)
+
+2025-02-10
+![Screenshot](screenshot.png)
+
+
 
 
 Project Duration:
 
-(2025-02-03 - 2025-02-10)
+(2025-02-03 - 2025-02-15)
