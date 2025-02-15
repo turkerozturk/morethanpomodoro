@@ -114,7 +114,9 @@ public class PlayListManagerPanel extends JPanel {
         loadPlaylistFromFile();
 
         // JList'i ScrollPane içine alalım
-        JScrollPane scrollPane = new JScrollPane(playlistList);
+        JScrollPane scrollPane = new JScrollPane(playlistList,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
 
         // ActionListenerlar
