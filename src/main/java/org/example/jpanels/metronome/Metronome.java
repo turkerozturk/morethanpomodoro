@@ -8,6 +8,14 @@ public class Metronome {
     private float volume = 0.5f;
     private boolean playing = false;
 
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public float getVolume() {
+        return volume;
+    }
+
     public Metronome() {
         try {
             sequencer = MidiSystem.getSequencer();

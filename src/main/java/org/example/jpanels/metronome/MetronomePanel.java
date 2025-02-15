@@ -34,14 +34,13 @@ public class MetronomePanel extends JPanel implements SoundController {
 
         initializeMetronomePanel();
 
-       // setLayout(new BorderLayout());
+        // setLayout(new BorderLayout());
 
         prepareStartStopButton();
         startStopButton.addActionListener(e -> toggleMetronomeSound());
 
         prepareBPMSpinner();
         bpmSpinner.addChangeListener(e -> changeBPM());
-
 
 
         prepareVolumeSlider();
@@ -83,7 +82,7 @@ public class MetronomePanel extends JPanel implements SoundController {
         this.add(volumeSlider);
     }
 
-    private void prepareBPMSpinner(){
+    private void prepareBPMSpinner() {
         bpmSpinner = new JSpinner(new SpinnerNumberModel(bpm, 0, 44100, 1));
         panel1.add(new JLabel("BPM:"));
         panel1.add(bpmSpinner);
@@ -157,23 +156,29 @@ public class MetronomePanel extends JPanel implements SoundController {
     }
 
 
+    private boolean muted = false;
+    private float previousVolume = 1.0f;  // 1.0 = %100
+
     @Override
     public void mute() {
-        isMetronomeEnabled = false;
-        startStopButton.setText(translate("button.metronome.sound.activate"));
-        stopMetronome();
+        if (!muted && metronome.isPlaying()) {
+            muted = true;
+            previousVolume = metronome.getVolume(); // Mevcut sesi sakla
+            metronome.setVolume(0);
+        }
     }
 
     @Override
     public void unmute() {
-        isMetronomeEnabled = true;
-        startStopButton.setText(translate("button.metronome.sound.deactivate"));
-
-        startMetronome();
+        if (muted && metronome.isPlaying()) {
+            muted = false;
+            metronome.setVolume(previousVolume); // Eski sesi geri yükle
+        }
     }
 
     @Override
     public boolean isMuted() {
-        return false;
+        return muted;
     }
+
 }
