@@ -19,6 +19,7 @@ import org.example.jpanels.speakertest.AudioOutputPanel;
 import org.example.jpanels.systeminfo.SystemInfoPanel;
 import org.example.jpanels.taptempo.TapTempoTool;
 import org.example.jpanels.pomodoro.PomodoroAppPanel;
+import org.example.jpanels.textquotes.RandomTextDisplayPanel;
 import org.example.jpanels.theme.ThemeSelectorPanel;
 
 import javax.swing.*;
@@ -130,6 +131,18 @@ public class ApplicationFrame extends JFrame {
 
         AnalogClockPanel analogClock = new AnalogClockPanel();
         jTabbedPaneForOtherTools.addTab("Clock", analogClock);
+
+        JTabbedPane textPanels = new JTabbedPane();
+        RandomTextDisplayPanel randomTextDisplayPanel1 = new RandomTextDisplayPanel(1);
+        RandomTextDisplayPanel randomTextDisplayPanel2 = new RandomTextDisplayPanel(2);
+        RandomTextDisplayPanel randomTextDisplayPanel3 = new RandomTextDisplayPanel(3);
+        textPanels.addTab("Quotes", randomTextDisplayPanel1);
+        textPanels.addTab("To Do", randomTextDisplayPanel2);
+        textPanels.addTab("Memorize", randomTextDisplayPanel3);
+        jTabbedPaneForOtherTools.addTab("Texts", textPanels);
+
+
+
         NotesPanel notesPanel = new NotesPanel();
         jTabbedPaneForOtherTools.addTab("Notes", notesPanel);
         CanvasPanel canvasPanel = new CanvasPanel();
