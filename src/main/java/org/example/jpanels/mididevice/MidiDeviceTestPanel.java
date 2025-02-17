@@ -2,10 +2,6 @@ package org.example.jpanels.mididevice;
 
 
 
-import org.example.orphan.newmidi.MidiDeviceInfoDTO;
-import org.example.orphan.newmidi.MidiInstrumentDTO;
-import org.example.orphan.newmidi.MidiService;
-
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.*;
 import java.awt.*;
