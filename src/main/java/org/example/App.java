@@ -1,7 +1,9 @@
 package org.example;
 
 
-import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
+import org.example.initial.ConfigManager;
+import org.example.initial.ThemeManager;
+
 import javax.swing.*;
 
 /**
@@ -10,23 +12,13 @@ import javax.swing.*;
  */
 public class App 
 {
+    private static final ConfigManager props = ConfigManager.getInstance();
     public static void main(String[] args) {
 
-        try {
-            UIManager.setLookAndFeel( new FlatSolarizedLightIJTheme() );
-            // https://www.formdev.com/flatlaf/customizing/
-            UIManager.put( "Button.arc", 15 );
-            UIManager.put( "Component.arc", 15 );
-            UIManager.put( "ProgressBar.arc", 15 );
-            UIManager.put( "TextComponent.arc", 15 );
-            UIManager.put( "ScrollBar.showButtons", true );
-            UIManager.put( "ScrollBar.width", 10 );
-            UIManager.put( "TabbedPane.tabSeparatorsFullHeight", true );
-        } catch( Exception ex ) {
-            System.err.println( "Failed to initialize LaF" );
-        }
-
         SwingUtilities.invokeLater(() -> {
-            new ApplicationFrame().setVisible(true);
+            ApplicationFrame applicationFrame = new ApplicationFrame();
+            ThemeManager.loadTheme();
+
+            applicationFrame.setVisible(true);
         });
     }}
