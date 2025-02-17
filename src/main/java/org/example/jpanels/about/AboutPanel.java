@@ -26,15 +26,34 @@ public class AboutPanel extends JPanel {
 
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(10, 1, 5, 5));
+        panel.setLayout(new GridLayout(15, 1, 5, 5));
         // Ust tarafta 20 piksel bsşluk birak
-        panel.setBorder(new EmptyBorder(40, 0, 0, 0));
+        //panel.setBorder(new EmptyBorder(40, 0, 0, 0));
+
         panel.add(new JLabel(bundle.getString("app.name")));
         panel.add(new JLabel(bundle.getString("app.version")));
         panel.add(new JLabel(bundle.getString("app.date")));
         panel.add(new JLabel(bundle.getString("app.description")));
         panel.add(new JLabel(bundle.getString("contact.name")));
         panel.add(createLinkLabel(bundle.getString("contact.github"), bundle.getString("contact.github")));
+        panel.add(new JLabel(bundle.getString("app.help.description")));
+
+
+        panel.add(new JLabel("License: GPL-3.0"));
+
+
+
+
+
+        panel.add(new JLabel("Library: FlatLaf, Apache 2.0"));
+
+        panel.add(new JLabel("Library: flatlaf-intellij-themes, Apache 2.0"));
+
+        panel.add(new JLabel("Library: jfugue, Apache 2.0"));
+
+        panel.add(new JLabel("Library: jdatepicker, Simplified BSD"));
+
+        panel.add(new JLabel("Library: openjfx, GPL-2.0"));
 
         JPanel contentPanel = new JPanel(new BorderLayout());
         JLabel logoLabel = new JLabel(logoIcon);
