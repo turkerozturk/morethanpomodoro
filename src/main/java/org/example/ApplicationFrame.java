@@ -10,7 +10,7 @@ import org.example.jpanels.calculator.CalculatorPanel;
 import org.example.jpanels.configuration.ConfigurationEditorPanel;
 import org.example.jpanels.datetime.DateTimePanel;
 import org.example.jpanels.metronome.MetronomePanel;
-import org.example.jpanels.mididevice.MidiPanel;
+import org.example.jpanels.mididevice.MidiDeviceTestPanel;
 import org.example.jpanels.noisegenerator.NoisePanel;
 import org.example.jpanels.notes.NotesPanel;
 import org.example.jpanels.paint.CanvasPanel;
@@ -148,7 +148,7 @@ public class ApplicationFrame extends JFrame {
 
 
         JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
-        MidiPanel midiInstrumentPanel = new MidiPanel();
+        MidiDeviceTestPanel midiInstrumentPanel = new MidiDeviceTestPanel();
         jTabbedPaneForDeviceTesting.add("MIDI test", midiInstrumentPanel);
         AudioOutputPanel audioOutputPanel = new AudioOutputPanel();
         jTabbedPaneForDeviceTesting.addTab("Speaker Test", audioOutputPanel);
