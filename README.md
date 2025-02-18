@@ -38,11 +38,12 @@ Use it in an empty folder! Because it can overwrite some files with the same nam
 
 The EXE file is not native. Java 1.8 is required too.
 
-https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.0/morethanpomodoro20250218.exe
+
+https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.1/morethanpomodoro20250218.exe
 
 JAR file:
 
-https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.0/morethanpomodoro20250218.jar
+https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.1/morethanpomodoro20250218.jar
 
 
 
