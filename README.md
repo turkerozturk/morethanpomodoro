@@ -1,6 +1,14 @@
 # morethanpomodoro
 
 This software is still under development. 
+Use it on an empty folder to prevent overwriting some files with the same name, if they exist.
+
+Demonstration video:
+
+
+
+[![more than pomodoro v1 0 1](https://img.youtube.com/vi/MnrVY8t-cGk/0.jpg)](https://www.youtube.com/watch?v=MnrVY8t-cGk)
+
 
 Codes can change constantly. When compiled from source code, the application may not work. If anyone wants to try it, they can download the compiled file from the release page and try it. Although the compiled file contains many deficiencies and logical errors, it is in working order.
 
@@ -26,6 +34,18 @@ The primary goal moving forward is to improve stability, fix bugs, and complete 
 
 ### Direct Download
 
+Use it in an empty folder! Because it can overwrite some files with the same name, if they exist.
+
+The EXE file is not native. Java 1.8 is required too.
+
+https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.0/morethanpomodoro20250218.exe
+
+JAR file:
+
+https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.0/morethanpomodoro20250218.jar
+
+
+
 The EXE file is not native. Java 1.8 is required too.
 
 https://github.com/turkerozturk/morethanpomodoro/releases/download/v1.0.0/morethanpomodoro20250210.exe
@@ -47,6 +67,11 @@ Run the following command:
 https://github.com/turkerozturk/morethanpomodoro/commits/v1.0.0
 
 ### Screenshots
+
+2025-02-18
+![Screenshot](screenshot20250218.jpg)
+
+
 
 2025-02-15
 ![Screenshot](screenshot20250215.png)
