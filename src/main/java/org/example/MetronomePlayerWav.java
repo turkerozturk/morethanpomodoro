@@ -2,8 +2,8 @@ package org.example;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
-import org.jfugue.player.Player;
-import org.jfugue.rhythm.Rhythm;
+
+
 
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
@@ -110,45 +110,8 @@ public class MetronomePlayerWav {
 
 
 
-    Player player = new Player();
-    // JFugue Rhythm kullanarak bir 'tick' sesi oluşturma
-    Rhythm rhythm = new Rhythm()
-            .addLayer("*"); // O: Kick Drum sesi
-    public void playTickJFugue() {
-
-        /*
-        new Thread(() -> {
-
-            player.play("T60 V9 Cq");
-        }).start();
-
-        */
-        // Yeni bir thread ile çalıştır, ana işleyişi engellemesin.
-        /*
-               // player.play("V9 T200 Cq");
-
-        new Thread(() -> {
-            try {
-                // Ses seviyesini belirlemek için MIDI Velocity hesaplaması (0-127 arası)
-                int velocity = (int) (volumePercent / 100.0 * 127);
 
 
-
-                // .setVolume(velocity);
-
-                //Player player = new Player();
-                //player.play(rhythm.getPattern().setTempo(60 * 1000 / durationMillis));
-
-                //player.play("I[TROMBONE] G4qi G3s A3is B2is");
-                player.play("V9 Cq");
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start(); // Yeni bir thread ile çalıştır, ana işleyişi engellemesin.
-        */
-    }
 
 
 
