@@ -3,7 +3,7 @@ package org.example.jpanels.pomodoro;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.example.jpanels.pomodoro.subpanels.EndingSoundPanel;
-import org.example.jpanels.pomodoro.subpanels.TickSoundPanel;
+import org.example.jpanels.pomodoro.subpanels.TickSoundWavPanel;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 // PomodoroService sınıfını daha önce verdiğimiz kodla oluşturduğunuzu varsayıyoruz.
 public class PomodoroAppPanel extends JPanel{
 
-    private TickSoundPanel tickSoundPanel;
+    private TickSoundWavPanel tickSoundPanel;
     private EndingSoundPanel endingSoundPanel;
     private JLabel remainingLabel, sessionLabel;
     private JToggleButton startStopButton;
@@ -281,7 +281,7 @@ public class PomodoroAppPanel extends JPanel{
             }
         });
 
-        tickSoundPanel = new TickSoundPanel();
+        tickSoundPanel = new TickSoundWavPanel();
         tabbedPane.addTab(translate("tab.panel.tick.sound.title"), tickSoundPanel);
         tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(tickSoundPanel));
 
@@ -360,7 +360,7 @@ public class PomodoroAppPanel extends JPanel{
     // end session info text
 
 
-    public TickSoundPanel getTickSoundPanel() {
+    public TickSoundWavPanel getTickSoundPanel() {
         return tickSoundPanel;
     }
 
