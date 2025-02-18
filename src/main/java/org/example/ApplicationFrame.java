@@ -9,6 +9,7 @@ import org.example.jpanels.binaural.BinauralPanel;
 import org.example.jpanels.calculator.CalculatorPanel;
 import org.example.jpanels.configuration.ConfigurationEditorPanel;
 import org.example.jpanels.datetime.DateTimePanel;
+import org.example.jpanels.games.BrickBreakerGamePanel;
 import org.example.jpanels.metronome.MetronomePanel;
 import org.example.jpanels.mididevice.MidiDeviceTestPanel;
 import org.example.jpanels.noisegenerator.NoisePanel;
@@ -71,15 +72,10 @@ public class ApplicationFrame extends JFrame {
 
 
         toggleAlwaysOnTopButton = new JToggleButton(translate("frame.always.on.top"));
-        toggleHistoryLoggingButton = new JToggleButton(translate("button.logging.history.initial"));
-
-        int historyLoggingAsInt = Integer.parseInt(props.getProperty("logging.history.toggle", "0"));
-        isHistoryLoggingEnabled = (historyLoggingAsInt == 1);
-        toggleHistoryLoggingButton.setSelected(isHistoryLoggingEnabled);
 
 
-        int alwaysOnTopAsInt = Integer.parseInt(props.getProperty("always.on.top.toggle", "1"));
-        isAlwaysOnTop = (alwaysOnTopAsInt == 1);
+
+        isAlwaysOnTop = Integer.parseInt(props.getProperty("gui.is.always.on.top")) == 1;
         toggleAlwaysOnTopButton.setSelected(isAlwaysOnTop);
         if (toggleAlwaysOnTopButton.isSelected()) {
             toggleAlwaysOnTopButton.setText(translate("button.always.on.top.on"));
@@ -155,6 +151,8 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForOtherTools.addTab("Piano", pianoPanel);
         DateTimePanel dateTimePanel = new DateTimePanel();
         jTabbedPaneForOtherTools.addTab("Date Diff", dateTimePanel);
+        BrickBreakerGamePanel brickBreakerGamePanel = new BrickBreakerGamePanel();
+        jTabbedPaneForOtherTools.addTab("Game", brickBreakerGamePanel);
 
 
         tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
@@ -184,15 +182,22 @@ public class ApplicationFrame extends JFrame {
         // bitti flatpak
 
 
-        ConfigurationEditorPanel configurationEditorPanel = new ConfigurationEditorPanel();
-        applicationSettingsPanel.addTab("Config", configurationEditorPanel);
+
 
         JPanel globalOptionsPanel = new JPanel();
 
         globalOptionsPanel.add(toggleAlwaysOnTopButton);
 
+        /* TO DO in the future
+        toggleHistoryLoggingButton = new JToggleButton(translate("button.logging.history.initial"));
+
+        int historyLoggingAsInt = Integer.parseInt(props.getProperty("logging.history.toggle", "0"));
+        isHistoryLoggingEnabled = (historyLoggingAsInt == 1);
+        toggleHistoryLoggingButton.setSelected(isHistoryLoggingEnabled);
+
         toggleHistoryLoggingButton.addActionListener(e -> toggleHistoryLogging());
         globalOptionsPanel.add(toggleHistoryLoggingButton);
+        */
 
         JButton resetFrameResolutionButton = new JButton("Reset Window Dimension");
         resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
@@ -208,9 +213,10 @@ public class ApplicationFrame extends JFrame {
         globalOptionsPanel.add(globalMuteButton);
 
 
-        applicationSettingsPanel.addTab("Global", globalOptionsPanel);
+        applicationSettingsPanel.addTab("Window", globalOptionsPanel);
 
-
+        ConfigurationEditorPanel configurationEditorPanel = new ConfigurationEditorPanel();
+        applicationSettingsPanel.addTab("Config", configurationEditorPanel);
 
 
         tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
