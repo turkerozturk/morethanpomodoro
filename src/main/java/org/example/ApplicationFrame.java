@@ -174,6 +174,16 @@ public class ApplicationFrame extends JFrame {
 
         JTabbedPane applicationSettingsPanel = new JTabbedPane();
 
+        // basla flatpak bilgi: flatpak tema
+
+        ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
+
+
+        applicationSettingsPanel.addTab("Theme", themeSelectorPanel);
+
+        // bitti flatpak
+
+
         ConfigurationEditorPanel configurationEditorPanel = new ConfigurationEditorPanel();
         applicationSettingsPanel.addTab("Config", configurationEditorPanel);
 
@@ -199,14 +209,7 @@ public class ApplicationFrame extends JFrame {
 
 
         applicationSettingsPanel.addTab("Global", globalOptionsPanel);
-        // basla flatpak bilgi: flatpak tema
 
-        ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
-
-
-        applicationSettingsPanel.addTab("Theme", themeSelectorPanel);
-
-        // bitti flatpak
 
 
 

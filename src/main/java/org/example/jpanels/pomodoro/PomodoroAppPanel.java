@@ -36,6 +36,9 @@ public class PomodoroAppPanel extends JPanel{
     // Durum takibi için: Timer çalışıyorsa "stop" butonuyla durdurulmalı
     private boolean isRunning = false;
 
+    private final LanguageManager bundle = LanguageManager.getInstance();
+    private final ConfigManager props = ConfigManager.getInstance();
+
     private void prepareNExt() {
         service.next();
         // Butonlardan gelen reset sonrasında spinner'ları da güncelleyelim
@@ -128,7 +131,7 @@ public class PomodoroAppPanel extends JPanel{
         startStopButton = new JToggleButton("Start");
         resetButton = new JButton("Reset");
         nextButton = new JButton("Next");
-        autoPlayToggle = new JToggleButton("AutoPlay OFF");
+        autoPlayToggle = new JToggleButton(bundle.getString("autoplay.off"));
 
         buttonPanel.add(startStopButton);
         buttonPanel.add(resetButton);
@@ -187,7 +190,9 @@ public class PomodoroAppPanel extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 boolean selected = autoPlayToggle.isSelected();
                 service.enableAutoPlay(selected);
-                autoPlayToggle.setText(selected ? "AutoPlay ON" : "AutoPlay OFF");
+                autoPlayToggle.setText(selected ?
+                        bundle.getString("autoplay.on")
+                        : bundle.getString("autoplay.off"));
             }
         });
 
@@ -329,8 +334,8 @@ public class PomodoroAppPanel extends JPanel{
         });
     }
     */
-    LanguageManager bundle = LanguageManager.getInstance();
-    ConfigManager props = ConfigManager.getInstance();
+
+
 
     public String translate(String key) {
         return bundle.getString(key);

@@ -27,7 +27,7 @@ public class MetronomePlayerWav {
 
             // 1. Çalışma dizininde dosya var mı kontrol et
             File externalFile = new File(fileName);
-            System.out.println(fileName);
+            //System.out.println(fileName);
             if (externalFile.exists()) {
                 audioStream = AudioSystem.getAudioInputStream(externalFile);
             } else {
@@ -184,7 +184,7 @@ public class MetronomePlayerWav {
     }
 
     private void playSound() {
-        System.out.println(soundType);
+        //System.out.println(soundType);
         if ("MIDI".equalsIgnoreCase(soundType)) {
             playMidiNote();
             //playTickJFugue();
