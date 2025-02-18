@@ -204,21 +204,21 @@ public class PomodoroAppPanel extends JPanel{
         // Work tab
         JPanel workPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         workPanel.add(new JLabel("Work Duration (min): "));
-        workSpinner = new JSpinner(new SpinnerNumberModel(service.getWorkDurationMinutes(), 1, 120, 1));
+        workSpinner = new JSpinner(new SpinnerNumberModel(service.getWorkDurationMinutes(), 1, 1440, 1));
         workPanel.add(workSpinner);
         tabbedPane.addTab("Work", workPanel);
 
         // Short Break tab
         JPanel shortBreakPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         shortBreakPanel.add(new JLabel("Short Break (min): "));
-        shortBreakSpinner = new JSpinner(new SpinnerNumberModel(service.getShortBreakDurationMinutes(), 1, 60, 1));
+        shortBreakSpinner = new JSpinner(new SpinnerNumberModel(service.getShortBreakDurationMinutes(), 1, 1440, 1));
         shortBreakPanel.add(shortBreakSpinner);
         tabbedPane.addTab("Short Break", shortBreakPanel);
 
         // Long Break tab
         JPanel longBreakPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         longBreakPanel.add(new JLabel("Long Break (min): "));
-        longBreakSpinner = new JSpinner(new SpinnerNumberModel(service.getLongBreakDurationMinutes(), 1, 120, 1));
+        longBreakSpinner = new JSpinner(new SpinnerNumberModel(service.getLongBreakDurationMinutes(), 1, 1440, 1));
         longBreakPanel.add(longBreakSpinner);
         tabbedPane.addTab("Long Break", longBreakPanel);
 

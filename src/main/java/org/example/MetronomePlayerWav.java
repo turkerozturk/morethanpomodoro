@@ -179,8 +179,11 @@ public class MetronomePlayerWav {
     }
 
     private void resetRandomTicks() {
-        remainingTicksToPlay = random.nextInt(16) + 1; // 1-10 arasında rastgele çalma süresi
-        remainingTicksToMute = (counter == 0) ? 0 : random.nextInt(4) + 1;  // İlk başta 0, sonrasında rastgele
+        int randomTickParameter = Integer.parseInt(props.getProperty("pomodoro.tick.sound.random.max.sound"));
+        int randomSilenceParameter = Integer.parseInt(props.getProperty("pomodoro.tick.sound.random.max.silence"));
+
+        remainingTicksToPlay = random.nextInt(randomTickParameter) + 1; // 1-10 arasında rastgele çalma süresi
+        remainingTicksToMute = (counter == 0) ? 0 : random.nextInt(randomSilenceParameter) + 1;  // İlk başta 0, sonrasında rastgele
     }
 
     private void playSound() {

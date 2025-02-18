@@ -1,5 +1,8 @@
 package org.example.jpanels.pomodoro;
 
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -18,12 +21,12 @@ public class PomodoroService {
     }
 
     // Süreler dakika cinsinden; GUI üzerinden spinner ile ayarlanır.
-    private int workDurationMinutes = 25;
-    private int shortBreakDurationMinutes = 5;
-    private int longBreakDurationMinutes = 20;
+    private int workDurationMinutes;
+    private int shortBreakDurationMinutes;
+    private int longBreakDurationMinutes;
 
     // Toplam pomodoro sayısı (örneğin 4) ve mevcut çalışma seansı sayısı.
-    private int totalWorkSessions = 4;
+    private int totalWorkSessions;
     private int currentWorkSession = 1; // ilk çalışma seansı
 
     // Aktif zamanlayıcı bilgileri
@@ -63,13 +66,21 @@ public class PomodoroService {
     private int remainingSeconds;
 
     // Otomatik oynatma (auto play) özelliği
-    private boolean autoPlayEnabled = false;
+    private boolean autoPlayEnabled;
 
     // Timer nesnesi
     private Timer timer;
     private TimerTask currentTask;
 
+    private final LanguageManager bundle = LanguageManager.getInstance();
+    private final ConfigManager props = ConfigManager.getInstance();
+
     public PomodoroService() {
+        workDurationMinutes = Integer.parseInt(props.getProperty("pomodoro.timer.work.duration"));
+        shortBreakDurationMinutes = Integer.parseInt(props.getProperty("pomodoro.timer.short.break"));
+        longBreakDurationMinutes = Integer.parseInt(props.getProperty("pomodoro.timer.long.break"));
+        totalWorkSessions = Integer.parseInt(props.getProperty("pomodoro.timer.cycle.count"));
+        autoPlayEnabled = Integer.parseInt(props.getProperty("pomodoro.timer.autoplay.is.enabled")) == 1;
         // İlk başta aktif zamanlayıcıya ait süreyi ayarla.
         reset();
     }
