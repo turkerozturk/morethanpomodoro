@@ -74,7 +74,11 @@ public class PomodoroAppPanel extends JPanel{
             @Override
             public void onTick(int remainingSeconds) {
                 // İsterseniz kalan süre güncellenirken tick sound efektini çalıştırın.
-                tickSoundPanel.tick();
+                if(service.getActiveTimerType() == PomodoroService.PomodoroTimerType.WORK_TIME) {
+                    tickSoundPanel.tick();
+                } else {
+                    // SILENT while resting during short break and lon break.
+                }
             }
         });
         // end tick sound related code

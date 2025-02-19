@@ -120,7 +120,7 @@ public class MetronomePlayerWav {
     private final String soundType;       // "MIDI" veya "WAV"
     private final String soundFile;       // "beep.wav" vb.
 
-    private boolean isMuted = false;
+    private boolean isMuted;
     private boolean isRandomEnabled;
 
     private int remainingTicksToPlay = 0;
