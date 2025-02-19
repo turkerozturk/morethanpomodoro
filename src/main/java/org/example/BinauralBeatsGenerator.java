@@ -32,16 +32,28 @@ public class BinauralBeatsGenerator implements Runnable {
         stopRequested = true;
     }
 
-    public void setVolume(float volume) {
-        volume = volume / 100; // guideki slider 0 - 100 ve buradaki volume 0.0 ile 1.0 arasinda oldugundan bolme islemi yapiyoruz.
-        if (volume < 0.0f) {
-            this.volume = 0.0f;
-        } else if (volume > 1.0f) {
-            this.volume = 1.0f;
-        } else {
-            this.volume = volume;
+    public void setVolume(float volumeSliderValue) {
+        // 0..100 arasındaki slider değerini 0..1 aralığına indir
+        float linearVolume = volumeSliderValue / 100.0f;
+        if (linearVolume < 0.0f) {
+            linearVolume = 0.0f;
+        } else if (linearVolume > 1.0f) {
+            linearVolume = 1.0f;
         }
+
+        // dB aralığını belirleyin (örnek: -50 dB ile 0 dB arası)
+        float minDb = -80.0f;
+        float maxDb = 0.0f;
+
+        // lineer [0..1] -> dB [minDb..maxDb]
+        // volume=0 -> -50 dB, volume=1 -> 0 dB
+        float dB = minDb + (maxDb - minDb) * linearVolume;
+        // dB -> genlik (amplitude)
+        float amplitude = (float) Math.pow(10.0, dB / 20.0);
+
+        this.volume = amplitude;
     }
+
 
     @Override
     public void run() {
