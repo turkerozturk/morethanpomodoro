@@ -62,8 +62,10 @@ public class NoisePanel extends JPanel implements SoundController {
     }
 
     private void changeNoise() {
-        stopNoise();
-        playNoise();
+        if(playStopButton.isSelected()) {
+            stopNoise();
+            playNoise();
+        }
     }
 
     private void playNoise() {
@@ -77,11 +79,8 @@ public class NoisePanel extends JPanel implements SoundController {
     }
 
     private void stopNoise() {
-        if(noiseType.equals(NoiseType.ANOTHER_NOISE)) {
-            anotherNoiseGenerator.stop();
-        } else {
-            noiseGenerator.stop();
-        }
+
+
         anotherNoiseGenerator.stop();
 
         noiseGenerator.stop();
