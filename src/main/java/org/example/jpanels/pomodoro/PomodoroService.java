@@ -2,6 +2,8 @@ package org.example.jpanels.pomodoro;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class PomodoroService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PomodoroService.class);
 
     // Zamanlayıcı tipleri
     public enum PomodoroTimerType {
@@ -81,6 +85,13 @@ public class PomodoroService {
         longBreakDurationMinutes = Integer.parseInt(props.getProperty("pomodoro.timer.long.break"));
         totalWorkSessions = Integer.parseInt(props.getProperty("pomodoro.timer.cycle.count"));
         autoPlayEnabled = Integer.parseInt(props.getProperty("pomodoro.timer.autoplay.is.enabled")) == 1;
+        /*
+        logger.info(String.format("%s %s %s %s %s",workDurationMinutes,
+                shortBreakDurationMinutes,
+                longBreakDurationMinutes,
+                totalWorkSessions,
+                autoPlayEnabled));
+        */
         // İlk başta aktif zamanlayıcıya ait süreyi ayarla.
         reset();
     }
@@ -315,5 +326,13 @@ public class PomodoroService {
 
     public int getTotalWorkSessions() {
         return totalWorkSessions;
+    }
+
+    public boolean isAutoPlayEnabled() {
+        return autoPlayEnabled;
+    }
+
+    public void setAutoPlayEnabled(boolean autoPlayEnabled) {
+        this.autoPlayEnabled = autoPlayEnabled;
     }
 }

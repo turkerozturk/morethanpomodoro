@@ -4,6 +4,8 @@ import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.example.jpanels.pomodoro.subpanels.EndingSoundPanel;
 import org.example.jpanels.pomodoro.subpanels.TickSoundWavPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -14,6 +16,9 @@ import java.awt.event.ActionListener;
 
 // PomodoroService sınıfını daha önce verdiğimiz kodla oluşturduğunuzu varsayıyoruz.
 public class PomodoroAppPanel extends JPanel{
+
+    private static final Logger logger = LoggerFactory.getLogger(PomodoroAppPanel.class);
+
 
     private TickSoundWavPanel tickSoundPanel;
     private EndingSoundPanel endingSoundPanel;
@@ -60,6 +65,7 @@ public class PomodoroAppPanel extends JPanel{
 
     public PomodoroAppPanel() {
         service = new PomodoroService();
+
         initialize();
         startDisplayUpdater();
 
@@ -79,8 +85,13 @@ public class PomodoroAppPanel extends JPanel{
             public void onTimerFinished() {
                 endingSoundPanel.playFrequencyBeepIfSelected();
                 if(!autoPlayToggle.isSelected()) {
+
                     prepareNExt();
-                } // else autoplay is  switching to next already. This if block prevents from double forward.
+                } else {
+                    // else autoplay is  switching to next already. This if block prevents from double forward.
+                    // autoplay config dosyasinda 1 iken ustteki if den dolayi pas geciyordu, acilista
+                    // autoplay buttonun isSelected durumuna gore ser selected yapinca duzeldi problem..
+                }
             }
         });
         // end ending sound related code
@@ -131,7 +142,13 @@ public class PomodoroAppPanel extends JPanel{
         startStopButton = new JToggleButton("Start");
         resetButton = new JButton("Reset");
         nextButton = new JButton("Next");
-        autoPlayToggle = new JToggleButton(bundle.getString("autoplay.off"));
+        autoPlayToggle = new JToggleButton();
+        autoPlayToggle.setSelected(service.isAutoPlayEnabled());
+        if(service.isAutoPlayEnabled()) {
+            autoPlayToggle.setText(bundle.getString("autoplay.on"));
+        } else {
+            autoPlayToggle.setText(bundle.getString("autoplay.off"));
+        }
 
         buttonPanel.add(startStopButton);
         buttonPanel.add(resetButton);
@@ -347,6 +364,7 @@ public class PomodoroAppPanel extends JPanel{
     private void updateDisplay() {
         remainingLabel.setText(formatTime(service.getRemainingSeconds()));
         sessionLabel.setText(getSessionInfo());
+       // logger.info(String.format("remaining: %s, session %s",formatTime(service.getRemainingSeconds()), getSessionInfo()));
     }
 
     // Aktif timer türüne göre seans bilgisini döner
