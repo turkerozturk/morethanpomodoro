@@ -8,6 +8,7 @@ import org.example.jpanels.analogclock.AnalogClockPanel;
 import org.example.jpanels.binaural.BinauralPanel;
 import org.example.jpanels.calculator.CalculatorPanel;
 import org.example.jpanels.configuration.ConfigurationEditorPanel;
+import org.example.jpanels.countdowntimer.CountdownTimerPanel;
 import org.example.jpanels.datetime.DateTimePanel;
 import org.example.jpanels.games.BrickBreakerGamePanel;
 import org.example.jpanels.metronome.MetronomePanel;
@@ -151,6 +152,10 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForOtherTools.addTab("Piano", pianoPanel);
         DateTimePanel dateTimePanel = new DateTimePanel();
         jTabbedPaneForOtherTools.addTab("Date Diff", dateTimePanel);
+        /*
+        CountdownTimerPanel countdownTimerPanel = new CountdownTimerPanel();
+        jTabbedPaneForOtherTools.addTab("Countdown", countdownTimerPanel);
+        */
         BrickBreakerGamePanel brickBreakerGamePanel = new BrickBreakerGamePanel();
         jTabbedPaneForOtherTools.addTab("Game", brickBreakerGamePanel);
 
