@@ -34,6 +34,9 @@ The primary goal moving forward is to improve stability, fix bugs, and complete 
 
 ### Direct Download
 
+[!IMPORTANT]
+BUG FIX: You need to make pomodoro.timer.autoplay.is.enabled=0 in config.properties file. Open the software, create config.properties file from user interface, close the program, change the value from 1 to 0 in config file. Start the program. Then pomodoro timer will work correctly.
+
 Use it in an empty folder! Because it can overwrite some files with the same name, if they exist.
 
 The EXE file is not native. Java 1.8 is required too.
