@@ -76,8 +76,10 @@ public class PomodoroAppPanel extends JPanel{
                 // İsterseniz kalan süre güncellenirken tick sound efektini çalıştırın.
                 if(service.getActiveTimerType() == PomodoroService.PomodoroTimerType.WORK_TIME) {
                     tickSoundPanel.tick();
+                } else if(service.getActiveTimerType() == PomodoroService.PomodoroTimerType.SHORT_BREAK) {
+                    // SILENT while resting during long break. Dont forget here is ticking each second.
                 } else {
-                    // SILENT while resting during short break and lon break.
+                    // SILENT while resting during long break. Dont forget here is ticking each second.
                 }
             }
         });

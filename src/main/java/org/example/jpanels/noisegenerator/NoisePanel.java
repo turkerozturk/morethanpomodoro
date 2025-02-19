@@ -8,12 +8,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class NoisePanel extends JPanel implements SoundController {
-    private JComboBox<String> noiseTypeComboBox;
+
+    private JComboBox<NoiseType> noiseTypeComboBox;
     private JToggleButton playStopButton;
     private JSlider volumeSlider;
     private NoiseGenerator noiseGenerator;
+    private AnotherNoiseGenerator anotherNoiseGenerator;
 
-    private String noiseType;
+
+    private NoiseType noiseType;
 
     public JPanel getPlayerPanel() {
         return this;
@@ -22,7 +25,8 @@ public class NoisePanel extends JPanel implements SoundController {
     public NoisePanel() {
         setLayout(new BorderLayout());
 
-        noiseTypeComboBox = new JComboBox<>(new String[]{"White Noise", "Brown Noise", "Pink Noise"});
+        //noiseTypeComboBox = new JComboBox<>(new String[]{"White Noise", "Brown Noise", "Pink Noise", "Another Noise"});
+        noiseTypeComboBox = new JComboBox<>(NoiseType.values());
         playStopButton = new JToggleButton("Play");
         volumeSlider = new JSlider(0, 100, 50);
 
@@ -36,6 +40,7 @@ public class NoisePanel extends JPanel implements SoundController {
         add(controlPanel, BorderLayout.NORTH);
 
         noiseGenerator = new NoiseGenerator();
+        anotherNoiseGenerator = new AnotherNoiseGenerator();
 
         playStopButton.addActionListener(new ActionListener() {
             @Override
@@ -48,7 +53,10 @@ public class NoisePanel extends JPanel implements SoundController {
             }
         });
 
-        volumeSlider.addChangeListener(e -> noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f));
+        volumeSlider.addChangeListener(e ->
+                noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f
+
+        ));
 
         noiseTypeComboBox.addActionListener(e -> changeNoise());
     }
@@ -59,13 +67,25 @@ public class NoisePanel extends JPanel implements SoundController {
     }
 
     private void playNoise() {
-        noiseType = (String) noiseTypeComboBox.getSelectedItem();
-        noiseGenerator.start(noiseType);
+        noiseType = (NoiseType) noiseTypeComboBox.getSelectedItem();
+        if(noiseType.equals(NoiseType.ANOTHER_NOISE)) {
+            anotherNoiseGenerator.play();
+        } else {
+            noiseGenerator.start(noiseType.toString());
+        }
         playStopButton.setText("Stop");
     }
 
     private void stopNoise() {
+        if(noiseType.equals(NoiseType.ANOTHER_NOISE)) {
+            anotherNoiseGenerator.stop();
+        } else {
+            noiseGenerator.stop();
+        }
+        anotherNoiseGenerator.stop();
+
         noiseGenerator.stop();
+
         playStopButton.setText("Play");
     }
 

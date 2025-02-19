@@ -1,5 +1,6 @@
 package org.example.jpanels.pomodoro;
 
+import org.example.jpanels.noisegenerator.AnotherNoiseGenerator;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.slf4j.Logger;
@@ -23,6 +24,8 @@ public class PomodoroService {
     public enum PomodoroTimerStatus {
         STOPPED, PAUSED, PLAYING;
     }
+
+    AnotherNoiseGenerator audioSynthesizer;
 
     // Süreler dakika cinsinden; GUI üzerinden spinner ile ayarlanır.
     private int workDurationMinutes;
@@ -152,6 +155,11 @@ public class PomodoroService {
             reset();
         }
 
+        if(getActiveTimerType().equals(PomodoroTimerType.SHORT_BREAK)) {
+            audioSynthesizer = new AnotherNoiseGenerator();
+            audioSynthesizer.play((int) shortBreakDurationMinutes * 60 * 1000);
+        }
+
         timer = new Timer();
         currentTask = new TimerTask() {
             @Override
@@ -180,6 +188,9 @@ public class PomodoroService {
         }
         if(timer != null) {
             timer.cancel();
+        }
+        if(audioSynthesizer != null) {
+            audioSynthesizer.stop();
         }
     }
 
