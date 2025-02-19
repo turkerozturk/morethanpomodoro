@@ -1,5 +1,7 @@
 package org.example.jpanels.noisegenerator;
 
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
 import org.example.initial.jpanels.sound.controller.SoundController;
 
 import javax.swing.*;
@@ -22,13 +24,18 @@ public class NoisePanel extends JPanel implements SoundController {
         return this;
     }
 
+    private final LanguageManager bundle = LanguageManager.getInstance();
+    private final ConfigManager props = ConfigManager.getInstance();
+
     public NoisePanel() {
         setLayout(new BorderLayout());
+        int initialVolume = Integer.parseInt(props.getProperty("noise.generator.volume"));
 
         //noiseTypeComboBox = new JComboBox<>(new String[]{"White Noise", "Brown Noise", "Pink Noise", "Another Noise"});
         noiseTypeComboBox = new JComboBox<>(NoiseType.values());
         playStopButton = new JToggleButton("Play");
         volumeSlider = new JSlider(0, 100, 50);
+        volumeSlider.setValue(initialVolume);
 
         JPanel controlPanel = new JPanel();
         controlPanel.add(new JLabel("Noise Type:"));
@@ -40,6 +47,7 @@ public class NoisePanel extends JPanel implements SoundController {
         add(controlPanel, BorderLayout.NORTH);
 
         noiseGenerator = new NoiseGenerator();
+        noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f);
         anotherNoiseGenerator = new AnotherNoiseGenerator();
 
         playStopButton.addActionListener(new ActionListener() {
