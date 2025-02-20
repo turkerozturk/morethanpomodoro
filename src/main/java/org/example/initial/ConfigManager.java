@@ -1,9 +1,7 @@
 package org.example.initial;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public class ConfigManager {
@@ -14,9 +12,12 @@ public class ConfigManager {
         props = new Properties();
 
         // 1) Load default config from resources
+        // 1) Load default config from resources
         try (InputStream is = getClass().getResourceAsStream("/config.properties")) {
             if (is != null) {
-                props.load(is);
+                try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                    props.load(isr);
+                }
             } else {
                 throw new RuntimeException("config.properties not found in resources!");
             }
@@ -24,23 +25,25 @@ public class ConfigManager {
             throw new RuntimeException("Error loading default config.properties", e);
         }
 
+
         // 2) Check for config.properties in the application folder
         File localConfig = new File(System.getProperty("user.dir"), "config.properties");
         if (localConfig.exists()) {
-            try (FileInputStream fis = new FileInputStream(localConfig)) {
-                // 3) If exists, load it into localProps
-                Properties localProps = new Properties();
-                localProps.load(fis);
+            try (FileInputStream fis = new FileInputStream(localConfig);
+                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
 
-                // 4) Overwrite matching keys in props
+                Properties localProps = new Properties();
+                localProps.load(isr);
+
                 for (String key : localProps.stringPropertyNames()) {
                     props.setProperty(key, localProps.getProperty(key));
                 }
+
             } catch (IOException e) {
-                // You could choose to ignore or handle the exception
                 e.printStackTrace();
             }
         }
+
     }
 
     public static ConfigManager getInstance() {
