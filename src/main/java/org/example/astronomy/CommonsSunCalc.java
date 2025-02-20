@@ -403,7 +403,7 @@ public class CommonsSunCalc {
         return st;
     }
 
-
+// MoonPhase.compute().phase(MoonPhase.Phase.FULL_MOON);
 
 
     public String getSunRiseFormatted() {

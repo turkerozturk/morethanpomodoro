@@ -57,7 +57,19 @@ public class SunAndMoonPanel extends JPanel {
         tabbedPane.addTab(bundle.getString("suncalc.tab.sun.sets"), createSetDetailsTab());
         tabbedPane.addTab(bundle.getString("suncalc.tab.moon"), createMoonDetailsTab());
 
-        // TODO moon phases
+        // Örnek olarak bu ayı (içinde bulunduğumuz) verelim:
+        // (Veya sabit bir yıl/ay verebilirsiniz)
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        int year = cal.get(java.util.Calendar.YEAR);
+        int month = cal.get(java.util.Calendar.MONTH);
+
+
+
+
+        MoonPhasesPanel moonPhasesPanel = new MoonPhasesPanel(year, month);
+        tabbedPane.addTab(bundle.getString("suncalc.tab.moon.phases"), moonPhasesPanel);
+
+        // TODO other moon data
 
         add(tabbedPane, BorderLayout.CENTER);
     }
