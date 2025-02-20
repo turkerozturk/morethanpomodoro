@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.astronomy.SunAndMoonPanel;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.example.initial.jpanels.sound.controller.SoundController;
@@ -13,6 +14,8 @@ import org.example.jpanels.datetime.DateTimePanel;
 import org.example.jpanels.games.BrickBreakerGamePanel;
 import org.example.jpanels.metronome.MetronomePanel;
 import org.example.jpanels.mididevice.MidiDeviceTestPanel;
+import org.example.jpanels.mp3.Mp3PlayerFx;
+import org.example.jpanels.mp3.Mp3PlayerPanel;
 import org.example.jpanels.noisegenerator.NoisePanel;
 import org.example.jpanels.notes.NotesPanel;
 import org.example.jpanels.paint.CanvasPanel;
@@ -30,11 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationFrame extends JFrame {
-    /*
+
         private final Mp3PlayerFx playerPanel;
         private final Mp3PlayerFx playerPanel2;
         private final Mp3PlayerFx playerPanel3;
-        */
+
     private JButton globalMuteButton;
 
     private JButton muteButtonAtTab;
@@ -105,7 +108,7 @@ public class ApplicationFrame extends JFrame {
 
 
         tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
-/*
+
 
         JTabbedPane jTabbedPaneForMp3 = new JTabbedPane();
          playerPanel = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
@@ -120,7 +123,7 @@ public class ApplicationFrame extends JFrame {
         Mp3PlayerPanel mp3PlayerPanel = new Mp3PlayerPanel(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
 
         tabbedPanel.addTab("New MP3", mp3PlayerPanel);
-*/
+
 
 
 
@@ -158,6 +161,8 @@ public class ApplicationFrame extends JFrame {
         */
         BrickBreakerGamePanel brickBreakerGamePanel = new BrickBreakerGamePanel();
         jTabbedPaneForOtherTools.addTab("Game", brickBreakerGamePanel);
+        SunAndMoonPanel sunAndMoonPanel = new SunAndMoonPanel();
+        jTabbedPaneForOtherTools.addTab("Sun & Moon", sunAndMoonPanel);
 
 
         tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
@@ -237,11 +242,11 @@ public class ApplicationFrame extends JFrame {
 
 
 
-/*
+
         soundControllers.add(playerPanel);
         soundControllers.add(playerPanel2);
         soundControllers.add(playerPanel3);
-*/
+
         soundControllers.add(binauralPanel);
         soundControllers.add(noisePanel);
         soundControllers.add(metronomePanel);
