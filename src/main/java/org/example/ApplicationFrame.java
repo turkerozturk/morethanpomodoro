@@ -33,11 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationFrame extends JFrame {
-
+/*
         private final Mp3PlayerFx playerPanel;
         private final Mp3PlayerFx playerPanel2;
         private final Mp3PlayerFx playerPanel3;
-
+*/
     private JButton globalMuteButton;
 
     private JButton muteButtonAtTab;
@@ -109,7 +109,7 @@ public class ApplicationFrame extends JFrame {
 
         tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
 
-
+/*
         JTabbedPane jTabbedPaneForMp3 = new JTabbedPane();
          playerPanel = new Mp3PlayerFx(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
         jTabbedPaneForMp3.addTab("MP3 Player", playerPanel.getPlayerPanel());
@@ -123,7 +123,7 @@ public class ApplicationFrame extends JFrame {
         Mp3PlayerPanel mp3PlayerPanel = new Mp3PlayerPanel(props.getProperty("mp3.playlist.number.1.file.location", "playlist1.txt"));
 
         tabbedPanel.addTab("New MP3", mp3PlayerPanel);
-
+*/
 
 
 
@@ -242,11 +242,11 @@ public class ApplicationFrame extends JFrame {
 
 
 
-
+/*
         soundControllers.add(playerPanel);
         soundControllers.add(playerPanel2);
         soundControllers.add(playerPanel3);
-
+*/
         soundControllers.add(binauralPanel);
         soundControllers.add(noisePanel);
         soundControllers.add(metronomePanel);
