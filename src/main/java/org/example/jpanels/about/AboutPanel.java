@@ -15,6 +15,8 @@ public class AboutPanel extends JPanel {
 
 
     public AboutPanel() {
+
+        JTabbedPane jTabbedPaneAbout = new JTabbedPane();
         //this.logoIcon = new ImageIcon(getClass().getClassLoader().getResource("logo.png")); // Logonun yolu
 
         /*
@@ -25,49 +27,60 @@ public class AboutPanel extends JPanel {
         ImageIcon logoIcon = new ImageIcon(getClass().getClassLoader().getResource("logo.png"));
 
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(15, 1, 5, 5));
+        JPanel aboutMySoftwarePanel = new JPanel();
+        aboutMySoftwarePanel.setLayout(new GridLayout(15, 1, 5, 5));
         // Ust tarafta 20 piksel bsşluk birak
         //panel.setBorder(new EmptyBorder(40, 0, 0, 0));
 
-        panel.add(new JLabel(bundle.getString("app.name")));
-        panel.add(new JLabel(bundle.getString("app.version")));
-        panel.add(new JLabel(bundle.getString("app.date")));
-        panel.add(new JLabel(bundle.getString("app.description")));
-        panel.add(new JLabel(bundle.getString("contact.name")));
-        panel.add(createLinkLabel(bundle.getString("contact.github"), bundle.getString("contact.github")));
-        panel.add(new JLabel(bundle.getString("app.help.description")));
+        aboutMySoftwarePanel.add(new JLabel(bundle.getString("app.name")));
+        aboutMySoftwarePanel.add(new JLabel(bundle.getString("app.version")));
+        aboutMySoftwarePanel.add(new JLabel(bundle.getString("app.date")));
+        aboutMySoftwarePanel.add(new JLabel(bundle.getString("app.description")));
+        aboutMySoftwarePanel.add(new JLabel(bundle.getString("contact.name")));
+        aboutMySoftwarePanel.add(createLinkLabel(bundle.getString("contact.github"), bundle.getString("contact.github")));
+        aboutMySoftwarePanel.add(new JLabel(bundle.getString("app.help.description")));
+        aboutMySoftwarePanel.add(new JLabel("License: GPL-3.0"));
 
 
-        panel.add(new JLabel("License: GPL-3.0"));
-
-
-
-
-
-        panel.add(new JLabel("Library: FlatLaf, Apache 2.0"));
-
-        panel.add(new JLabel("Library: flatlaf-intellij-themes, Apache 2.0"));
-
-        panel.add(new JLabel("Library: jfugue, Apache 2.0"));
-
-        panel.add(new JLabel("Library: jdatepicker, Simplified BSD"));
-
-        panel.add(new JLabel("Library: openjfx, GPL-2.0"));
 
         JPanel contentPanel = new JPanel(new BorderLayout());
         JLabel logoLabel = new JLabel(logoIcon);
         contentPanel.add(logoLabel, BorderLayout.WEST);
-        contentPanel.add(panel, BorderLayout.CENTER);
+        contentPanel.add(aboutMySoftwarePanel, BorderLayout.CENTER);
 
         JPanel wrapperPanel = new JPanel(new GridBagLayout());
-
-
         wrapperPanel.add(contentPanel);
 
 
 
-        this.add(wrapperPanel);
+
+        jTabbedPaneAbout.addTab("About MoreThanPomodoro", wrapperPanel);
+
+
+        JPanel aboutThirdPartyLibrariesPanel = new JPanel();
+        aboutThirdPartyLibrariesPanel.setLayout(new GridLayout(15, 1, 5, 5));
+
+        aboutThirdPartyLibrariesPanel.add(new JLabel("Library: FlatLaf, Apache 2.0"));
+
+        aboutThirdPartyLibrariesPanel.add(new JLabel("Library: flatlaf-intellij-themes, Apache 2.0"));
+
+        aboutThirdPartyLibrariesPanel.add(new JLabel("Library: jfugue, Apache 2.0"));
+
+        aboutThirdPartyLibrariesPanel.add(new JLabel("Library: jdatepicker, Simplified BSD"));
+
+        aboutThirdPartyLibrariesPanel.add(new JLabel("Library: openjfx, GPL-2.0"));
+
+        aboutThirdPartyLibrariesPanel.add(new JLabel("Library: commons-suncalc, Apache 2.0"));
+
+        jTabbedPaneAbout.addTab("About 3. Party Libraries", aboutThirdPartyLibrariesPanel);
+
+
+
+
+
+
+
+        this.add(jTabbedPaneAbout);
     }
 
     private JLabel createLinkLabel(String text, String url) {
