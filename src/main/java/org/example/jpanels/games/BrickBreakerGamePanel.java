@@ -97,6 +97,17 @@ public class BrickBreakerGamePanel extends JPanel {
         Rectangle paddleRect = new Rectangle((int) paddleX, getHeight() - 30, (int) paddleWidth, (int) paddleHeight);
 
         if (ballRect.intersects(paddleRect)) {
+            // Topun paddle'a çarptığı x noktası
+            double collisionPoint = ballX + ballRadius;
+            // Paddle'ın orta noktası
+            double paddleCenter = paddleX + paddleWidth / 2.0;
+            // Orta noktadan uzaklık (normalize edilmiş)
+            double distanceFromCenter = (collisionPoint - paddleCenter) / (paddleWidth / 2.0);
+
+            // dx'i güncelle (orta noktadan uzaklaştıkça daha fazla yön değiştir)
+            dx += distanceFromCenter * 2; // 2 katsayısı çarpışmanın etkisini artırır, gerekirse ayarlanabilir.
+
+            // Çarpışma sonrası dy yön değiştirir
             dy = -dy;
         }
 
