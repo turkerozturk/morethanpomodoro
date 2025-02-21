@@ -18,7 +18,7 @@ import org.example.jpanels.mididevice.MidiDeviceTestPanel;
 import org.example.jpanels.noisegenerator.NoisePanel;
 import org.example.jpanels.notes.NotesPanel;
 import org.example.jpanels.paint.CanvasPanel;
-import org.example.jpanels.piano.PianoPanel;
+//import org.example.jpanels.piano.PianoPanel;
 import org.example.jpanels.speakertest.AudioOutputPanel;
 import org.example.jpanels.systeminfo.SystemInfoPanel;
 import org.example.jpanels.taptempo.TapTempoTool;
@@ -178,8 +178,10 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForOtherTools.addTab("Calculator", calculatorPanel);
         TapTempoTool tapTempoTool = new TapTempoTool();
         jTabbedPaneForOtherTools.addTab("Tap Tempo", tapTempoTool);
+        /*
         PianoPanel pianoPanel = new PianoPanel();
         jTabbedPaneForOtherTools.addTab("Piano", pianoPanel);
+         */
         DateTimePanel dateTimePanel = new DateTimePanel();
         jTabbedPaneForOtherTools.addTab("Date Diff", dateTimePanel);
         /*
