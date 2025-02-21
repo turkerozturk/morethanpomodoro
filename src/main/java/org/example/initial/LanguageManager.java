@@ -40,4 +40,8 @@ public class LanguageManager {
         locale = new Locale(language, country);
         bundle = ResourceBundle.getBundle("messages", locale);
     }
+
+    public boolean containsKey(String key) {
+        return bundle.containsKey(key);
+    }
 }
