@@ -11,7 +11,6 @@ import org.example.jpanels.calculator.CalculatorPanel;
 import org.example.jpanels.configuration.ConfigurationEditorPanel;
 //import org.example.jpanels.countdowntimer.CountdownTimerPanel;
 import org.example.jpanels.datetime.DateTimePanel;
-import org.example.jpanels.games.BrickBreakerGamePanel;
 import org.example.jpanels.metronome.MetronomePanel;
 import org.example.jpanels.mididevice.MidiDeviceTestPanel;
 //import org.example.jpanels.mp3.Mp3PlayerFx;
@@ -26,11 +25,17 @@ import org.example.jpanels.taptempo.TapTempoTool;
 import org.example.jpanels.pomodoro.PomodoroAppPanel;
 import org.example.jpanels.textquotes.RandomTextDisplayPanel;
 import org.example.jpanels.theme.ThemeSelectorPanel;
+import org.example.plugin.PanelPlugin;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 public class ApplicationFrame extends JFrame {
 /*
@@ -142,6 +147,28 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForOtherTools.addTab("Texts", textPanels);
 
 
+        // BASLA pluginlerin yuklenmesi
+        ServiceLoader<PanelPlugin> loader = loadPanelPlugins();
+        if(loader!=null) {
+        // 4) Her bulunan plugin nesnesini GUI'ye ekle
+            for (PanelPlugin plugin : loader) {
+                String tabName;
+
+                if (bundle.containsKey(plugin.getTabName())) {
+                    tabName = bundle.getString(plugin.getTabName());
+                } else {
+                    tabName = plugin.getTabName(); // Varsayılan değer olarak plugin ismini kullan
+                }
+
+                jTabbedPaneForOtherTools.addTab(tabName, plugin.getPanel());
+            }
+
+        }
+        // BITTI pluginlerin yuklenmesi
+
+
+
+
 
         NotesPanel notesPanel = new NotesPanel();
         jTabbedPaneForOtherTools.addTab("Notes", notesPanel);
@@ -159,8 +186,11 @@ public class ApplicationFrame extends JFrame {
         CountdownTimerPanel countdownTimerPanel = new CountdownTimerPanel();
         jTabbedPaneForOtherTools.addTab("Countdown", countdownTimerPanel);
         */
+        /*
         BrickBreakerGamePanel brickBreakerGamePanel = new BrickBreakerGamePanel();
         jTabbedPaneForOtherTools.addTab("Game", brickBreakerGamePanel);
+
+         */
         SunAndMoonPanel sunAndMoonPanel = new SunAndMoonPanel();
         jTabbedPaneForOtherTools.addTab("Sun & Moon", sunAndMoonPanel);
 
@@ -398,6 +428,37 @@ public class ApplicationFrame extends JFrame {
             muteButtonAtTab.setText("🔇"); // 🔊 Ses Açık, 🔇 Ses Kapalı
 
         }
+    }
+
+    private ServiceLoader<PanelPlugin> loadPanelPlugins() {
+
+        File extDir = new File("extensions");
+        File[] jarFiles = extDir.listFiles((dir, name) -> name.endsWith(".jar"));
+        if (jarFiles == null) {
+            return null;
+        }
+
+// 1) Tüm eklenti jarlarının URL'lerini array'e atıyoruz
+        List<URL> urls = new ArrayList<>();
+        for (File jar : jarFiles) {
+            try {
+                urls.add(jar.toURI().toURL());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
+// 2) Kendimize özel bir ClassLoader oluşturuyoruz
+        URLClassLoader extensionClassLoader = new URLClassLoader(
+                urls.toArray(new URL[0]),
+                getClass().getClassLoader() // parent
+        );
+
+// 3) ServiceLoader kullanarak PanelPlugin arayüzünü implemente edenleri bul
+        ServiceLoader<PanelPlugin> loader = ServiceLoader.load(PanelPlugin.class, extensionClassLoader);
+
+        return loader;
+
     }
 
 
