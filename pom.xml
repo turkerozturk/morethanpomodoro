@@ -19,40 +19,22 @@
     </properties>
 
     <dependencies>
-        <!-- JavaFX MediaPlayer için -->
+
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-media</artifactId>
-            <version>22</version>
+            <groupId>org.example</groupId>
+            <artifactId>MtpPluginApi</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- JavaFX Swing entegrasyonu için (JFXPanel desteği) -->
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
-            <version>22</version>
+            <groupId>org.example</groupId>
+            <artifactId>mtp-sound-noise-generators-ext</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- JavaFX Base (temel kütüphane) -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
-            <version>22</version>
-        </dependency>
 
-        <!-- JavaFX Controls (Gerekirse) -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>22</version>
-        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.jdatepicker/jdatepicker -->
-        <dependency>
-            <groupId>org.jdatepicker</groupId>
-            <artifactId>jdatepicker</artifactId>
-            <version>1.3.4</version>
-        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf -->
         <dependency>
@@ -87,30 +69,25 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.shredzone.commons/commons-suncalc -->
-        <dependency>
-            <groupId>org.shredzone.commons</groupId>
-            <artifactId>commons-suncalc</artifactId>
-            <version>3.11</version>
-        </dependency>
 
-        <!--
+
+<!--
             <dependency>
               <groupId>com.github.JensPiegsa</groupId>
               <artifactId>jfugue</artifactId>
               <version>5.0.9</version>
             </dependency>
+-->
 
-            -->
     </dependencies>
-    <!--
+<!--
       <repositories>
         <repository>
           <id>jitpack.io</id>
           <url>https://jitpack.io</url>
         </repository>
       </repositories>
-    -->
+-->
     <build>
         <plugins>
             <!-- Çalıştırılabilir Fat JAR oluşturmak için -->

@@ -1,6 +1,6 @@
 package org.example.jpanels.pomodoro;
 
-import org.example.jpanels.noisegenerator.AnotherNoiseGenerator;
+import org.example.AnotherNoiseGenerator;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.slf4j.Logger;
