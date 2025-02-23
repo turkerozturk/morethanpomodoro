@@ -1,31 +1,31 @@
 package org.example;
 
-import org.example.astronomy.SunAndMoonPanel;
+//import org.example.astronomy.SunAndMoonPanel;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.example.initial.jpanels.sound.controller.SoundController;
 import org.example.jpanels.about.AboutPanel;
-import org.example.jpanels.analogclock.AnalogClockPanel;
-import org.example.jpanels.binaural.BinauralPanel;
-import org.example.jpanels.calculator.CalculatorPanel;
+//import org.example.jpanels.analogclock.AnalogClockPanel;
+//import org.example.jpanels.binaural.BinauralPanel;
+//import org.example.jpanels.calculator.CalculatorPanel;
 import org.example.jpanels.configuration.ConfigurationEditorPanel;
 //import org.example.jpanels.countdowntimer.CountdownTimerPanel;
-import org.example.jpanels.datetime.DateTimePanel;
-import org.example.jpanels.metronome.MetronomePanel;
-import org.example.jpanels.mididevice.MidiDeviceTestPanel;
+//import org.example.jpanels.datetime.DateTimePanel;
+//import org.example.jpanels.metronome.MetronomePanel;
+//import org.example.jpanels.mididevice.MidiDeviceTestPanel;
 //import org.example.jpanels.mp3.Mp3PlayerFx;
 //import org.example.jpanels.mp3.Mp3PlayerPanel;
-import org.example.jpanels.noisegenerator.NoisePanel;
-import org.example.jpanels.notes.NotesPanel;
-import org.example.jpanels.paint.CanvasPanel;
+//import org.example.jpanels.noisegenerator.NoisePanel;
+//import org.example.jpanels.notes.NotesPanel;
+//import org.example.jpanels.paint.CanvasPanel;
 //import org.example.jpanels.piano.PianoPanel;
-import org.example.jpanels.speakertest.AudioOutputPanel;
-import org.example.jpanels.systeminfo.SystemInfoPanel;
-import org.example.jpanels.taptempo.TapTempoTool;
+//import org.example.jpanels.speakertest.AudioOutputPanel;
+//import org.example.jpanels.systeminfo.SystemInfoPanel;
+//import org.example.jpanels.taptempo.TapTempoTool;
 import org.example.jpanels.pomodoro.PomodoroAppPanel;
-import org.example.jpanels.textquotes.RandomTextDisplayPanel;
+//import org.example.jpanels.textquotes.RandomTextDisplayPanel;
 import org.example.jpanels.theme.ThemeSelectorPanel;
-import org.example.plugin.PanelPlugin;
+//import org.example.plugin.PanelPlugin;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,14 +103,16 @@ public class ApplicationFrame extends JFrame {
 
 
         JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
-
+        /*
         BinauralPanel binauralPanel = new BinauralPanel();
         jTabbedPaneForNoises.addTab(translate("tab.panel.binaural.beats.title"), binauralPanel);
         NoisePanel noisePanel = new NoisePanel();
         jTabbedPaneForNoises.addTab("Noise Generator", noisePanel.getPlayerPanel());
+        */
+        /*
         MetronomePanel metronomePanel = new MetronomePanel();
         jTabbedPaneForNoises.addTab("Metronome", metronomePanel.getPlayerPanel());
-
+        */
 
         tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
 
@@ -134,9 +136,12 @@ public class ApplicationFrame extends JFrame {
 
         JTabbedPane jTabbedPaneForOtherTools = new JTabbedPane();
 
+        /*
         AnalogClockPanel analogClock = new AnalogClockPanel();
         jTabbedPaneForOtherTools.addTab("Clock", analogClock);
+        */
 
+        /*
         JTabbedPane textPanels = new JTabbedPane();
         RandomTextDisplayPanel randomTextDisplayPanel1 = new RandomTextDisplayPanel(1);
         RandomTextDisplayPanel randomTextDisplayPanel2 = new RandomTextDisplayPanel(2);
@@ -145,6 +150,7 @@ public class ApplicationFrame extends JFrame {
         textPanels.addTab("To Do", randomTextDisplayPanel2);
         textPanels.addTab("Memorize", randomTextDisplayPanel3);
         jTabbedPaneForOtherTools.addTab("Texts", textPanels);
+        */
 
 
         // BASLA pluginlerin yuklenmesi
@@ -169,21 +175,28 @@ public class ApplicationFrame extends JFrame {
 
 
 
-
+        /*
         NotesPanel notesPanel = new NotesPanel();
         jTabbedPaneForOtherTools.addTab("Notes", notesPanel);
         CanvasPanel canvasPanel = new CanvasPanel();
         jTabbedPaneForOtherTools.addTab("Paint", canvasPanel);
+        */
+        /*
         CalculatorPanel calculatorPanel = new CalculatorPanel();
         jTabbedPaneForOtherTools.addTab("Calculator", calculatorPanel);
         TapTempoTool tapTempoTool = new TapTempoTool();
         jTabbedPaneForOtherTools.addTab("Tap Tempo", tapTempoTool);
+        */
+
         /*
         PianoPanel pianoPanel = new PianoPanel();
         jTabbedPaneForOtherTools.addTab("Piano", pianoPanel);
          */
+        /*
         DateTimePanel dateTimePanel = new DateTimePanel();
         jTabbedPaneForOtherTools.addTab("Date Diff", dateTimePanel);
+
+         */
         /*
         CountdownTimerPanel countdownTimerPanel = new CountdownTimerPanel();
         jTabbedPaneForOtherTools.addTab("Countdown", countdownTimerPanel);
@@ -193,22 +206,28 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForOtherTools.addTab("Game", brickBreakerGamePanel);
 
          */
+        /*
         SunAndMoonPanel sunAndMoonPanel = new SunAndMoonPanel();
         jTabbedPaneForOtherTools.addTab("Sun & Moon", sunAndMoonPanel);
-
+        */
 
         tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
 
 
         JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
+        /*
         MidiDeviceTestPanel midiInstrumentPanel = new MidiDeviceTestPanel();
         jTabbedPaneForDeviceTesting.add("MIDI test", midiInstrumentPanel);
+        */
+        /*
         AudioOutputPanel audioOutputPanel = new AudioOutputPanel();
         jTabbedPaneForDeviceTesting.addTab("Speaker Test", audioOutputPanel);
+        */
 
+        /*
         SystemInfoPanel systemInfoPanel = new SystemInfoPanel();
         jTabbedPaneForDeviceTesting.addTab("System Info", systemInfoPanel);
-
+        */
         tabbedPanel.addTab("Device Tests", jTabbedPaneForDeviceTesting);
 
 
@@ -279,9 +298,10 @@ public class ApplicationFrame extends JFrame {
         soundControllers.add(playerPanel2);
         soundControllers.add(playerPanel3);
 */
-        soundControllers.add(binauralPanel);
-        soundControllers.add(noisePanel);
-        soundControllers.add(metronomePanel);
+        //soundControllers.add(binauralPanel);
+        //soundControllers.add(noisePanel);
+
+        // TODO soundControllers.add(metronomePanel);
 
         soundControllers.add(pomodoroApp.getTickSoundPanel());
         //soundControllers.add(pomodoroApp.getTickSoundMidiPanel());
