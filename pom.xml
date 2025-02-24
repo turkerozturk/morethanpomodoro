@@ -15,6 +15,24 @@
     <modules>
         <module>TurkerPomodoro-main</module>
         <module>project-extensions/mpt-system-info-ext</module>
+        <module>project-extensions/mtb-paint-ext</module>
+        <module>project-extensions/MtpPluginApi</module>
+        <module>project-extensions/mtp-brickbreakergame-ext</module>
+        <module>project-extensions/mtp-calculator-ext</module>
+        <module>project-extensions/mtp-clock-analog.ext</module>
+        <module>project-extensions/mtp-countdown-timer-ext</module>
+        <module>project-extensions/mtp-datediff-ext</module>
+        <module>project-extensions/mtp-device-test-midi-ext</module>
+        <module>project-extensions/mtp-metronome-ext</module>
+        <module>project-extensions/mtp-midipiano-ext</module>
+        <module>project-extensions/mtp-notes-ext</module>
+        <module>project-extensions/mtp-piano-ext</module>
+        <module>project-extensions/mtp-sound-binaural-beats-ext</module>
+        <module>project-extensions/mtp-sound-noise-generators-ext</module>
+        <module>project-extensions/mtp-sunandmoon-ext</module>
+        <module>project-extensions/mtp-tap-tempo-ext</module>
+        <module>project-extensions/mtp-test-speakers-ext</module>
+        <module>project-extensions/mtp-texts-quotes-ext</module>
     </modules>
 
     <properties>
