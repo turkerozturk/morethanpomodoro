@@ -24,6 +24,7 @@ package org.example;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 import org.example.initial.PluginLoader;
+import org.example.initial.PluginsLoader;
 import org.example.initial.jpanels.sound.controller.SoundController;
 //import org.example.jpanels.about.AboutPanel;
 //import org.example.jpanels.analogclock.AnalogClockPanel;
@@ -155,7 +156,6 @@ public class ApplicationFrame extends JFrame {
 
 
 
-        JTabbedPane jTabbedPaneForOtherTools = new JTabbedPane();
 
         /*
         AnalogClockPanel analogClock = new AnalogClockPanel();
@@ -175,9 +175,12 @@ public class ApplicationFrame extends JFrame {
 
 
         // BASLA pluginlerin yuklenmesi
-        ServiceLoader<PanelPlugin> loader = loadPanelPlugins();
+        ServiceLoader<PanelPlugin> loader = PluginsLoader.loadPanelPlugins();
         if(loader!=null) {
-        // 4) Her bulunan plugin nesnesini GUI'ye ekle
+
+            JTabbedPane jTabbedPaneForOtherTools = new JTabbedPane();
+
+            // 4) Her bulunan plugin nesnesini GUI'ye ekle
             for (PanelPlugin plugin : loader) {
                 String tabName;
 
@@ -189,6 +192,9 @@ public class ApplicationFrame extends JFrame {
 
                 jTabbedPaneForOtherTools.addTab(tabName, plugin.getPanel());
             }
+
+            tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
+
 
         }
         // BITTI pluginlerin yuklenmesi
@@ -232,7 +238,7 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForOtherTools.addTab("Sun & Moon", sunAndMoonPanel);
         */
 
-        tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
+
 
 
         //JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
@@ -480,36 +486,7 @@ public class ApplicationFrame extends JFrame {
         }
     }
 
-    private ServiceLoader<PanelPlugin> loadPanelPlugins() {
 
-        File extDir = new File("extensions");
-        File[] jarFiles = extDir.listFiles((dir, name) -> name.endsWith(".jar"));
-        if (jarFiles == null) {
-            return null;
-        }
-
-// 1) Tüm eklenti jarlarının URL'lerini array'e atıyoruz
-        List<URL> urls = new ArrayList<>();
-        for (File jar : jarFiles) {
-            try {
-                urls.add(jar.toURI().toURL());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
-
-// 2) Kendimize özel bir ClassLoader oluşturuyoruz
-        URLClassLoader extensionClassLoader = new URLClassLoader(
-                urls.toArray(new URL[0]),
-                getClass().getClassLoader() // parent
-        );
-
-// 3) ServiceLoader kullanarak PanelPlugin arayüzünü implemente edenleri bul
-        ServiceLoader<PanelPlugin> loader = ServiceLoader.load(PanelPlugin.class, extensionClassLoader);
-
-        return loader;
-
-    }
 
     /**
      * JTabbedPane içinde belirli bir sekmenin indeksini döndürür.
