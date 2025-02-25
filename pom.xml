@@ -35,6 +35,7 @@
         <module>project-extensions/mtp-texts-quotes-ext</module>
         <module>project-extensions/mtp-sound-mp3-player-ext</module>
         <module>project-extensions/mtp-configuration-editor-ext</module>
+        <module>project-extensions/mtp-about-ext</module>
     </modules>
 
     <properties>

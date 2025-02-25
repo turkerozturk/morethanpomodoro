@@ -18,18 +18,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/gpl-3.0.en.html>.
  */
-package org.example.jpanels.about;
+package org.example;
 
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.net.URI;
-import java.util.ResourceBundle;
 
-public class AboutPanel extends JPanel {
+public class AboutPanel extends JPanel implements PanelPlugin{
     LanguageManager bundle = LanguageManager.getInstance();
     ConfigManager props = ConfigManager.getInstance();
 
@@ -116,5 +114,15 @@ public class AboutPanel extends JPanel {
             }
         });
         return label;
+    }
+
+    @Override
+    public String getTabName() {
+        return "plugin.about.title";
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 }
