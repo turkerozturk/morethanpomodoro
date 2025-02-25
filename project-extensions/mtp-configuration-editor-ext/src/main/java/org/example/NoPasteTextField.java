@@ -19,7 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/gpl-3.0.en.html>.
  */
 // Özel paste devre dışı bırakılan metin alanı
-package org.example.jpanels.configuration;
+package org.example;
 
 import javax.swing.*;
 import java.awt.*;

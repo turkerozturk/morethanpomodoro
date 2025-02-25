@@ -28,7 +28,7 @@ import org.example.jpanels.about.AboutPanel;
 //import org.example.jpanels.analogclock.AnalogClockPanel;
 //import org.example.jpanels.binaural.BinauralPanel;
 //import org.example.jpanels.calculator.CalculatorPanel;
-import org.example.jpanels.configuration.ConfigurationEditorPanel;
+//import org.example.jpanels.configuration.ConfigurationEditorPanel;
 //import org.example.jpanels.countdowntimer.CountdownTimerPanel;
 //import org.example.jpanels.datetime.DateTimePanel;
 //import org.example.jpanels.metronome.MetronomePanel;
@@ -295,10 +295,10 @@ public class ApplicationFrame extends JFrame {
 
 
         applicationSettingsPanel.addTab("Window", globalOptionsPanel);
-
+        /*
         ConfigurationEditorPanel configurationEditorPanel = new ConfigurationEditorPanel();
         applicationSettingsPanel.addTab("Config", configurationEditorPanel);
-
+        */
 
         tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
 

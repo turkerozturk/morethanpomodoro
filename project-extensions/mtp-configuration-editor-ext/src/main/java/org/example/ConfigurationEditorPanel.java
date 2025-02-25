@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/gpl-3.0.en.html>.
  */
-package org.example.jpanels.configuration;
+package org.example;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-public class ConfigurationEditorPanel extends JPanel {
+public class ConfigurationEditorPanel extends JPanel implements PanelPlugin {
 
     private static final String CONFIG_FILE_NAME = "config.properties";
 
@@ -232,5 +232,15 @@ public class ConfigurationEditorPanel extends JPanel {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
+    }
+
+    @Override
+    public String getTabName() {
+        return "plugin.configuration.editor.title";
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 }
