@@ -23,8 +23,9 @@ package org.example;
 //import org.example.astronomy.SunAndMoonPanel;
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
+import org.example.initial.PluginLoader;
 import org.example.initial.jpanels.sound.controller.SoundController;
-import org.example.jpanels.about.AboutPanel;
+//import org.example.jpanels.about.AboutPanel;
 //import org.example.jpanels.analogclock.AnalogClockPanel;
 //import org.example.jpanels.binaural.BinauralPanel;
 //import org.example.jpanels.calculator.CalculatorPanel;
@@ -122,7 +123,7 @@ public class ApplicationFrame extends JFrame {
 
 
 
-        JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
+        //JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
         /*
         BinauralPanel binauralPanel = new BinauralPanel();
         jTabbedPaneForNoises.addTab(translate("tab.panel.binaural.beats.title"), binauralPanel);
@@ -134,7 +135,7 @@ public class ApplicationFrame extends JFrame {
         jTabbedPaneForNoises.addTab("Metronome", metronomePanel.getPlayerPanel());
         */
 
-        tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
+        //tabbedPanel.addTab("Noise Generators", jTabbedPaneForNoises);
 
 /*
         JTabbedPane jTabbedPaneForMp3 = new JTabbedPane();
@@ -234,7 +235,7 @@ public class ApplicationFrame extends JFrame {
         tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
 
 
-        JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
+        //JTabbedPane jTabbedPaneForDeviceTesting = new JTabbedPane();
         /*
         MidiDeviceTestPanel midiInstrumentPanel = new MidiDeviceTestPanel();
         jTabbedPaneForDeviceTesting.add("MIDI test", midiInstrumentPanel);
@@ -248,7 +249,7 @@ public class ApplicationFrame extends JFrame {
         SystemInfoPanel systemInfoPanel = new SystemInfoPanel();
         jTabbedPaneForDeviceTesting.addTab("System Info", systemInfoPanel);
         */
-        tabbedPanel.addTab("Device Tests", jTabbedPaneForDeviceTesting);
+        //tabbedPanel.addTab("Device Tests", jTabbedPaneForDeviceTesting);
 
 
         JTabbedPane applicationSettingsPanel = new JTabbedPane();
@@ -302,11 +303,18 @@ public class ApplicationFrame extends JFrame {
 
         tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
 
-        AboutPanel aboutPanel = new AboutPanel();
-        tabbedPanel.addTab("About", aboutPanel);
+        // AboutPanel aboutPanel = new AboutPanel();
+        String aboutPanelTitle = "plugin.about.title";
+        String aboutPanelJarLocation = "core/mtp-about-ext-1.0-SNAPSHOT.jar";
+        JPanel aboutPanel = PluginLoader.loadSpecificPanel(
+                aboutPanelJarLocation
+                , aboutPanelTitle);
+        tabbedPanel.addTab(bundle.getString(aboutPanelTitle), aboutPanel);
 
-        tabbedPanel.setTabComponentAt(5, createTabHeader(tabbedPanel, 5));
-
+        Integer tabIndex = getTabIndex(aboutPanelTitle, tabbedPanel);
+        if(tabIndex != null) {
+            tabbedPanel.setTabComponentAt(tabIndex, createTabHeader(tabbedPanel, tabIndex));
+        }
 
         add(tabbedPanel, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
 
@@ -501,6 +509,26 @@ public class ApplicationFrame extends JFrame {
 
         return loader;
 
+    }
+
+    /**
+     * JTabbedPane içinde belirli bir sekmenin indeksini döndürür.
+     *
+     * @param tabNameKey  messages.properties dosyasındaki sekme başlığının anahtarı
+     * @param tabbedPane  JTabbedPane nesnesi
+     * @return           Sekmenin indeksini döndürür, bulunamazsa null döndürür
+     */
+    public Integer getTabIndex(String tabNameKey, JTabbedPane tabbedPane) {
+        // Çeviri dosyasından sekmenin görünen adını al
+        String translatedTabName = bundle.getString(tabNameKey);
+
+        // Sekme başlıklarını kontrol et
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            if (translatedTabName.equals(tabbedPane.getTitleAt(i))) {
+                return i;  // İlk eşleşmeyi döndür
+            }
+        }
+        return null; // Sekme bulunamazsa null döndür
     }
 
 
