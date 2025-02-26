@@ -36,6 +36,7 @@
         <module>project-extensions/mtp-sound-mp3-player-ext</module>
         <module>project-extensions/mtp-configuration-editor-ext</module>
         <module>project-extensions/mtp-about-ext</module>
+        <module>project-extensions/mtp-sound-mp3-player-jlayer-ext</module>
     </modules>
 
     <properties>
@@ -43,6 +44,69 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+
+    <dependencies>
+
+
+
+        <dependency>
+            <groupId>javazoom</groupId>
+            <artifactId>jlayer</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!--  Maven artifact for BasicPlayer API. http://www.javazoom.net/jlgui/api.html
+                JavaZoom	jlgui<at>javazoom.net		Original Author
+                Elliot Huntington	elliot.huntington<at>gmail.com		Packager
+                Patrik Duditš	soundlibs<at>dudits.net		Packager
+                Ralf Eichinger	ralf.eichinger<at>ralfeichinger.com		Packager
+                 http://www.opensource.org/licenses/lgpl-2.1.php
+                 Central Repository https://repo1.maven.org/maven2/
+        -->
+        <!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/basicplayer -->
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>basicplayer</artifactId>
+            <version>3.0.0.0</version>
+        </dependency>
+
+
+
+        <!-- https://mvnrepository.com/artifact/javazoom/winAmpSkinLoader -->
+        <!--
+        <dependency>
+            <groupId>javazoom</groupId>
+            <artifactId>winAmpSkinLoader</artifactId>
+            <version>1.0</version>
+        </dependency>
+        Note: this artifact is located at AKSW repository
+         (https://maven.aksw.org/repository/internal/)
+         https://mvnrepository.com/artifact/javazoom
+        -->
+
+        <!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi -->
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>mp3spi</artifactId>
+            <version>1.9.5.4</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.mobicents.external.fmj/tritonus_share -->
+        <dependency>
+            <groupId>org.mobicents.external.fmj</groupId>
+            <artifactId>tritonus_share</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>repository.jboss.org</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
