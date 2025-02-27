@@ -20,8 +20,6 @@
  */
 package org.example;
 
-import org.example.PanelPlugin;
-
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
