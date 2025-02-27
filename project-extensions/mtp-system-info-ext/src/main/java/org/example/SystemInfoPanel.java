@@ -26,35 +26,57 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.management.ManagementFactory;
 
-public class SystemInfoPanel extends JPanel implements PanelPlugin{
+
+import org.example.initial.ConfigManager;
+import org.example.initial.LanguageManager;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
+
+public class SystemInfoPanel extends JPanel implements PanelPlugin {
 
     private JLabel javaVersionLabel;
     private JLabel osLabel;
     private JLabel archLabel;
     private JLabel memoryLabel;
+    private JLabel systemMemoryLabel;
     private JLabel cpuLabel;
+    private JLabel processorLabel;
+    private JLabel soundOutputLabel;
     private Timer timer;
 
     // İşletim sistemi CPU kullanım bilgilerini almak için:
     private OperatingSystemMXBean osBean;
 
+    private final ConfigManager props = ConfigManager.getInstance();
+
+    private final LanguageManager bundle = LanguageManager.getInstance();
+
     public SystemInfoPanel() {
-        setLayout(new GridLayout(5, 1, 5, 5));
+
+
+        setLayout(new GridLayout(8, 1, 5, 5));
 
         // Sistem bilgilerini alalım
-        javaVersionLabel = new JLabel("Java Version: " + System.getProperty("java.version"));
-        osLabel = new JLabel("Operating System: " + System.getProperty("os.name") + " "
+        javaVersionLabel = new JLabel(bundle.getString("system.info.java.version") + ": " + System.getProperty("java.version"));
+        osLabel = new JLabel(bundle.getString("system.info.os") + ": " + System.getProperty("os.name") + " "
                 + System.getProperty("os.version"));
-        archLabel = new JLabel("Architecture: " + System.getProperty("os.arch"));
-        memoryLabel = new JLabel("Memory: ");
-        cpuLabel = new JLabel("CPU Usage: ");
+        archLabel = new JLabel(bundle.getString("system.info.arch") + ": " + System.getProperty("os.arch"));
+        memoryLabel = new JLabel(bundle.getString("system.info.memory") + ": ");
+        systemMemoryLabel = new JLabel(bundle.getString("system.info.system.memory") + ": ");
+        cpuLabel = new JLabel(bundle.getString("system.info.cpu.usage") + ": ");
+        processorLabel = new JLabel(bundle.getString("system.info.cpu.count") + ": " + Runtime.getRuntime().availableProcessors());
+        soundOutputLabel = new JLabel(bundle.getString("system.info.sound.output") + ": " + getDefaultSoundOutput());
 
         // Label'ları panele ekleyelim
         add(javaVersionLabel);
         add(osLabel);
         add(archLabel);
         add(memoryLabel);
+        add(systemMemoryLabel);
         add(cpuLabel);
+        add(processorLabel);
+        add(soundOutputLabel);
 
         // OperatingSystemMXBean örneğini alalım
         osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
@@ -65,36 +87,45 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin{
     }
 
     private void updateStats() {
-        // Bellek bilgilerini güncelleyelim
+        // JVM bellek bilgileri
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long freeMemory = runtime.freeMemory();
         long usedMemory = totalMemory - freeMemory;
-        // MB cinsine çevirelim
         long usedMB = usedMemory / (1024 * 1024);
         long totalMB = totalMemory / (1024 * 1024);
-        memoryLabel.setText("Memory: " + usedMB + " MB / " + totalMB + " MB");
+        memoryLabel.setText(bundle.getString("system.info.memory") + ": " + usedMB + " MB / " + totalMB + " MB");
+
+        // İşletim sistemi toplam bellek bilgisi
+        long osTotalMemory = osBean.getTotalPhysicalMemorySize() / (1024 * 1024);
+        long osFreeMemory = osBean.getFreePhysicalMemorySize() / (1024 * 1024);
+        long osUsedMemory = osTotalMemory - osFreeMemory;
+        systemMemoryLabel.setText(bundle.getString("system.info.system.memory") + ": " + osUsedMemory + " MB / " + osTotalMemory + " MB");
 
         // CPU kullanım bilgisini güncelleyelim
-        // getProcessCpuLoad() değeri 0.0 ile 1.0 arasında döner.
         double cpuLoad = osBean.getProcessCpuLoad();
-        // Eğer bilgi alınamıyorsa -1 dönebilir, buna dikkat edelim.
         if (cpuLoad < 0) {
-            cpuLabel.setText("CPU Usage: N/A");
+            cpuLabel.setText(bundle.getString("system.info.cpu.usage") + ": N/A");
         } else {
             int cpuPercentage = (int) (cpuLoad * 100);
-            cpuLabel.setText("CPU Usage: " + cpuPercentage + "%");
+            cpuLabel.setText(bundle.getString("system.info.cpu.usage") + ": " + cpuPercentage + "%");
         }
     }
 
-    // Panelin durdurulması gereken durumlarda timer'ı durdurmak için metod eklenebilir.
+    private String getDefaultSoundOutput() {
+        Mixer.Info[] mixers = AudioSystem.getMixerInfo();
+        if (mixers.length > 0) {
+            return mixers[0].getName();
+        }
+        return bundle.getString("system.info.sound.output.unknown");
+    }
+
     public void stop() {
         if (timer != null && timer.isRunning()) {
             timer.stop();
         }
     }
 
-    // Test için standalone JFrame oluşturabilirsiniz.
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("System Info");

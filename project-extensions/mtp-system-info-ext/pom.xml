@@ -9,7 +9,7 @@
     <relativePath>../../pom.xml</relativePath> <!-- Ana pom.xml'in yolu -->
   </parent>
 
-  <artifactId>mpt-system-info-ext</artifactId>
+  <artifactId>mtp-system-info-ext</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
@@ -74,7 +74,7 @@
             </goals>
             <configuration>
               <target>
-                <copy file="target/mpt-system-info-ext-1.0-SNAPSHOT.jar"
+                <copy file="target/mtp-system-info-ext-1.0-SNAPSHOT.jar"
                       todir="../../release-jars/extensions/" />
               </target>
             </configuration>
