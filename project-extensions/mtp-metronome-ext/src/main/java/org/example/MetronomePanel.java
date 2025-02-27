@@ -20,17 +20,16 @@
  */
 package org.example;
 
-import org.example.PanelPlugin;
-
 import org.example.initial.ConfigManager;
 import org.example.initial.LanguageManager;
-import org.example.initial.jpanels.sound.controller.SoundController;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MetronomePanel extends JPanel implements PanelPlugin, SoundController {
-    private JSpinner bpmSpinner;
+public class MetronomePanel extends JPanel implements PanelPlugin {
+    //public class MetronomePanel extends JPanel implements PanelPlugin, SoundController {
+
+        private JSpinner bpmSpinner;
     private JToggleButton startStopButton;
     private JSlider volumeSlider;
     private Metronome metronome;
@@ -44,9 +43,8 @@ public class MetronomePanel extends JPanel implements PanelPlugin, SoundControll
     private int metronomeSoundVolume;
     private int bpm;
 
-    public JPanel getPlayerPanel() {
-        return this;
-    }
+
+
 
     public MetronomePanel() {
 
@@ -179,6 +177,7 @@ public class MetronomePanel extends JPanel implements PanelPlugin, SoundControll
     private boolean muted = false;
     private float previousVolume = 1.0f;  // 1.0 = %100
 
+    /*
     @Override
     public void mute() {
         if (!muted && metronome.isPlaying()) {
@@ -200,7 +199,7 @@ public class MetronomePanel extends JPanel implements PanelPlugin, SoundControll
     public boolean isMuted() {
         return muted;
     }
-
+    */
     @Override
     public String getTabName() {
         return "plugin.metronome.title";
@@ -208,6 +207,17 @@ public class MetronomePanel extends JPanel implements PanelPlugin, SoundControll
 
     @Override
     public JPanel getPanel() {
-        return new MetronomePanel();
+        return this;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("MetronomePanel Demo");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.add(new MetronomePanel());
+            frame.setSize(800, 600); // Pencere boyutu
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 }
