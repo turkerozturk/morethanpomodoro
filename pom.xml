@@ -37,6 +37,7 @@
         <module>project-extensions/mtp-configuration-editor-ext</module>
         <module>project-extensions/mtp-about-ext</module>
         <module>project-extensions/mtp-sound-mp3-player-jlayer-ext</module>
+        <module>project-extensions/mtp-advanced-calculator-ext</module>
     </modules>
 
     <properties>
