@@ -45,6 +45,7 @@ public class PluginsLoader {
         for (File jar : jarFiles) {
             try {
                 urls.add(jar.toURI().toURL());
+             //   System.out.println("PluginsLoader.java: " + jar.getName());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -58,6 +59,15 @@ public class PluginsLoader {
 
 // 3) ServiceLoader kullanarak PanelPlugin arayüzünü implemente edenleri bul
         ServiceLoader<PanelPlugin> loader = ServiceLoader.load(PanelPlugin.class, extensionClassLoader);
+
+
+        /* for debug
+        for (PanelPlugin plugin : loader) {
+            System.out.println("Plugin Class: " + plugin.getClass().getName());
+            System.out.println("Plugin Details: " + plugin.toString()); // toString() metodunu override edebilirsin.
+        }
+
+         */
 
         return loader;
 

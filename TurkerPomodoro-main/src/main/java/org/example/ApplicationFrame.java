@@ -190,6 +190,7 @@ public class ApplicationFrame extends JFrame {
                     tabName = plugin.getTabName(); // Varsayılan değer olarak plugin ismini kullan
                 }
 
+                // for debug System.out.println(tabName);
                 jTabbedPaneForOtherTools.addTab(tabName, plugin.getPanel());
             }
 
