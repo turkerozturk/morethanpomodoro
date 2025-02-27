@@ -20,13 +20,32 @@
  */
 package org.example;
 /*
-Some parts of the following code is taken from the software source code at
-https://github.com/Velliz/Musicplayer, specifically from the commit dated
-May 24, 2017 (https://github.com/Velliz/Musicplayer/commit/41c4c5ee21a21a845865c34c2b847c75d3349604),
-and according to the same source, it is licensed under the
-Apache License Version 2.0, January 2004. http://www.apache.org/licenses/
-*/
-
+ * Portions of this file are derived from the Musicplayer project
+ * (https://github.com/Velliz/Musicplayer), specifically from the commit:
+ * https://github.com/Velliz/Musicplayer/commit/41c4c5ee21a21a845865c34c2b847c75d3349604
+ *
+ * The original code is licensed under the Apache License Version 2.0,
+ * January 2004 (http://www.apache.org/licenses/).
+ *
+ * As per the requirements of the Apache License, the original copyright
+ * notice, license text, and disclaimer must be retained:
+ *
+ *  --- Begin Apache License Notice ---
+ *  Copyright (c) 2017 Velliz
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  --- End Apache License Notice ---
+ */
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
