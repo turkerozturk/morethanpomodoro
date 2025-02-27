@@ -44,7 +44,7 @@
             </goals>
             <configuration>
               <target>
-                <copy file="target/MtpPluginApi-1.0-SNAPSHOT.jar"
+                <copy file="target/${project.build.finalName}.jar"
                       todir="../../release-jars/extensions/" />
               </target>
             </configuration>
