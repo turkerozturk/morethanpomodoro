@@ -9,7 +9,7 @@
     <relativePath>../../pom.xml</relativePath> <!-- Ana pom.xml'in yolu -->
   </parent>
 
-  <artifactId>MtpPluginApi</artifactId>
+  <artifactId>mtp-plugin-api</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 

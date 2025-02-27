@@ -15,8 +15,8 @@
     <modules>
         <module>TurkerPomodoro-main</module>
         <module>project-extensions/mtp-system-info-ext</module>
-        <module>project-extensions/mtb-paint-ext</module>
-        <module>project-extensions/MtpPluginApi</module>
+        <module>project-extensions/mtp-paint-ext</module>
+        <module>project-extensions/mtp-plugin-api</module>
         <module>project-extensions/mtp-brickbreakergame-ext</module>
         <module>project-extensions/mtp-calculator-ext</module>
         <module>project-extensions/mtp-clock-analog.ext</module>

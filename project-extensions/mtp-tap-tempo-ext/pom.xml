@@ -23,7 +23,7 @@
 
     <dependency>
       <groupId>org.example</groupId>
-      <artifactId>MtpPluginApi</artifactId>
+      <artifactId>mtp-plugin-api</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
