@@ -73,7 +73,7 @@
             </goals>
             <configuration>
               <target>
-                <copy file="target/mtp-texts-quotes-ext-1.0-SNAPSHOT.jar"
+                <copy file="target/${project.build.finalName}.jar"
                       todir="../../release-jars/extensions/" />
               </target>
             </configuration>
