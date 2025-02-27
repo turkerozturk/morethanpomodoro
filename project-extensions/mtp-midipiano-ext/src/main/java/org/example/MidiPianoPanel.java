@@ -30,9 +30,9 @@ import java.net.URI;
 public class MidiPianoPanel extends JPanel implements PanelPlugin {
 
 
-    private static final String CODE_OWNER = "Kod Sahibi: John Doe";
-    private static final String LICENSE = "Lisans: MIT License";
-    private static final String GITHUB_URL = "https://github.com/johndoe/my-piano-project";
+    private static final String CODE_OWNER = "Code Owner: Ben Myers, http://www.benjmyers.com/";
+    private static final String LICENSE = "License: Apache 2.0";
+    private static final String GITHUB_URL = "https://github.com/benjmyers/MIDIPiano";
 
     public MidiPianoPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -93,7 +93,7 @@ public class MidiPianoPanel extends JPanel implements PanelPlugin {
     // Kısa bir test için main metodu (isteğe bağlı)
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MidiPiano Info");
+            JFrame frame = new JFrame("MidiPiano");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.getContentPane().add(new MidiPianoPanel());
             frame.pack();
