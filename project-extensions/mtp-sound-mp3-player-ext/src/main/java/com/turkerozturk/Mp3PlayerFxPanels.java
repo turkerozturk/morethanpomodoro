@@ -21,6 +21,7 @@
 package com.turkerozturk;
 
 import com.turkerozturk.initial.ConfigManager;
+import com.turkerozturk.initial.ExtensionCategory;
 import com.turkerozturk.initial.LanguageManager;
 import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 
@@ -62,5 +63,15 @@ public class Mp3PlayerFxPanels extends JPanel implements PanelPlugin {
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.SOUND;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

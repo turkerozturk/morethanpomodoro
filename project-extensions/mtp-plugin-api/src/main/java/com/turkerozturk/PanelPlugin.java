@@ -20,6 +20,8 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.swing.*;
 
 /* bilgi: her plugin projesinde src/main/resources/META-INF/services/ klasoru olusturacaksin.
@@ -33,4 +35,8 @@ plugin uygulmasindaki CountdownTimerPanel sinifi kullanilabilir olur.
 public interface PanelPlugin {
     String getTabName();         // Sekme başlığını döndür
     JPanel getPanel();           // Eklenti panelini döndür
+
+    ExtensionCategory getExtensionCategory(); // eklentinin kategorisini döndür
+
+    String getExtensionDescription(); // eklenti hakkinda kisa aciklama metni
 }

@@ -20,6 +20,8 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -228,5 +230,15 @@ public class CountdownTimerPanel extends JPanel implements PanelPlugin {
     @Override
     public JPanel getPanel() {
         return new CountdownTimerPanel();
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.PRODUCTIVITY;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

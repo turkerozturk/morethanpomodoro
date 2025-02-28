@@ -20,6 +20,8 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -242,5 +244,15 @@ public class ConfigurationEditorPanel extends JPanel implements PanelPlugin {
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.CORE;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

@@ -20,6 +20,8 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -126,6 +128,16 @@ public class TapTempoPanel extends JPanel implements PanelPlugin{
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.SOUND;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }
 

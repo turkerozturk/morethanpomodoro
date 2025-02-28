@@ -20,6 +20,8 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -189,6 +191,16 @@ public class CanvasPanel extends JPanel implements PanelPlugin{
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.GRAPHICS;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 
     /**

@@ -22,6 +22,7 @@ package com.turkerozturk;
 
 
 import com.turkerozturk.initial.ConfigManager;
+import com.turkerozturk.initial.ExtensionCategory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -205,5 +206,15 @@ public class AnalogClockPanel extends JPanel implements PanelPlugin{
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.INFO;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

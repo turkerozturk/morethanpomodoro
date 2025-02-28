@@ -46,6 +46,7 @@ package com.turkerozturk;
  *  limitations under the License.
  *  --- End Apache License Notice ---
  */
+import com.turkerozturk.initial.ExtensionCategory;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
@@ -718,6 +719,16 @@ public class Mp3WindowPanel extends JPanel implements PanelPlugin {
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.SOUND;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
     // End of variables declaration//GEN-END:variables
 }

@@ -22,6 +22,7 @@ package com.turkerozturk;
 
 import com.turkerozturk.BinauralBeatsGenerator;
 import com.turkerozturk.initial.ConfigManager;
+import com.turkerozturk.initial.ExtensionCategory;
 import com.turkerozturk.initial.LanguageManager;
 import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 
@@ -197,5 +198,15 @@ public class BinauralPanel extends JPanel implements SoundController, PanelPlugi
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.PRODUCTIVITY;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

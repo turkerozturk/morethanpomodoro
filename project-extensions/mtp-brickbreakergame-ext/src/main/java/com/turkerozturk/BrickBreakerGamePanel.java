@@ -22,6 +22,8 @@ package com.turkerozturk;
 
 
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -187,5 +189,15 @@ public class BrickBreakerGamePanel extends JPanel implements PanelPlugin {
     @Override
     public JPanel getPanel() {
         return new BrickBreakerGamePanel();
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.FUN;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

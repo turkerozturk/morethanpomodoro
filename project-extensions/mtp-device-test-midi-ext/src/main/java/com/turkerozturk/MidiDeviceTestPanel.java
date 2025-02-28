@@ -22,6 +22,8 @@ package com.turkerozturk;
 
 
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.*;
 import java.awt.*;
@@ -240,5 +242,15 @@ public class MidiDeviceTestPanel extends JPanel implements PanelPlugin{
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.SOUND;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

@@ -21,6 +21,7 @@
 package com.turkerozturk;
 
 import com.turkerozturk.initial.ConfigManager;
+import com.turkerozturk.initial.ExtensionCategory;
 import com.turkerozturk.initial.LanguageManager;
 
 import javax.swing.*;
@@ -124,5 +125,15 @@ public class AboutPanel extends JPanel implements PanelPlugin{
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.CORE;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

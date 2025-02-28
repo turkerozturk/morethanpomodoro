@@ -21,6 +21,7 @@
 package com.turkerozturk;
 
 import com.turkerozturk.PanelPlugin;
+import com.turkerozturk.initial.ExtensionCategory;
 
 import javax.sound.midi.*;
 import javax.swing.*;
@@ -149,6 +150,16 @@ public class PianoPanel extends JPanel implements PanelPlugin {
     @Override
     public JPanel getPanel() {
         return new PianoPanel();
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.SOUND;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 
 }

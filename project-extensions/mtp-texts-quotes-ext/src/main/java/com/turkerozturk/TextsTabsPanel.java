@@ -20,6 +20,8 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ExtensionCategory;
+
 import javax.swing.*;
 
 public class TextsTabsPanel extends JPanel implements PanelPlugin{
@@ -45,5 +47,15 @@ public class TextsTabsPanel extends JPanel implements PanelPlugin{
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.PRODUCTIVITY;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }

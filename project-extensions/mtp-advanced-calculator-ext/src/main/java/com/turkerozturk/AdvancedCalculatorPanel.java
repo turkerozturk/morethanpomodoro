@@ -20,6 +20,7 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ExtensionCategory;
 import com.turkerozturk.thirdparty.calculator.Main;
 
 import javax.imageio.ImageIO;
@@ -128,5 +129,15 @@ public class AdvancedCalculatorPanel extends JPanel implements PanelPlugin
     @Override
     public JPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public ExtensionCategory getExtensionCategory() {
+        return ExtensionCategory.PRODUCTIVITY;
+    }
+
+    @Override
+    public String getExtensionDescription() {
+        return null;
     }
 }
