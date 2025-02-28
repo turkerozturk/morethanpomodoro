@@ -18,6 +18,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javafx.version>11</javafx.version>
   </properties>
 
   <dependencies>
@@ -32,29 +33,32 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
-      <version>22</version>
+      <version>${javafx.version}</version>
     </dependency>
 
     <!-- JavaFX Swing entegrasyonu için (JFXPanel desteği) -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-swing</artifactId>
-      <version>22</version>
+      <version>${javafx.version}</version>
     </dependency>
+
 
     <!-- JavaFX Base (temel kütüphane) -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
-      <version>22</version>
+      <version>${javafx.version}</version>
     </dependency>
 
     <!-- JavaFX Controls (Gerekirse) -->
+    <!--
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>22</version>
+      <version>${javafx.version}</version>
     </dependency>
+    -->
 
     <dependency>
       <groupId>junit</groupId>
