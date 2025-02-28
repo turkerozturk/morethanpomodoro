@@ -21,10 +21,7 @@
 package com.turkerozturk;
 
 //import com.turkerozturk.astronomy.SunAndMoonPanel;
-import com.turkerozturk.initial.ConfigManager;
-import com.turkerozturk.initial.LanguageManager;
-import com.turkerozturk.initial.PluginLoader;
-import com.turkerozturk.initial.PluginsLoader;
+import com.turkerozturk.initial.*;
 import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 //import com.turkerozturk.jpanels.about.AboutPanel;
 //import com.turkerozturk.jpanels.analogclock.AnalogClockPanel;
@@ -55,9 +52,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.ServiceLoader;
 
 public class ApplicationFrame extends JFrame {
 /*
@@ -101,9 +97,7 @@ public class ApplicationFrame extends JFrame {
         initializeApplicationFrame();
 
 
-
         toggleAlwaysOnTopButton = new JToggleButton(translate("frame.always.on.top"));
-
 
 
         isAlwaysOnTop = Integer.parseInt(props.getProperty("gui.is.always.on.top")) == 1;
@@ -120,8 +114,6 @@ public class ApplicationFrame extends JFrame {
 
         PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
         tabbedPanel.addTab("Pomodoro", pomodoroApp);
-
-
 
 
         //JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
@@ -176,28 +168,37 @@ public class ApplicationFrame extends JFrame {
 
         // BASLA pluginlerin yuklenmesi
         ServiceLoader<PanelPlugin> loader = PluginsLoader.loadPanelPlugins();
-        if(loader!=null) {
 
-            JTabbedPane jTabbedPaneForOtherTools = new JTabbedPane();
+        if (loader != null) {
+            Map<ExtensionCategory, JTabbedPane> tabbedPanes = new EnumMap<>(ExtensionCategory.class);
+            JTabbedPane mainTabbedPane = new JTabbedPane();
 
-            // 4) Her bulunan plugin nesnesini GUI'ye ekle
             for (PanelPlugin plugin : loader) {
-                String tabName;
+                String tabName = bundle.containsKey(plugin.getTabName()) ? bundle.getString(plugin.getTabName()) : plugin.getTabName();
 
-                if (bundle.containsKey(plugin.getTabName())) {
-                    tabName = bundle.getString(plugin.getTabName());
-                } else {
-                    tabName = plugin.getTabName(); // Varsayılan değer olarak plugin ismini kullan
+                ExtensionCategory category = plugin.getExtensionCategory();
+                if (category == null) {
+                    category = ExtensionCategory.OTHER; // Null durumunda default olarak OTHER kullanılıyor
                 }
 
-                // for debug System.out.println(tabName);
-                jTabbedPaneForOtherTools.addTab(tabName, plugin.getPanel());
+                // Eğer kategoriye ait tabbedPane yoksa, ilk kez oluştur ve haritaya ekle
+                tabbedPanes.computeIfAbsent(category, k -> new JTabbedPane())
+                        .addTab(tabName, plugin.getPanel());
             }
 
-            tabbedPanel.addTab("Other Tools", jTabbedPaneForOtherTools);
+            // Oluşturulmuş olan tabbedPanes'leri ana tabbedPane'e ekleyelim
+            for (Map.Entry<ExtensionCategory, JTabbedPane> entry : tabbedPanes.entrySet()) {
+                if (entry.getValue().getTabCount() > 0) { // Boş olmayanları ekle
+                    mainTabbedPane.addTab(entry.getKey().name(), entry.getValue());
+                }
+            }
+
+            tabbedPanel.addTab("Plugins", mainTabbedPane);
 
 
-        }
+
+
+    }
         // BITTI pluginlerin yuklenmesi
 
 
