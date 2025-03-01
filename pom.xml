@@ -12,6 +12,9 @@
     <name>TurkerPomodoro</name>
     <url>http://maven.apache.org</url>
 
+
+
+
     <modules>
         <module>TurkerPomodoro-main</module>
         <module>project-extensions/mtp-system-info-ext</module>
@@ -33,12 +36,26 @@
         <module>project-extensions/mtp-tap-tempo-ext</module>
         <module>project-extensions/mtp-test-speakers-ext</module>
         <module>project-extensions/mtp-texts-quotes-ext</module>
-        <module>project-extensions/mtp-sound-mp3-player-ext</module>
         <module>project-extensions/mtp-configuration-editor-ext</module>
         <module>project-extensions/mtp-about-ext</module>
         <module>project-extensions/mtp-sound-mp3-player-jlayer-ext</module>
         <module>project-extensions/mtp-advanced-calculator-ext</module>
     </modules>
+
+
+    <profiles>
+        <!-- 1) Java 11 ve üstü olduğunda mp3-player modülünü dahil eden profil -->
+        <profile>
+            <id>java11-plus</id>
+            <activation>
+                <!-- JDK 11 ve üstü ise aktif olur -->
+                <jdk>[11,)</jdk>
+            </activation>
+            <modules>
+                <module>project-extensions/mtp-sound-mp3-player-ext</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
