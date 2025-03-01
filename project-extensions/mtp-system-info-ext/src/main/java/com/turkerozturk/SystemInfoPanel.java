@@ -76,7 +76,7 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
         resolutionLabel = new JLabel();
         displayInfoLabel = new JLabel();
 
-        // Label'ları panele ekleyelim
+
 
         add(javaVersionLabel);
         add(resolutionLabel);
@@ -91,6 +91,8 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
         // İlk çözünürlüğü ayarla
         updateResolutionLabel();
 
+
+
         // Panel yeniden boyutlandırıldığında çözünürlüğü güncelle
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -99,13 +101,16 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
             }
         });
 
+        updateDisplayInfo();
+
         // Frame taşındığında updateDisplayInfo() metodunu çağır
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
-                if (isShowing()) { // Pencerenin gösterildiğinden emin ol
+              //  if (isShowing()) { // Pencerenin gösterildiğinden emin ol
                     updateDisplayInfo();
-                }
+                System.out.println("moved");
+              //  }
             }
         });
 
@@ -116,6 +121,12 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
         // Her 1 saniyede bir güncellemek için Timer
         timer = new Timer(1000, e -> updateStats());
         timer.start();
+
+        // Label'ları panele ekleyelim
+        JButton checkMonitorButton = new JButton("Current Monitor Info");
+        checkMonitorButton.addActionListener(e -> showMonitorDialog());
+
+        add(checkMonitorButton, BorderLayout.CENTER);
     }
 
     private void updateResolutionLabel() {
@@ -137,7 +148,7 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
 
         }
 
-        updateDisplayInfo();
+     //   updateDisplayInfo();
 
 
 
@@ -154,7 +165,7 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
 
         // Şu anki ekranı bul
         GraphicsDevice currentScreen = ge.getDefaultScreenDevice();
-        String currentScreenId = null;// = currentScreen.getIDstring();
+        String currentScreenId = currentScreen.getIDstring();// = currentScreen.getIDstring();
 
         if (isShowing()) {
 
@@ -166,7 +177,7 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
                     // Bulunan ekranın ID'sini al
                     currentScreenId = screen.getIDstring();
                     // Burada ekran bilgisini güncelleyebilirsiniz. Örnek:
-                    System.out.println("Pencere şu anda ekran: " + currentScreenId);
+                    //System.out.println("Pencere şu anda ekran: " + currentScreenId);
                     // İsteğe bağlı: Bir etiket veya başka bir bileşende de gösterebilirsiniz
                     // myScreenLabel.setText("Ekran: " + currentScreenId);
                     break;
@@ -192,9 +203,10 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
 
         // String.format ile mesajı oluştur
 
+        //String formattedText = String.format(bundle.getString("system.info.displays"),
+          //      monitorCount, currentScreenId, monitorsInfo.toString());
         String formattedText = String.format(bundle.getString("system.info.displays"),
-                monitorCount, currentScreenId, monitorsInfo.toString());
-
+                monitorCount, monitorsInfo.toString());
 
         //String formattedText = monitorCount + " "  + currentScreenId + monitorsInfo.toString();
         // JLabel güncelle
@@ -227,6 +239,26 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
             cpuLabel.setText(bundle.getString("system.info.cpu.usage") + ": " + cpuPercentage + "%");
         }
     }
+
+    private void showMonitorDialog() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] screens = ge.getScreenDevices();
+        GraphicsConfiguration gc = getGraphicsConfiguration();
+
+        if (gc != null) {
+            for (int i = 0; i < screens.length; i++) {
+                if (screens[i] == gc.getDevice()) {
+                    JOptionPane.showMessageDialog(this, "This window is currently on display monitor " + (i + 1) + ".",
+                            "Monitor Info", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Error getting monitor info.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     private String getDefaultSoundOutput() {
         Mixer.Info[] mixers = AudioSystem.getMixerInfo();
