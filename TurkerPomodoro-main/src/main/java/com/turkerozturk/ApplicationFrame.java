@@ -48,6 +48,9 @@ import com.turkerozturk.jpanels.theme.ThemeSelectorPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -56,6 +59,11 @@ import java.util.*;
 import java.util.List;
 
 public class ApplicationFrame extends JFrame {
+
+    private float opacityLevel = 1.0f; // Başlangıçta tam opak
+    private boolean maximized = false;
+    private Point initialClick;
+
 /*
         private final Mp3PlayerFx playerPanel;
         private final Mp3PlayerFx playerPanel2;
@@ -91,6 +99,10 @@ public class ApplicationFrame extends JFrame {
     }
 
     public ApplicationFrame() {
+
+
+
+        prepareTransparentFrameWithControls();
 
         loadVariablesFromConfig();
 
@@ -508,6 +520,107 @@ public class ApplicationFrame extends JFrame {
             }
         }
         return null; // Sekme bulunamazsa null döndür
+    }
+
+    /**
+     * related with transparent frame
+     */
+    private void toggleMaximize() {
+        if (maximized) {
+            setExtendedState(JFrame.NORMAL);
+        } else {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+        maximized = !maximized;
+    }
+
+
+    /**
+     * related with transparent frame
+     */
+    private void enableFrameDrag(JPanel panel) {
+        panel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                initialClick = e.getPoint();
+            }
+        });
+
+        panel.addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent e) {
+                int thisX = getLocation().x;
+                int thisY = getLocation().y;
+
+                int deltaX = e.getX() - initialClick.x;
+                int deltaY = e.getY() - initialClick.y;
+
+                setLocation(thisX + deltaX, thisY + deltaY);
+            }
+        });
+    }
+
+    /**
+     * related with transparent frame
+     */
+    public void prepareTransparentFrameWithControls() {
+       // setTitle("Şeffaf Kontrol Barlı JFrame");
+       // setSize(600, 400);
+       // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       // setLocationRelativeTo(null);
+
+
+        // Kenarlıkları kaldır (tam şeffaflık için gerekli)
+        setUndecorated(true);
+        // Şeffaflık ayarı (0.0 tamamen görünmez, 1.0 tamamen opak)
+        setOpacity(opacityLevel);
+
+        // Üst panel (Kontrol Barı)
+        JPanel controlBar = new JPanel();
+        controlBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        controlBar.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
+
+        // Minimize Butonu
+        JButton minimizeButton = new JButton("_");
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
+
+        // Maksimize / Normal Butonu
+        JButton maximizeButton = new JButton("[]");
+        maximizeButton.addActionListener(e -> toggleMaximize());
+
+        // Kapatma Butonu
+        JButton closeButton = new JButton("X");
+        closeButton.addActionListener(e -> System.exit(0));
+
+        // Şeffaflık Ayar Slider'ı
+        JSlider opacitySlider = new JSlider(30, 100, (int) (opacityLevel * 100));
+        opacitySlider.setPreferredSize(new Dimension(100, 20));
+        opacitySlider.addChangeListener(e -> {
+            opacityLevel = opacitySlider.getValue() / 100f;
+            setOpacity(opacityLevel);
+        });
+
+        // Butonları ekle
+        controlBar.add(new JLabel("Şeffaflık: "));
+        controlBar.add(opacitySlider);
+        controlBar.add(minimizeButton);
+        controlBar.add(maximizeButton);
+        controlBar.add(closeButton);
+
+        // Üst paneli sürükleyerek taşımayı sağla
+        enableFrameDrag(controlBar);
+
+        // JTabbedPane (Ana İçerik)
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Tab 1", new JLabel("İçerik 1"));
+        tabbedPane.addTab("Tab 2", new JLabel("İçerik 2"));
+        tabbedPane.addTab("Tab 3", new JLabel("İçerik 3"));
+
+        // Ana Panel
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(controlBar, BorderLayout.NORTH);
+        mainPanel.add(tabbedPane, BorderLayout.CENTER);
+
+        // İçeriği ekle
+        setContentPane(mainPanel);
     }
 
 
