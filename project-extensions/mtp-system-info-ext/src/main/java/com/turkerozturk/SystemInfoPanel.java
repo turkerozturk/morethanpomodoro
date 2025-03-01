@@ -24,6 +24,8 @@ import com.sun.management.OperatingSystemMXBean;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.lang.management.ManagementFactory;
 
 
@@ -44,19 +46,22 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
     private JLabel cpuLabel;
     private JLabel processorLabel;
     private JLabel soundOutputLabel;
+    private JLabel resolutionLabel;
+    private JLabel displayInfoLabel;
     private Timer timer;
 
     // İşletim sistemi CPU kullanım bilgilerini almak için:
     private OperatingSystemMXBean osBean;
 
-    private final ConfigManager props = ConfigManager.getInstance();
+
+    private static final ConfigManager props = ConfigManager.getInstance();
 
     private final LanguageManager bundle = LanguageManager.getInstance();
 
     public SystemInfoPanel() {
 
 
-        setLayout(new GridLayout(8, 1, 5, 5));
+        setLayout(new GridLayout(10, 1, 1, 1));
 
         // Sistem bilgilerini alalım
         javaVersionLabel = new JLabel(bundle.getString("system.info.java.version") + ": " + System.getProperty("java.version"));
@@ -68,9 +73,13 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
         cpuLabel = new JLabel(bundle.getString("system.info.cpu.usage") + ": ");
         processorLabel = new JLabel(bundle.getString("system.info.cpu.count") + ": " + Runtime.getRuntime().availableProcessors());
         soundOutputLabel = new JLabel(bundle.getString("system.info.sound.output") + ": " + getDefaultSoundOutput());
+        resolutionLabel = new JLabel();
+        displayInfoLabel = new JLabel();
 
         // Label'ları panele ekleyelim
+
         add(javaVersionLabel);
+        add(resolutionLabel);
         add(osLabel);
         add(archLabel);
         add(memoryLabel);
@@ -78,6 +87,28 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
         add(cpuLabel);
         add(processorLabel);
         add(soundOutputLabel);
+        add(displayInfoLabel);
+        // İlk çözünürlüğü ayarla
+        updateResolutionLabel();
+
+        // Panel yeniden boyutlandırıldığında çözünürlüğü güncelle
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateResolutionLabel();
+            }
+        });
+
+        // Frame taşındığında updateDisplayInfo() metodunu çağır
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                if (isShowing()) { // Pencerenin gösterildiğinden emin ol
+                    updateDisplayInfo();
+                }
+            }
+        });
+
 
         // OperatingSystemMXBean örneğini alalım
         osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
@@ -86,6 +117,90 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
         timer = new Timer(1000, e -> updateStats());
         timer.start();
     }
+
+    private void updateResolutionLabel() {
+
+        Dimension jpanelResolution = getSize(); // JPanel resolution
+
+        Window window = SwingUtilities.getWindowAncestor(this); // JFrame resolution
+        if (window != null) {
+            int jframeWidth = window.getWidth();
+            int jframeHeight = window.getHeight();
+            // panel: %d x %d, window %d x %d
+
+            resolutionLabel.setText(String.format(bundle.getString("system.info.resolutions"),
+                    jpanelResolution.width, jpanelResolution.height,
+                    jframeWidth, jframeHeight));
+
+
+
+
+        }
+
+        updateDisplayInfo();
+
+
+
+    }
+
+    private void updateDisplayInfo() {
+
+        // Pencerenin konumunu al
+
+        
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] screens = ge.getScreenDevices();
+        int monitorCount = screens.length;
+
+        // Şu anki ekranı bul
+        GraphicsDevice currentScreen = ge.getDefaultScreenDevice();
+        String currentScreenId = null;// = currentScreen.getIDstring();
+
+        if (isShowing()) {
+
+            Point windowLocation = getLocationOnScreen();
+            // Pencerenin bulunduğu ekranı belirle
+            for (GraphicsDevice screen : screens) {
+                Rectangle screenBounds = screen.getDefaultConfiguration().getBounds();
+                if (screenBounds.contains(windowLocation)) {
+                    // Bulunan ekranın ID'sini al
+                    currentScreenId = screen.getIDstring();
+                    // Burada ekran bilgisini güncelleyebilirsiniz. Örnek:
+                    System.out.println("Pencere şu anda ekran: " + currentScreenId);
+                    // İsteğe bağlı: Bir etiket veya başka bir bileşende de gösterebilirsiniz
+                    // myScreenLabel.setText("Ekran: " + currentScreenId);
+                    break;
+                }
+            }
+        }
+
+        // Monitör bilgilerini topla
+        StringBuilder monitorsInfo = new StringBuilder();
+        for (int i = 0; i < screens.length; i++) {
+            DisplayMode dm = screens[i].getDisplayMode();
+
+            //String formattedTxt = (i + 1) + " " + dm.getWidth() + " " + dm.getHeight();
+            String formattedTxt = String.format(bundle.getString("system.info.display.format"),
+                                        (i + 1), dm.getWidth(), dm.getHeight());
+            monitorsInfo.append(formattedTxt);
+            if (i < screens.length - 1) {
+                monitorsInfo.append("\n");
+            }
+        }
+
+
+
+        // String.format ile mesajı oluştur
+
+        String formattedText = String.format(bundle.getString("system.info.displays"),
+                monitorCount, currentScreenId, monitorsInfo.toString());
+
+
+        //String formattedText = monitorCount + " "  + currentScreenId + monitorsInfo.toString();
+        // JLabel güncelle
+        displayInfoLabel.setText(formattedText);
+    }
+
 
     private void updateStats() {
         // JVM bellek bilgileri
@@ -130,11 +245,13 @@ public class SystemInfoPanel extends JPanel implements PanelPlugin {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("System Info");
+            frame.setPreferredSize(new Dimension(400, 300));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.add(new SystemInfoPanel());
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+
         });
     }
 

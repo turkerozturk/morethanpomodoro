@@ -13,7 +13,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>mpt-system-info-ext</name>
+  <name>mtp-system-info-ext</name>
   <url>http://maven.apache.org</url>
 
   <properties>
