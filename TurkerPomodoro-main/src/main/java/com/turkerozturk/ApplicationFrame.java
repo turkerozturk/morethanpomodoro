@@ -100,9 +100,10 @@ public class ApplicationFrame extends JFrame {
 
     public ApplicationFrame() {
 
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(prepareTransparentFrameWithControls(), BorderLayout.NORTH);
 
-
-        prepareTransparentFrameWithControls();
+        // TODO enableResize(); // 📌 Pencerenin yeniden boyutlandırılmasını etkinleştir!
 
         loadVariablesFromConfig();
 
@@ -336,7 +337,9 @@ public class ApplicationFrame extends JFrame {
             tabbedPanel.setTabComponentAt(tabIndex, createTabHeader(tabbedPanel, tabIndex));
         }
 
-        add(tabbedPanel, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
+        mainPanel.add(tabbedPanel, BorderLayout.CENTER);
+
+        add(mainPanel, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
 
 
 
@@ -561,7 +564,7 @@ public class ApplicationFrame extends JFrame {
     /**
      * related with transparent frame
      */
-    public void prepareTransparentFrameWithControls() {
+    public JPanel prepareTransparentFrameWithControls() {
        // setTitle("Şeffaf Kontrol Barlı JFrame");
        // setSize(600, 400);
        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -574,9 +577,9 @@ public class ApplicationFrame extends JFrame {
         setOpacity(opacityLevel);
 
         // Üst panel (Kontrol Barı)
-        JPanel controlBar = new JPanel();
-        controlBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        controlBar.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
+        JPanel windowControlBarPanel = new JPanel();
+        windowControlBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        windowControlBarPanel.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
 
         // Minimize Butonu
         JButton minimizeButton = new JButton("_");
@@ -599,15 +602,17 @@ public class ApplicationFrame extends JFrame {
         });
 
         // Butonları ekle
-        controlBar.add(new JLabel("Şeffaflık: "));
-        controlBar.add(opacitySlider);
-        controlBar.add(minimizeButton);
-        controlBar.add(maximizeButton);
-        controlBar.add(closeButton);
+        windowControlBarPanel.add(new JLabel("Şeffaflık: "));
+        windowControlBarPanel.add(opacitySlider);
+        windowControlBarPanel.add(minimizeButton);
+        windowControlBarPanel.add(maximizeButton);
+        windowControlBarPanel.add(closeButton);
 
         // Üst paneli sürükleyerek taşımayı sağla
-        enableFrameDrag(controlBar);
+        enableFrameDrag(windowControlBarPanel);
 
+        // TODO enableResize();
+        /*
         // JTabbedPane (Ana İçerik)
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Tab 1", new JLabel("İçerik 1"));
@@ -616,13 +621,83 @@ public class ApplicationFrame extends JFrame {
 
         // Ana Panel
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(controlBar, BorderLayout.NORTH);
+        mainPanel.add(windowControlBarPanel, BorderLayout.NORTH);
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
 
+         */
+
         // İçeriği ekle
-        setContentPane(mainPanel);
+       // setContentPane(mainPanel);
+
+        return windowControlBarPanel;
+    }
+/*
+    private static final int RESIZE_MARGIN = 8; // Kenarlardan kaç piksel içeride algılasın?
+
+    private int mouseX, mouseY; // Fare konumlarını takip etmek için
+
+    private void enableResize() {
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                int cursorType = Cursor.DEFAULT_CURSOR;
+
+                if (e.getX() < RESIZE_MARGIN && e.getY() < RESIZE_MARGIN) {
+                    cursorType = Cursor.NW_RESIZE_CURSOR; // Sol üst köşe
+                } else if (e.getX() > getWidth() - RESIZE_MARGIN && e.getY() < RESIZE_MARGIN) {
+                    cursorType = Cursor.NE_RESIZE_CURSOR; // Sağ üst köşe
+                } else if (e.getX() < RESIZE_MARGIN && e.getY() > getHeight() - RESIZE_MARGIN) {
+                    cursorType = Cursor.SW_RESIZE_CURSOR; // Sol alt köşe
+                } else if (e.getX() > getWidth() - RESIZE_MARGIN && e.getY() > getHeight() - RESIZE_MARGIN) {
+                    cursorType = Cursor.SE_RESIZE_CURSOR; // Sağ alt köşe
+                } else if (e.getX() < RESIZE_MARGIN) {
+                    cursorType = Cursor.W_RESIZE_CURSOR; // Sol kenar
+                } else if (e.getX() > getWidth() - RESIZE_MARGIN) {
+                    cursorType = Cursor.E_RESIZE_CURSOR; // Sağ kenar
+                } else if (e.getY() < RESIZE_MARGIN) {
+                    cursorType = Cursor.N_RESIZE_CURSOR; // Üst kenar
+                } else if (e.getY() > getHeight() - RESIZE_MARGIN) {
+                    cursorType = Cursor.S_RESIZE_CURSOR; // Alt kenar
+                }
+
+                setCursor(Cursor.getPredefinedCursor(cursorType));
+            }
+
+            public void mouseDragged(MouseEvent e) {
+                int dx = e.getX() - mouseX;
+                int dy = e.getY() - mouseY;
+
+                if (getCursor().getType() == Cursor.NW_RESIZE_CURSOR) { // Sol üst köşe
+                    setBounds(getX() + dx, getY() + dy, getWidth() - dx, getHeight() - dy);
+                } else if (getCursor().getType() == Cursor.NE_RESIZE_CURSOR) { // Sağ üst köşe
+                    setBounds(getX(), getY() + dy, getWidth() + dx, getHeight() - dy);
+                } else if (getCursor().getType() == Cursor.SW_RESIZE_CURSOR) { // Sol alt köşe
+                    setBounds(getX() + dx, getY(), getWidth() - dx, getHeight() + dy);
+                } else if (getCursor().getType() == Cursor.SE_RESIZE_CURSOR) { // Sağ alt köşe
+                    setSize(getWidth() + dx, getHeight() + dy);
+                } else if (getCursor().getType() == Cursor.W_RESIZE_CURSOR) { // Sol kenar
+                    setBounds(getX() + dx, getY(), getWidth() - dx, getHeight());
+                } else if (getCursor().getType() == Cursor.E_RESIZE_CURSOR) { // Sağ kenar
+                    setSize(getWidth() + dx, getHeight());
+                } else if (getCursor().getType() == Cursor.N_RESIZE_CURSOR) { // Üst kenar
+                    setBounds(getX(), getY() + dy, getWidth(), getHeight() - dy);
+                } else if (getCursor().getType() == Cursor.S_RESIZE_CURSOR) { // Alt kenar
+                    setSize(getWidth(), getHeight() + dy);
+                }
+
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
+        });
     }
 
+*/
 
 }
 
