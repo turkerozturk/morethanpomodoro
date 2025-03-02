@@ -315,7 +315,6 @@ public class PomodoroAppPanel extends JPanel{
                     }
                 } else if(source == sessionCountSpinner) {
                     if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.WORK_TIME) {
-                        System.out.println("bbb");
 
                         int currentVal = service.getCurrentWorkSession();
                         int newVal = (Integer) sessionCountSpinner.getValue();
@@ -327,7 +326,6 @@ public class PomodoroAppPanel extends JPanel{
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "You cannot change\n the pomodoro count\n during break times!");
-                        System.out.println("aaa");
 
                     }
                 }
