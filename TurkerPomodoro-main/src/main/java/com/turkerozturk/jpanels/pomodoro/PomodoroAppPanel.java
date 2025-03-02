@@ -52,6 +52,9 @@ public class PomodoroAppPanel extends JPanel{
     private JSpinner shortBreakSpinner;
     private JSpinner longBreakSpinner;
 
+    private JSpinner sessionCountSpinner;
+
+
     // PomodoroService nesnesi
     private PomodoroService service;
 
@@ -244,34 +247,48 @@ public class PomodoroAppPanel extends JPanel{
         // Alt Panel: Tabbed Panel
         JTabbedPane tabbedPane = new JTabbedPane();
 
+        JPanel allTimersPanel = new JPanel();
+        allTimersPanel.setLayout(new GridLayout(5, 1, 1, 1));
+
+
         // Work tab
-        JPanel workPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        workPanel.add(new JLabel("Work Duration (min): "));
+        //JPanel workPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        allTimersPanel.add(new JLabel("Work Duration (min): "));
         workSpinner = new JSpinner(new SpinnerNumberModel(service.getWorkDurationMinutes(), 1, 1440, 1));
-        workPanel.add(workSpinner);
-        tabbedPane.addTab("Work", workPanel);
+        allTimersPanel.add(workSpinner);
+        //tabbedPane.addTab("Work", workPanel);
 
         // Short Break tab
-        JPanel shortBreakPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        shortBreakPanel.add(new JLabel("Short Break (min): "));
+        //JPanel shortBreakPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        allTimersPanel.add(new JLabel("Short Break (min): "));
         shortBreakSpinner = new JSpinner(new SpinnerNumberModel(service.getShortBreakDurationMinutes(), 1, 1440, 1));
-        shortBreakPanel.add(shortBreakSpinner);
-        tabbedPane.addTab("Short Break", shortBreakPanel);
+        allTimersPanel.add(shortBreakSpinner);
+        //tabbedPane.addTab("Short Break", shortBreakPanel);
 
         // Long Break tab
-        JPanel longBreakPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        longBreakPanel.add(new JLabel("Long Break (min): "));
+        //JPanel longBreakPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        allTimersPanel.add(new JLabel("Long Break (min): "));
         longBreakSpinner = new JSpinner(new SpinnerNumberModel(service.getLongBreakDurationMinutes(), 1, 1440, 1));
-        longBreakPanel.add(longBreakSpinner);
-        tabbedPane.addTab("Long Break", longBreakPanel);
+        allTimersPanel.add(longBreakSpinner);
+        //tabbedPane.addTab("Long Break", longBreakPanel);
+
+        allTimersPanel.add(new JLabel("Session Count: "));
+        sessionCountSpinner = new JSpinner(new SpinnerNumberModel(service.getTotalWorkSessions(), 1, 100, 1));
+        // https://stackoverflow.com/questions/2902101/how-to-set-jspinner-as-non-editable
+        ((JSpinner.DefaultEditor) sessionCountSpinner.getEditor()).getTextField().setEditable(false);
+        allTimersPanel.add(sessionCountSpinner);
+
+        tabbedPane.addTab("All Timers", allTimersPanel);
 
         // Spinner listener'ları:
         ChangeListener spinnerListener = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 // Aktif tab'a göre ilgili süreyi güncelle.
-                int selectedIndex = tabbedPane.getSelectedIndex();
-                if (selectedIndex == 0) { // Work tab
+                //int selectedIndex = tabbedPane.getSelectedIndex();
+                Object source = e.getSource();
+
+                if (source == workSpinner) {
                     int newVal = (Integer) workSpinner.getValue();
                     if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.WORK_TIME) {
                         // Aktifse updateActiveTimerDuration kullanarak kalan süreyi de güncelleyelim
@@ -280,7 +297,7 @@ public class PomodoroAppPanel extends JPanel{
                     } else {
                         service.setWorkDurationMinutes(newVal);
                     }
-                } else if (selectedIndex == 1) { // Short Break tab
+                } else if (source == shortBreakSpinner) {
                     int newVal = (Integer) shortBreakSpinner.getValue();
                     if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.SHORT_BREAK) {
                         service.updateActiveTimerDuration(newVal);
@@ -288,13 +305,30 @@ public class PomodoroAppPanel extends JPanel{
                     } else {
                         service.setShortBreakDurationMinutes(newVal);
                     }
-                } else if (selectedIndex == 2) { // Long Break tab
+                } else if (source == longBreakSpinner) {
                     int newVal = (Integer) longBreakSpinner.getValue();
                     if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.LONG_BREAK) {
                         service.updateActiveTimerDuration(newVal);
                         //remainingLabel.setText(formatTime(service.getRemainingSeconds()));
                     } else {
                         service.setLongBreakDurationMinutes(newVal);
+                    }
+                } else if(source == sessionCountSpinner) {
+                    if (service.getActiveTimerType() == PomodoroService.PomodoroTimerType.WORK_TIME) {
+                        System.out.println("bbb");
+
+                        int currentVal = service.getCurrentWorkSession();
+                        int newVal = (Integer) sessionCountSpinner.getValue();
+                        if (newVal >= currentVal) {
+                            service.setTotalWorkSessions(newVal);
+                            //sessionCountSpinner.setValue(newVal);
+                        } else {
+                            sessionCountSpinner.setValue(currentVal);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "You cannot change\n the pomodoro count\n during break times!");
+                        System.out.println("aaa");
+
                     }
                 }
                 updateDisplay();
@@ -304,6 +338,7 @@ public class PomodoroAppPanel extends JPanel{
         workSpinner.addChangeListener(spinnerListener);
         shortBreakSpinner.addChangeListener(spinnerListener);
         longBreakSpinner.addChangeListener(spinnerListener);
+        sessionCountSpinner.addChangeListener(spinnerListener);
 
 
         // Tab değiştiğinde, aktif timer türüyle ilgili spinner'ı göstermek amacıyla
@@ -397,9 +432,9 @@ public class PomodoroAppPanel extends JPanel{
     private String getSessionInfo() {
         PomodoroService.PomodoroTimerType type = service.getActiveTimerType();
         if (type == PomodoroService.PomodoroTimerType.WORK_TIME) {
-            return "Work Time " + service.getCurrentWorkSession() + " of " + service.getTotalWorkSessions();
+            return "Work Time " + service.getCurrentWorkSessionAsString() + " of " + service.getTotalWorkSessions();
         } else if (type == PomodoroService.PomodoroTimerType.SHORT_BREAK) {
-            return "Short Break " + service.getCurrentWorkSession() + " of " + service.getTotalWorkSessions();
+            return "Short Break " + service.getCurrentWorkSessionAsString() + " of " + service.getTotalWorkSessions();
         } else { // LONG_BREAK
             return "Long Break";
         }

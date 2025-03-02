@@ -253,7 +253,7 @@ public class PomodoroService {
     }
 
     // "pomodoro X of Y" bilgisini döner.
-    public String getCurrentWorkSession() {
+    public String getCurrentWorkSessionAsString() {
         return "Pomodoro " + currentWorkSession;
         //return "Pomodoro " + currentWorkSession + " of " + totalWorkSessions;
     }
@@ -365,5 +365,10 @@ public class PomodoroService {
 
     public void setAutoPlayEnabled(boolean autoPlayEnabled) {
         this.autoPlayEnabled = autoPlayEnabled;
+    }
+
+
+    public int getCurrentWorkSession() {
+        return currentWorkSession;
     }
 }
