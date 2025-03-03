@@ -21,6 +21,9 @@
 package com.turkerozturk;
 
 //import com.turkerozturk.astronomy.SunAndMoonPanel;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.turkerozturk.buttons.AlwaysOnTopButton;
+import com.turkerozturk.buttons.MuteAllButton;
 import com.turkerozturk.initial.*;
 import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 //import com.turkerozturk.jpanels.about.AboutPanel;
@@ -46,15 +49,24 @@ import com.turkerozturk.jpanels.pomodoro.PomodoroAppPanel;
 import com.turkerozturk.jpanels.theme.ThemeSelectorPanel;
 //import com.turkerozturk.plugin.PanelPlugin;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 
 public class ApplicationFrame extends JFrame {
+
+    public static final java.util.List<SoundController> soundControllers = new ArrayList<>();
+
+
+
+
 
     private float opacityLevel = 1.0f; // Başlangıçta tam opak
     private boolean maximized = false;
@@ -65,15 +77,15 @@ public class ApplicationFrame extends JFrame {
         private final Mp3PlayerFx playerPanel2;
         private final Mp3PlayerFx playerPanel3;
 */
-    private JButton globalMuteButton;
 
     private JButton muteButtonAtTab;
 
     private int frameWidth, frameHeight;
 
 
-    JToggleButton toggleAlwaysOnTopButton, toggleHistoryLoggingButton;
-    private boolean isAlwaysOnTop, isHistoryLoggingEnabled;
+    JToggleButton toggleHistoryLoggingButton;
+
+    private boolean isHistoryLoggingEnabled;
 
     Dimension defaultFrameDimension;
 
@@ -81,6 +93,7 @@ public class ApplicationFrame extends JFrame {
     LanguageManager bundle = LanguageManager.getInstance();
     ConfigManager props = ConfigManager.getInstance();
     private JToggleButton toggleCompactViewButton;
+    private int windowControlBarPanelHeight = 30;
 
     private void loadVariablesFromConfig() {
         frameWidth = Integer.parseInt(props.getProperty("frame.width", "700"));
@@ -102,12 +115,14 @@ public class ApplicationFrame extends JFrame {
 
     public ApplicationFrame() {
 
+        loadVariablesFromConfig();
+
+
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(prepareTransparentFrameWithControls(), BorderLayout.NORTH);
 
         // TODO enableResize(); // 📌 Pencerenin yeniden boyutlandırılmasını etkinleştir!
 
-        loadVariablesFromConfig();
 
         initializeApplicationFrame();
 
@@ -116,6 +131,7 @@ public class ApplicationFrame extends JFrame {
 
 
         tabbedPanel = new JTabbedPane();
+        tabbedPanel.setPreferredSize(new Dimension(frameWidth, frameHeight - windowControlBarPanelHeight));
 
         PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
         tabbedPanel.addTab("Pomodoro", pomodoroApp);
@@ -325,8 +341,6 @@ public class ApplicationFrame extends JFrame {
         add(mainPanel, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
 
 
-
-
 /*
         soundControllers.add(playerPanel);
         soundControllers.add(playerPanel2);
@@ -361,11 +375,11 @@ public class ApplicationFrame extends JFrame {
             toggleHistoryLoggingButton.setText(translate("button.logging.history.off"));
         }
     }
-
+/*
     private void toggleAlwaysOnTop() {
         boolean isSelected = toggleAlwaysOnTopButton.isSelected();
         setAlwaysOnTop(isSelected);
-    }
+    }*/
 
     public String translate(String key) {
         return bundle.getString(key);
@@ -378,39 +392,10 @@ public class ApplicationFrame extends JFrame {
     }
 
 
-    private static boolean isGlobalMuted = false;
-    private static final java.util.List<SoundController> soundControllers = new ArrayList<>();
-    private static final List<Boolean> previousMuteStates = new ArrayList<>();
-
-    private void toggleGlobalMute(JButton button) {
-        if (isGlobalMuted) {
-            // Global Unmute
-            for (int i = 0; i < soundControllers.size(); i++) {
-                if (!previousMuteStates.get(i)) { // Eski durumu kontrol et
-                    soundControllers.get(i).unmute();
-                }
-            }
-            isGlobalMuted = false;
-            button.setText("Global Mute");
-            System.out.println(this.prepareGlobalSoundReport());
-        } else {
-            // Global Mute
-            previousMuteStates.clear();
-            for (SoundController controller : soundControllers) {
-                previousMuteStates.add(controller.isMuted());
-                controller.mute();
-            }
-            isGlobalMuted = true;
-            button.setText("Global Unmute");
-        }
-    }
-
-    private String prepareGlobalSoundReport() {
-        StringBuilder sb = new StringBuilder();
 
 
-        return sb.toString();
-    }
+
+
 
 
     /**
@@ -434,7 +419,7 @@ public class ApplicationFrame extends JFrame {
         muteButtonAtTab.setOpaque(false);
         muteButtonAtTab.setToolTipText("Mute/Unmute");
 
-        muteButtonAtTab.addActionListener(e -> toggleGlobalMuteAtTab());
+       // muteButtonAtTab.addActionListener(e -> toggleGlobalMuteAtTab());
 
 
         /* todo
@@ -459,32 +444,7 @@ public class ApplicationFrame extends JFrame {
     }
 
 
-    private void toggleGlobalMuteAtTab() {
-        if (isGlobalMuted) {
-            // Global Unmute
-            for (int i = 0; i < soundControllers.size(); i++) {
-                if (!previousMuteStates.get(i)) { // Eski durumu kontrol et
-                    soundControllers.get(i).unmute();
-                }
-            }
-            isGlobalMuted = false;
-            //muteButtonAtTab.setText("Global Mute");
-            muteButtonAtTab.setText("🔊"); // 🔊 Ses Açık, 🔇 Ses Kapalı
 
-            System.out.println(this.prepareGlobalSoundReport());
-        } else {
-            // Global Mute
-            previousMuteStates.clear();
-            for (SoundController controller : soundControllers) {
-                previousMuteStates.add(controller.isMuted());
-                controller.mute();
-            }
-            isGlobalMuted = true;
-            //muteButtonAtTab.setText("Global Unmute");
-            muteButtonAtTab.setText("🔇"); // 🔊 Ses Açık, 🔇 Ses Kapalı
-
-        }
-    }
 
 
 
@@ -562,16 +522,20 @@ public class ApplicationFrame extends JFrame {
         // Üst panel (Kontrol Barı)
         windowControlBarPanel = new JPanel();
         windowControlBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        windowControlBarPanel.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
+        windowControlBarPanel.setPreferredSize(new Dimension(frameWidth, windowControlBarPanelHeight));
+        //windowControlBarPanel.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
+
 
 
         // Toggle window size to compact
-        toggleCompactViewButton = new JToggleButton("Compact");
+        toggleCompactViewButton = new JToggleButton("C");
+        toggleCompactViewButton.setToolTipText("Compact");
         toggleCompactViewButton.addActionListener(e -> toggleCompactView());
         windowControlBarPanel.add(toggleCompactViewButton);
 
         // Theme Selector
-        JButton themeSelectorButton = new JButton("Theme");
+        JButton themeSelectorButton = new JButton("T");
+        themeSelectorButton.setToolTipText("Theme");
         themeSelectorButton.addActionListener(e -> {
             ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
 
@@ -586,26 +550,19 @@ public class ApplicationFrame extends JFrame {
 
 
         // Reset window dimension to its original config values.
-        JButton resetFrameResolutionButton = new JButton("Reset Window");
+        JButton resetFrameResolutionButton = new JButton("R");
+        resetFrameResolutionButton.setToolTipText("Reset Window");
         resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
         windowControlBarPanel.add(resetFrameResolutionButton);
 
         // Global Mute/Unmute butonu
-        globalMuteButton = new JButton("Global Mute");
-        globalMuteButton.addActionListener(e -> toggleGlobalMute(globalMuteButton));
+        MuteAllButton globalMuteButton = new MuteAllButton();
         windowControlBarPanel.add(globalMuteButton);
 
         // Always On Top Butonu
-        toggleAlwaysOnTopButton = new JToggleButton(translate("frame.always.on.top"));
-        isAlwaysOnTop = Integer.parseInt(props.getProperty("gui.is.always.on.top")) == 1;
-        toggleAlwaysOnTopButton.setSelected(isAlwaysOnTop);
-        if (toggleAlwaysOnTopButton.isSelected()) {
-            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.on"));
-            setAlwaysOnTop(isAlwaysOnTop);
-        } else {
-            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.off"));
-        }
-        toggleAlwaysOnTopButton.addActionListener(e -> toggleAlwaysOnTop());
+        AlwaysOnTopButton toggleAlwaysOnTopButton = new AlwaysOnTopButton();
+        windowControlBarPanel.add(toggleAlwaysOnTopButton);
+
 
 
         // Minimize Butonu
@@ -629,7 +586,6 @@ public class ApplicationFrame extends JFrame {
         });
 
         // Butonları ekle
-        windowControlBarPanel.add(toggleAlwaysOnTopButton);
         windowControlBarPanel.add(new JLabel("opacity:"));
         windowControlBarPanel.add(opacitySlider);
         windowControlBarPanel.add(minimizeButton);
@@ -664,7 +620,7 @@ public class ApplicationFrame extends JFrame {
     private Point previousLocation;
 
     /**
-     *
+     * pencereyi cok kucuk yapar
      */
     private void toggleCompactView() {
         if (toggleCompactViewButton.isSelected()) {
@@ -672,21 +628,25 @@ public class ApplicationFrame extends JFrame {
             previousSize = getSize();
             previousLocation = getLocation();
 
+
+
+            getContentPane().remove(tabbedPanel);
+
             // Sadece butonu içerecek şekilde pencereyi küçült
             setSize(windowControlBarPanel.getPreferredSize());
             //setLocationRelativeTo(null);
-
-            getContentPane().remove(tabbedPanel);
+            //System.out.println(windowControlBarPanel.getPreferredSize());
             //getContentPane().add(toggleCompactViewButton);
             setAlwaysOnTop(true);
         } else {
             // Eski boyut ve içeriği geri yükle
             setSize(previousSize);
-            setLocation(previousLocation);
+            //setLocation(previousLocation);
             //getContentPane().removeAll();
             // Ana paneli geri ekle
             //getContentPane().setLayout(new BorderLayout());
             getContentPane().add(tabbedPanel);
+
 
             // Always on top kapat
             setAlwaysOnTop(false);
