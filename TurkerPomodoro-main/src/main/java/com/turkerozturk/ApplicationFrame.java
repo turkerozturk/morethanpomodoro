@@ -51,10 +51,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.List;
 
@@ -84,6 +80,7 @@ public class ApplicationFrame extends JFrame {
 
     LanguageManager bundle = LanguageManager.getInstance();
     ConfigManager props = ConfigManager.getInstance();
+    private JToggleButton toggleCompactViewButton;
 
     private void loadVariablesFromConfig() {
         frameWidth = Integer.parseInt(props.getProperty("frame.width", "700"));
@@ -98,9 +95,14 @@ public class ApplicationFrame extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    JPanel mainPanel;
+    JPanel windowControlBarPanel;
+
+    JTabbedPane tabbedPanel;
+
     public ApplicationFrame() {
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(prepareTransparentFrameWithControls(), BorderLayout.NORTH);
 
         // TODO enableResize(); // 📌 Pencerenin yeniden boyutlandırılmasını etkinleştir!
@@ -110,20 +112,10 @@ public class ApplicationFrame extends JFrame {
         initializeApplicationFrame();
 
 
-        toggleAlwaysOnTopButton = new JToggleButton(translate("frame.always.on.top"));
 
 
-        isAlwaysOnTop = Integer.parseInt(props.getProperty("gui.is.always.on.top")) == 1;
-        toggleAlwaysOnTopButton.setSelected(isAlwaysOnTop);
-        if (toggleAlwaysOnTopButton.isSelected()) {
-            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.on"));
-            setAlwaysOnTop(isAlwaysOnTop);
-        } else {
-            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.off"));
-        }
 
-
-        JTabbedPane tabbedPanel = new JTabbedPane();
+        tabbedPanel = new JTabbedPane();
 
         PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
         tabbedPanel.addTab("Pomodoro", pomodoroApp);
@@ -272,24 +264,26 @@ public class ApplicationFrame extends JFrame {
         */
         //tabbedPanel.addTab("Device Tests", jTabbedPaneForDeviceTesting);
 
-
-        JTabbedPane applicationSettingsPanel = new JTabbedPane();
-
         // basla flatpak bilgi: flatpak tema
 
-        ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
+        //JTabbedPane applicationSettingsPanel = new JTabbedPane();
+        //ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
 
 
-        applicationSettingsPanel.addTab("Theme", themeSelectorPanel);
+
+
+
+
+        //applicationSettingsPanel.addTab("Theme", themeSelectorPanel);
 
         // bitti flatpak
 
 
 
 
-        JPanel globalOptionsPanel = new JPanel();
+        //JPanel globalOptionsPanel = new JPanel();
 
-        globalOptionsPanel.add(toggleAlwaysOnTopButton);
+        //globalOptionsPanel.add(toggleAlwaysOnTopButton);
 
         /* TO DO in the future
         toggleHistoryLoggingButton = new JToggleButton(translate("button.logging.history.initial"));
@@ -302,27 +296,16 @@ public class ApplicationFrame extends JFrame {
         globalOptionsPanel.add(toggleHistoryLoggingButton);
         */
 
-        JButton resetFrameResolutionButton = new JButton("Reset Window Dimension");
-        resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
-        globalOptionsPanel.add(resetFrameResolutionButton);
-
-        toggleAlwaysOnTopButton.addActionListener(e -> toggleAlwaysOnTop());
 
 
-        // Global Mute/Unmute butonu
-        globalMuteButton = new JButton("Global Mute");
-        globalMuteButton.addActionListener(e -> toggleGlobalMute(globalMuteButton));
 
-        globalOptionsPanel.add(globalMuteButton);
-
-
-        applicationSettingsPanel.addTab("Window", globalOptionsPanel);
+        //applicationSettingsPanel.addTab("Window", globalOptionsPanel);
         /*
         ConfigurationEditorPanel configurationEditorPanel = new ConfigurationEditorPanel();
         applicationSettingsPanel.addTab("Config", configurationEditorPanel);
         */
 
-        tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
+        //tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
 
         // AboutPanel aboutPanel = new AboutPanel();
         String aboutPanelTitle = "plugin.about.title";
@@ -577,9 +560,53 @@ public class ApplicationFrame extends JFrame {
         setOpacity(opacityLevel);
 
         // Üst panel (Kontrol Barı)
-        JPanel windowControlBarPanel = new JPanel();
+        windowControlBarPanel = new JPanel();
         windowControlBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         windowControlBarPanel.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
+
+
+        // Toggle window size to compact
+        toggleCompactViewButton = new JToggleButton("Compact");
+        toggleCompactViewButton.addActionListener(e -> toggleCompactView());
+        windowControlBarPanel.add(toggleCompactViewButton);
+
+        // Theme Selector
+        JButton themeSelectorButton = new JButton("Theme");
+        themeSelectorButton.addActionListener(e -> {
+            ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
+
+            JOptionPane.showMessageDialog(
+                    SwingUtilities.getWindowAncestor(themeSelectorButton), // Ana pencereyi alır
+                    themeSelectorPanel,
+                    "Select Theme",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+        });
+        windowControlBarPanel.add(themeSelectorButton);
+
+
+        // Reset window dimension to its original config values.
+        JButton resetFrameResolutionButton = new JButton("Reset Window");
+        resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
+        windowControlBarPanel.add(resetFrameResolutionButton);
+
+        // Global Mute/Unmute butonu
+        globalMuteButton = new JButton("Global Mute");
+        globalMuteButton.addActionListener(e -> toggleGlobalMute(globalMuteButton));
+        windowControlBarPanel.add(globalMuteButton);
+
+        // Always On Top Butonu
+        toggleAlwaysOnTopButton = new JToggleButton(translate("frame.always.on.top"));
+        isAlwaysOnTop = Integer.parseInt(props.getProperty("gui.is.always.on.top")) == 1;
+        toggleAlwaysOnTopButton.setSelected(isAlwaysOnTop);
+        if (toggleAlwaysOnTopButton.isSelected()) {
+            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.on"));
+            setAlwaysOnTop(isAlwaysOnTop);
+        } else {
+            toggleAlwaysOnTopButton.setText(translate("button.always.on.top.off"));
+        }
+        toggleAlwaysOnTopButton.addActionListener(e -> toggleAlwaysOnTop());
+
 
         // Minimize Butonu
         JButton minimizeButton = new JButton("_");
@@ -602,7 +629,8 @@ public class ApplicationFrame extends JFrame {
         });
 
         // Butonları ekle
-        windowControlBarPanel.add(new JLabel("Şeffaflık: "));
+        windowControlBarPanel.add(toggleAlwaysOnTopButton);
+        windowControlBarPanel.add(new JLabel("opacity:"));
         windowControlBarPanel.add(opacitySlider);
         windowControlBarPanel.add(minimizeButton);
         windowControlBarPanel.add(maximizeButton);
@@ -631,6 +659,47 @@ public class ApplicationFrame extends JFrame {
 
         return windowControlBarPanel;
     }
+
+    private Dimension previousSize;
+    private Point previousLocation;
+
+    /**
+     *
+     */
+    private void toggleCompactView() {
+        if (toggleCompactViewButton.isSelected()) {
+            // Eski boyut ve konumu sakla
+            previousSize = getSize();
+            previousLocation = getLocation();
+
+            // Sadece butonu içerecek şekilde pencereyi küçült
+            setSize(windowControlBarPanel.getPreferredSize());
+            //setLocationRelativeTo(null);
+
+            getContentPane().remove(tabbedPanel);
+            //getContentPane().add(toggleCompactViewButton);
+            setAlwaysOnTop(true);
+        } else {
+            // Eski boyut ve içeriği geri yükle
+            setSize(previousSize);
+            setLocation(previousLocation);
+            //getContentPane().removeAll();
+            // Ana paneli geri ekle
+            //getContentPane().setLayout(new BorderLayout());
+            getContentPane().add(tabbedPanel);
+
+            // Always on top kapat
+            setAlwaysOnTop(false);
+        }
+
+        // İçeriği yenile
+
+
+        revalidate();
+        repaint();
+    }
+
+
 /*
     private static final int RESIZE_MARGIN = 8; // Kenarlardan kaç piksel içeride algılasın?
 
