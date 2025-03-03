@@ -65,6 +65,7 @@ public class ApplicationFrame extends JFrame {
     public static final java.util.List<SoundController> soundControllers = new ArrayList<>();
 
 
+    int iconWidth, iconHeight;
 
 
 
@@ -98,6 +99,9 @@ public class ApplicationFrame extends JFrame {
     private void loadVariablesFromConfig() {
         frameWidth = Integer.parseInt(props.getProperty("frame.width", "700"));
         frameHeight = Integer.parseInt(props.getProperty("frame.height", "350"));
+        iconWidth = Integer.parseInt(props.getProperty("gui.icon.width"));
+        iconHeight = Integer.parseInt(props.getProperty("gui.icon.height"));
+
     }
 
     private void initializeApplicationFrame() {
@@ -331,10 +335,12 @@ public class ApplicationFrame extends JFrame {
                 , aboutPanelTitle);
         tabbedPanel.addTab(bundle.getString(aboutPanelTitle), aboutPanel);
 
+        /*
         Integer tabIndex = getTabIndex(aboutPanelTitle, tabbedPanel);
         if(tabIndex != null) {
             tabbedPanel.setTabComponentAt(tabIndex, createTabHeader(tabbedPanel, tabIndex));
         }
+        */
 
         mainPanel.add(tabbedPanel, BorderLayout.CENTER);
 
@@ -528,13 +534,19 @@ public class ApplicationFrame extends JFrame {
 
 
         // Toggle window size to compact
-        toggleCompactViewButton = new JToggleButton("C");
+        toggleCompactViewButton = new JToggleButton();
+        FlatSVGIcon compactViewIcon = new FlatSVGIcon("svg/compact__tabler__freeze-row.svg", iconWidth, iconHeight);
+        toggleCompactViewButton.setIcon(compactViewIcon);
+        toggleCompactViewButton.setFocusable(false);
         toggleCompactViewButton.setToolTipText("Compact");
         toggleCompactViewButton.addActionListener(e -> toggleCompactView());
         windowControlBarPanel.add(toggleCompactViewButton);
 
         // Theme Selector
-        JButton themeSelectorButton = new JButton("T");
+        JButton themeSelectorButton = new JButton();
+        FlatSVGIcon themeIcon = new FlatSVGIcon("svg/theme__tabler__template.svg", iconWidth, iconHeight);
+        themeSelectorButton.setIcon(themeIcon);
+        themeSelectorButton.setFocusable(false);
         themeSelectorButton.setToolTipText("Theme");
         themeSelectorButton.addActionListener(e -> {
             ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
@@ -549,11 +561,7 @@ public class ApplicationFrame extends JFrame {
         windowControlBarPanel.add(themeSelectorButton);
 
 
-        // Reset window dimension to its original config values.
-        JButton resetFrameResolutionButton = new JButton("R");
-        resetFrameResolutionButton.setToolTipText("Reset Window");
-        resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
-        windowControlBarPanel.add(resetFrameResolutionButton);
+
 
         // Global Mute/Unmute butonu
         MuteAllButton globalMuteButton = new MuteAllButton();
@@ -563,34 +571,68 @@ public class ApplicationFrame extends JFrame {
         AlwaysOnTopButton toggleAlwaysOnTopButton = new AlwaysOnTopButton();
         windowControlBarPanel.add(toggleAlwaysOnTopButton);
 
-
-
-        // Minimize Butonu
-        JButton minimizeButton = new JButton("_");
-        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
-
-        // Maksimize / Normal Butonu
-        JButton maximizeButton = new JButton("[]");
-        maximizeButton.addActionListener(e -> toggleMaximize());
-
-        // Kapatma Butonu
-        JButton closeButton = new JButton("X");
-        closeButton.addActionListener(e -> System.exit(0));
-
         // Şeffaflık Ayar Slider'ı
+        windowControlBarPanel.add(new JLabel("opacity:"));
         JSlider opacitySlider = new JSlider(30, 100, (int) (opacityLevel * 100));
-        opacitySlider.setPreferredSize(new Dimension(100, 20));
+        opacitySlider.setPreferredSize(new Dimension(50, iconHeight));
         opacitySlider.addChangeListener(e -> {
             opacityLevel = opacitySlider.getValue() / 100f;
             setOpacity(opacityLevel);
         });
-
-        // Butonları ekle
-        windowControlBarPanel.add(new JLabel("opacity:"));
         windowControlBarPanel.add(opacitySlider);
+
+
+        // Reset window dimension to its original config values.
+        JButton resetFrameResolutionButton = new JButton();
+        FlatSVGIcon resetIcon = new FlatSVGIcon("svg/reset-resolution__tabler__refresh.svg", iconWidth, iconHeight);
+        resetFrameResolutionButton.setIcon(resetIcon);
+        resetFrameResolutionButton.setFocusable(false);
+        resetFrameResolutionButton.setToolTipText("Reset Window Resolution");
+        resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
+        windowControlBarPanel.add(resetFrameResolutionButton);
+
+        // change_resolution__opuscapita__zoom_out_map.svg
+        JButton changeResolutionButton = new JButton();
+        FlatSVGIcon changeResolutionIcon = new FlatSVGIcon("svg/change_resolution__opuscapita__zoom_out_map.svg", iconWidth, iconHeight);
+        changeResolutionButton.setIcon(changeResolutionIcon);
+        changeResolutionButton.setFocusable(false);
+        changeResolutionButton.setToolTipText("Change Window Resolution");
+        changeResolutionButton.addActionListener(e -> changeFrameResolution());
+        windowControlBarPanel.add(changeResolutionButton);
+
+        // https://stackoverflow.com/questions/6507695/how-do-i-set-the-horizontal-gap-for-just-one-part-of-a-flowlayout
+        windowControlBarPanel.add(Box.createRigidArea(new Dimension(30, 0)));
+
+
+        // Minimize Butonu
+        JButton minimizeButton = new JButton();
+        FlatSVGIcon minimizeIcon = new FlatSVGIcon("svg/minimize__tabler__window-minimize.svg", iconWidth, iconHeight);
+        minimizeButton.setIcon(minimizeIcon);
+        minimizeButton.setFocusable(false);
+        minimizeButton.setToolTipText("Minimize Window");
+        minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
         windowControlBarPanel.add(minimizeButton);
+
+        // Maksimize / Normal Butonu
+        JButton maximizeButton = new JButton();
+        FlatSVGIcon maximizeIcon = new FlatSVGIcon("svg/maximize__iconduck__maximize-2.svg", iconWidth, iconHeight);
+        maximizeButton.setIcon(maximizeIcon);
+        maximizeButton.setFocusable(false);
+        maximizeButton.setToolTipText("Maximize Window");
+        maximizeButton.addActionListener(e -> toggleMaximize());
         windowControlBarPanel.add(maximizeButton);
+
+        // Kapatma Butonu
+        JButton closeButton = new JButton();
+        FlatSVGIcon closeIcon = new FlatSVGIcon("svg/exit-application__opuscapita__clear.svg", iconWidth, iconHeight);
+        closeButton.setIcon(closeIcon);
+        closeButton.setFocusable(false);
+        closeButton.setToolTipText("Close Application");
+        closeButton.addActionListener(e -> System.exit(0));
         windowControlBarPanel.add(closeButton);
+
+
+
 
         // Üst paneli sürükleyerek taşımayı sağla
         enableFrameDrag(windowControlBarPanel);
@@ -727,6 +769,72 @@ public class ApplicationFrame extends JFrame {
     }
 
 */
+
+
+
+    public void changeFrameResolution() {
+        Window window = SwingUtilities.getWindowAncestor(toggleCompactViewButton);
+        if (window == null) return;
+
+        // Mevcut pencere boyutlarını al
+        int currentWidth = window.getWidth();
+        int currentHeight = window.getHeight();
+
+        // Dialog oluştur
+        JDialog dialog = new JDialog(this, "Change Resolution", true);
+        dialog.setLayout(new GridBagLayout());
+        dialog.setSize(300, 150);
+        dialog.setLocationRelativeTo(window);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Genişlik Spinner
+        dialog.add(new JLabel("Width:"), gbc);
+        gbc.gridx = 1;
+        JSpinner widthSpinner = new JSpinner(new SpinnerNumberModel(currentWidth, 100, 5000, 10));
+        dialog.add(widthSpinner, gbc);
+
+        // Yükseklik Spinner
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        dialog.add(new JLabel("Height:"), gbc);
+        gbc.gridx = 1;
+        JSpinner heightSpinner = new JSpinner(new SpinnerNumberModel(currentHeight, 100, 5000, 10));
+        dialog.add(heightSpinner, gbc);
+
+        // Apply ve Cancel butonları
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+
+        JPanel buttonPanel = new JPanel();
+        JButton applyButton = new JButton("Apply");
+        JButton cancelButton = new JButton("Cancel");
+
+        applyButton.addActionListener(e -> {
+            int newWidth = (int) widthSpinner.getValue();
+            int newHeight = (int) heightSpinner.getValue();
+            window.setSize(newWidth, newHeight);
+            dialog.dispose();
+        });
+
+        cancelButton.addActionListener(e -> dialog.dispose());
+
+        buttonPanel.add(applyButton);
+        buttonPanel.add(cancelButton);
+        dialog.add(buttonPanel, gbc);
+
+        dialog.setVisible(true);
+    }
+
+
+
+
+
 
 }
 

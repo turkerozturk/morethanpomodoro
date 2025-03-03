@@ -28,7 +28,7 @@ public class AlwaysOnTopButton extends JToggleButton {
         iconHeight = Integer.parseInt(props.getProperty("gui.icon.height"));
 
         this.setToolTipText(bundle.getString("frame.always.on.top"));
-        FlatSVGIcon icon = new FlatSVGIcon("svg/top-with-upwards-arrow-above.svg", iconWidth, iconHeight);
+        FlatSVGIcon icon = new FlatSVGIcon("svg/always-on-top__iconduck__top-with-upwards-arrow-above.svg", iconWidth, iconHeight);
         this.setIcon(icon);
         addActionListener(new ActionListener() {
             @Override

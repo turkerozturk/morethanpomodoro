@@ -62,7 +62,7 @@ public class MuteAllButton extends JToggleButton {
             }
             //isGlobalMuted = true;
             this.setToolTipText("UnMute All");
-            FlatSVGIcon globalMuteIcon = new FlatSVGIcon("svg/volume_mute.svg", iconWidth, iconHeight);
+            FlatSVGIcon globalMuteIcon = new FlatSVGIcon("svg/sound_off__tabler__volume_mute.svg", iconWidth, iconHeight);
             this.setIcon(globalMuteIcon);
             this.setText("");
         } else {
@@ -75,7 +75,7 @@ public class MuteAllButton extends JToggleButton {
             }
             //isGlobalMuted = false;
             this.setToolTipText("Mute All");
-            FlatSVGIcon globalMuteIcon = new FlatSVGIcon("svg/volume_up.svg", iconWidth, iconHeight);
+            FlatSVGIcon globalMuteIcon = new FlatSVGIcon("svg/sound_on__tabler__volume_up.svg", iconWidth, iconHeight);
             this.setIcon(globalMuteIcon);
             this.setText("");
             //System.out.println(this.prepareGlobalSoundReport());
