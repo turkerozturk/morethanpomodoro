@@ -27,6 +27,7 @@ import com.turkerozturk.initial.LanguageManager;
 
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
+import javax.swing.*;
 import java.awt.Toolkit;
 import java.io.*;
 import java.net.URL;
@@ -135,7 +136,7 @@ public class MetronomePlayerWav {
 
 
 
-    private final int tickInterval;       // Kaç tick'te bir ses çalınacak
+    private int tickInterval;       // Kaç tick'te bir ses çalınacak
     private int counter = 0;
     private final String soundType;       // "MIDI" veya "WAV"
     private final String soundFile;       // "beep.wav" vb.
@@ -153,12 +154,18 @@ public class MetronomePlayerWav {
     private int wavSoundVolume;
 
 
+    public int getTickInterval() {
+        return tickInterval;
+    }
 
-    public MetronomePlayerWav(int tickInterval, String soundType, String soundFile, boolean isRandomEnabled) {
+    public void setTickInterval(int seconds) {
+        this.tickInterval = seconds;
+    }
+
+    public MetronomePlayerWav(int tickInterval, String soundType, String soundFile) {
         this.tickInterval = tickInterval;
         this.soundType = soundType != null ? soundType : "WAV";
         this.soundFile = soundFile != null ? soundFile : "tick.wav";
-        this.isRandomEnabled = isRandomEnabled;
         resetRandomTicks();
     }
 
@@ -262,7 +269,7 @@ public class MetronomePlayerWav {
         }
         return new MidiEvent(message, tick);
     }
-
+/*
     private void playWavFile() {
         try (InputStream audioSrc = getClass().getResourceAsStream("/" + soundFile)) {
             if (audioSrc == null) {
@@ -286,7 +293,7 @@ public class MetronomePlayerWav {
             Toolkit.getDefaultToolkit().beep();
         }
     }
-
+*/
     public void setMuted(boolean mute) {
         this.isMuted = mute;
     }
@@ -308,6 +315,47 @@ public class MetronomePlayerWav {
 
     public void setVolume(int tickSoundVolume) {
         this.tickSoundVolume = tickSoundVolume;
+    }
+
+    public void setWavFile(String fname) {
+
+        // todo
+
+        clip.drain();
+
+        try {
+            String fileName = "ticksounds" + File.separator + fname;
+            //System.out.println("fname: " + fileName);
+
+            AudioInputStream audioStream = null;
+
+            // 1. Çalışma dizininde dosya var mı kontrol et
+            File externalFile = new File(fileName);
+            //System.out.println(fileName);
+            if (externalFile.exists()) {
+                audioStream = AudioSystem.getAudioInputStream(externalFile);
+            } else {
+                // 2. Resources içindeki dosyayı kontrol et
+                URL resource = MetronomePlayerWav.class.getClassLoader().getResource(fileName);
+                if (resource != null) {
+                    audioStream = AudioSystem.getAudioInputStream(resource);
+                }
+            }
+
+            // 3. Hiçbir dosya bulunamazsa, bellekte beep ses oluştur
+            if (audioStream == null) {
+                audioStream = createBeepAudioStream();
+            }
+
+            // Clip oluştur ve ses akışını yükle
+            clip = AudioSystem.getClip();
+            clip.open(audioStream);
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     /*

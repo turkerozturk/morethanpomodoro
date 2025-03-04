@@ -21,6 +21,8 @@
 package com.turkerozturk.jpanels.pomodoro.subpanels;
 
 import com.turkerozturk.MetronomePlayerWav;
+import com.turkerozturk.comboboxes.WavFile;
+import com.turkerozturk.comboboxes.WavFileComboBox;
 import com.turkerozturk.initial.ConfigManager;
 import com.turkerozturk.initial.LanguageManager;
 import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
@@ -32,7 +34,7 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
     private final MetronomePlayerWav metronomePlayer;
     private int metronomeInterval; // saniye
     private String soundType;
-    private String soundFile;
+    private String soundFileName;
     //private int wavSoundVolume;
 
     private int tickSoundVolume;
@@ -41,6 +43,8 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
     JSlider tickSoundVolumeSlider;
     private final JToggleButton  toggleRandomTickButton;
     private final JToggleButton toggleTickSoundButton;
+
+    //JLabel jLabel;
 
 
     private boolean isRandomTick;
@@ -58,7 +62,7 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
 
 
         // Metronom ayarla
-        metronomePlayer = new MetronomePlayerWav(metronomeInterval, soundType, soundFile, isRandomTick);
+        metronomePlayer = new MetronomePlayerWav(metronomeInterval, soundType, soundFileName);
         metronomePlayer.setRandomEnabled(isRandomTick);
 
 
@@ -69,8 +73,27 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
 
 
 
+        //jLabel = new JLabel("tick inverval: " + metronomeInterval + "");
+        //this.add(jLabel);
 
 
+        JPanel panelForComboBox = new JPanel();
+        panelForComboBox.setLayout(new BoxLayout(panelForComboBox, BoxLayout.X_AXIS));
+        WavFileComboBox wavFileComboBox = new WavFileComboBox();
+        wavFileComboBox.populateComboBox();
+        panelForComboBox.add(wavFileComboBox);
+        this.add(panelForComboBox);
+
+        JButton btnGetSelection = new JButton("Select");
+        btnGetSelection.addActionListener(e -> {
+            WavFile wavFile = wavFileComboBox.getSelectedWavFile();
+            // İstediğiniz işlemi yapın. Örneğin label'ı güncelleyin:
+            //jLabel.setText("Seçilen Dosya: " + fileName);
+            metronomePlayer.setWavFile(wavFile.getFileName());
+            metronomePlayer.setTickInterval(wavFile.getDurationSec());
+            //System.out.println(wavFile.getFileName() + " interval: " + wavFile.getDurationSec());
+        });
+        this.add(btnGetSelection);
 
 
         // https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemoProject/src/components/SliderDemo.java
@@ -117,7 +140,7 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
 
         soundType = props.getProperty("pomodoro.tick.sound.type"); // WAV or MIDI or BEEP
         if(soundType.equals("WAV")) {
-            soundFile = props.getProperty("pomodoro.tick.sound.wav.file");
+            soundFileName = props.getProperty("pomodoro.tick.sound.wav.file");
             tickSoundVolume = Integer.parseInt(props.getProperty("pomodoro.tick.sound.wav.volume"));
             //tickSoundVolume = wavSoundVolume;
         }
