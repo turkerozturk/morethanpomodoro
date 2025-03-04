@@ -197,7 +197,9 @@ public class PomodoroService {
             }
         };
         // Her saniye çalıştır
-        timer.scheduleAtFixedRate(currentTask, 1000, 1000);
+        //timer.scheduleAtFixedRate(currentTask, 1000, 1000);
+        timer.scheduleAtFixedRate(currentTask, 0, 1000);
+
     }
 
     // Zamanlayıcıyı durdurur.
