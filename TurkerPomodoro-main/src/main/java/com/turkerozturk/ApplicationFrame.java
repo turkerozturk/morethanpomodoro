@@ -105,6 +105,8 @@ public class ApplicationFrame extends JFrame {
     }
 
     private void initializeApplicationFrame() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/mtp-app-icon.png"));
+        setIconImage(icon.getImage());
         setTitle(translate("frame.title"));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(frameWidth, frameHeight);
