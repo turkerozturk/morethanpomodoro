@@ -22,6 +22,7 @@ public class AlwaysOnTopButton extends JToggleButton {
     public AlwaysOnTopButton() {
         super("");
         setFocusable(false);
+        setBackground(Color.white);
 
         isAlwaysOnTop = Integer.parseInt(props.getProperty("gui.is.always.on.top")) == 1;
         iconWidth = Integer.parseInt(props.getProperty("gui.icon.width"));

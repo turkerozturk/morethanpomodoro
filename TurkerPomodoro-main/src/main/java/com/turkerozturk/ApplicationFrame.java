@@ -44,6 +44,7 @@ import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 //import com.turkerozturk.jpanels.speakertest.AudioOutputPanel;
 //import com.turkerozturk.jpanels.systeminfo.SystemInfoPanel;
 //import com.turkerozturk.jpanels.taptempo.TapTempoTool;
+import com.turkerozturk.jpanels.GradientPanel;
 import com.turkerozturk.jpanels.pomodoro.PomodoroAppPanel;
 //import com.turkerozturk.jpanels.textquotes.RandomTextDisplayPanel;
 import com.turkerozturk.jpanels.theme.ThemeSelectorPanel;
@@ -112,10 +113,11 @@ public class ApplicationFrame extends JFrame {
         setSize(frameWidth, frameHeight);
         defaultFrameDimension = getSize();
         setLocationRelativeTo(null);
+        enableResize(); // transparent framede cerceve olmaz. kendimiz programlariz.
     }
 
     JPanel mainPanel;
-    JPanel windowControlBarPanel;
+    GradientPanel windowControlBarPanel;
 
     JTabbedPane tabbedPanel;
 
@@ -124,7 +126,7 @@ public class ApplicationFrame extends JFrame {
         loadVariablesFromConfig();
 
 
-        mainPanel = new JPanel(new BorderLayout());
+        mainPanel = new JPanel();
         mainPanel.add(prepareTransparentFrameWithControls(), BorderLayout.NORTH);
 
         // TODO enableResize(); // 📌 Pencerenin yeniden boyutlandırılmasını etkinleştir!
@@ -531,7 +533,7 @@ public class ApplicationFrame extends JFrame {
         setOpacity(opacityLevel);
 
         // Üst panel (Kontrol Barı)
-        windowControlBarPanel = new JPanel();
+        windowControlBarPanel = new GradientPanel();
         windowControlBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         windowControlBarPanel.setPreferredSize(new Dimension(frameWidth, windowControlBarPanelHeight));
         //windowControlBarPanel.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
@@ -543,6 +545,7 @@ public class ApplicationFrame extends JFrame {
         FlatSVGIcon compactViewIcon = new FlatSVGIcon("svg/compact__tabler__freeze-row.svg", iconWidth, iconHeight);
         toggleCompactViewButton.setIcon(compactViewIcon);
         toggleCompactViewButton.setFocusable(false);
+        toggleCompactViewButton.setBackground(Color.white);
         toggleCompactViewButton.setToolTipText("Compact");
         toggleCompactViewButton.addActionListener(e -> toggleCompactView());
         windowControlBarPanel.add(toggleCompactViewButton);
@@ -552,6 +555,7 @@ public class ApplicationFrame extends JFrame {
         FlatSVGIcon themeIcon = new FlatSVGIcon("svg/theme__tabler__template.svg", iconWidth, iconHeight);
         themeSelectorButton.setIcon(themeIcon);
         themeSelectorButton.setFocusable(false);
+        themeSelectorButton.setBackground(Color.white);
         themeSelectorButton.setToolTipText("Theme");
         themeSelectorButton.addActionListener(e -> {
             ThemeSelectorPanel themeSelectorPanel = new ThemeSelectorPanel(this);
@@ -592,6 +596,7 @@ public class ApplicationFrame extends JFrame {
         FlatSVGIcon resetIcon = new FlatSVGIcon("svg/reset-resolution__tabler__refresh.svg", iconWidth, iconHeight);
         resetFrameResolutionButton.setIcon(resetIcon);
         resetFrameResolutionButton.setFocusable(false);
+        resetFrameResolutionButton.setBackground(Color.white);
         resetFrameResolutionButton.setToolTipText("Reset Window Resolution");
         resetFrameResolutionButton.addActionListener(e -> resetFrameResolution());
         windowControlBarPanel.add(resetFrameResolutionButton);
@@ -601,6 +606,7 @@ public class ApplicationFrame extends JFrame {
         FlatSVGIcon changeResolutionIcon = new FlatSVGIcon("svg/change_resolution__opuscapita__zoom_out_map.svg", iconWidth, iconHeight);
         changeResolutionButton.setIcon(changeResolutionIcon);
         changeResolutionButton.setFocusable(false);
+        changeResolutionButton.setBackground(Color.white);
         changeResolutionButton.setToolTipText("Change Window Resolution");
         changeResolutionButton.addActionListener(e -> changeFrameResolution());
         windowControlBarPanel.add(changeResolutionButton);
@@ -614,6 +620,7 @@ public class ApplicationFrame extends JFrame {
         FlatSVGIcon minimizeIcon = new FlatSVGIcon("svg/minimize__tabler__window-minimize.svg", iconWidth, iconHeight);
         minimizeButton.setIcon(minimizeIcon);
         minimizeButton.setFocusable(false);
+        minimizeButton.setBackground(Color.white);
         minimizeButton.setToolTipText("Minimize Window");
         minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED));
         windowControlBarPanel.add(minimizeButton);
@@ -623,6 +630,7 @@ public class ApplicationFrame extends JFrame {
         FlatSVGIcon maximizeIcon = new FlatSVGIcon("svg/maximize__iconduck__maximize-2.svg", iconWidth, iconHeight);
         maximizeButton.setIcon(maximizeIcon);
         maximizeButton.setFocusable(false);
+        maximizeButton.setBackground(Color.white);
         maximizeButton.setToolTipText("Maximize Window");
         maximizeButton.addActionListener(e -> toggleMaximize());
         windowControlBarPanel.add(maximizeButton);
@@ -632,6 +640,7 @@ public class ApplicationFrame extends JFrame {
         FlatSVGIcon closeIcon = new FlatSVGIcon("svg/exit-application__opuscapita__clear.svg", iconWidth, iconHeight);
         closeButton.setIcon(closeIcon);
         closeButton.setFocusable(false);
+        closeButton.setBackground(Color.white);
         closeButton.setToolTipText("Close Application");
         closeButton.addActionListener(e -> System.exit(0));
         windowControlBarPanel.add(closeButton);
@@ -707,8 +716,8 @@ public class ApplicationFrame extends JFrame {
     }
 
 
-/*
-    private static final int RESIZE_MARGIN = 8; // Kenarlardan kaç piksel içeride algılasın?
+
+    private static final int RESIZE_MARGIN = 4; // Kenarlardan kaç piksel içeride algılasın?
 
     private int mouseX, mouseY; // Fare konumlarını takip etmek için
 
@@ -773,7 +782,7 @@ public class ApplicationFrame extends JFrame {
         });
     }
 
-*/
+
 
 
 

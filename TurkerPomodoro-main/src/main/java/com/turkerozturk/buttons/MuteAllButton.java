@@ -6,6 +6,7 @@ import com.turkerozturk.initial.LanguageManager;
 import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,8 @@ public class MuteAllButton extends JToggleButton {
 
         super("");
         setFocusable(false);
+        setBackground(Color.white);
+
 
         isGlobalMuted = Integer.parseInt(props.getProperty("gui.is.mute.all")) == 1;
         iconWidth = Integer.parseInt(props.getProperty("gui.icon.width"));
