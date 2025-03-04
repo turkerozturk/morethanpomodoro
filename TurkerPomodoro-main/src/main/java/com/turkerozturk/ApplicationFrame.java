@@ -135,7 +135,10 @@ public class ApplicationFrame extends JFrame {
 
 
         tabbedPanel = new JTabbedPane();
-        tabbedPanel.setPreferredSize(new Dimension(frameWidth, frameHeight - windowControlBarPanelHeight));
+        tabbedPanel.setPreferredSize(new Dimension(frameWidth - 50, frameHeight - windowControlBarPanelHeight));
+        //tabbedPanel.setBackground(new Color(0, 0, 0, 10)); // RGBA (A=Alpha, şeffaflık)
+        //this.setBackground(new Color(0, 0, 0, 0)); // RGBA (A=Alpha, şeffaflık)
+        //mainPanel.setBackground(new Color(100, 0, 0, 30)); // RGBA (A=Alpha, şeffaflık)
 
         PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
         tabbedPanel.addTab("Pomodoro", pomodoroApp);
@@ -672,7 +675,7 @@ public class ApplicationFrame extends JFrame {
 
 
 
-            getContentPane().remove(tabbedPanel);
+            mainPanel.remove(tabbedPanel);
 
             // Sadece butonu içerecek şekilde pencereyi küçült
             setSize(windowControlBarPanel.getPreferredSize());
@@ -687,7 +690,7 @@ public class ApplicationFrame extends JFrame {
             //getContentPane().removeAll();
             // Ana paneli geri ekle
             //getContentPane().setLayout(new BorderLayout());
-            getContentPane().add(tabbedPanel);
+            mainPanel.add(tabbedPanel);
 
 
             // Always on top kapat
