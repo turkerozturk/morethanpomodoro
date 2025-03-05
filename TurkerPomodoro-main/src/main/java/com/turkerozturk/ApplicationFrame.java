@@ -136,7 +136,8 @@ public class ApplicationFrame extends JFrame {
 
 
         mainPanel = new JPanel();
-        mainPanel.add(prepareTransparentFrameWithControls(), BorderLayout.NORTH);
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(prepareTransparentFrameWithControls());
 
         // TODO enableResize(); // 📌 Pencerenin yeniden boyutlandırılmasını etkinleştir!
 
@@ -389,7 +390,7 @@ public class ApplicationFrame extends JFrame {
         }
         */
 
-        mainPanel.add(tabbedPanel, BorderLayout.CENTER);
+        mainPanel.add(tabbedPanel);
 
         add(mainPanel, BorderLayout.CENTER); // tum hersey tabbedpanede. en son frame icine eklemis olduk.
 
@@ -576,6 +577,9 @@ public class ApplicationFrame extends JFrame {
         windowControlBarPanel = new GradientPanel();
         windowControlBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         windowControlBarPanel.setPreferredSize(new Dimension(frameWidth, windowControlBarPanelHeight));
+        windowControlBarPanel.setMaximumSize(new Dimension(frameWidth, windowControlBarPanelHeight));
+        windowControlBarPanel.setMinimumSize(new Dimension(420, windowControlBarPanelHeight));
+
         //windowControlBarPanel.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
 
 
@@ -728,14 +732,21 @@ public class ApplicationFrame extends JFrame {
 
             mainPanel.remove(tabbedPanel);
 
-            // Sadece butonu içerecek şekilde pencereyi küçült
-            setSize(windowControlBarPanel.getPreferredSize());
+            Point location = toggleCompactViewButton.getLocationOnScreen(); // Ekran üzerindeki mutlak konumu al
+            setLocation(location);
+            //label.setText("X: " + location.x + ", Y: " + location.y);
+            // Sadece kontrol bar paneli içerecek şekilde pencereyi küçült
+            //setSize(new Dimension(previousSize.width, windowControlBarPanel.getHeight()));
+            setSize(new Dimension(windowControlBarPanel.getMinimumSize()));
+
             //setLocationRelativeTo(null);
             //System.out.println(windowControlBarPanel.getPreferredSize());
             //getContentPane().add(toggleCompactViewButton);
             setAlwaysOnTop(true);
         } else {
             // Eski boyut ve içeriği geri yükle
+            setLocation(previousLocation);
+
             setSize(previousSize);
             //setLocation(previousLocation);
             //getContentPane().removeAll();
