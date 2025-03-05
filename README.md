@@ -82,6 +82,10 @@ https://github.com/turkerozturk/morethanpomodoro/commits/v1.0.0
 
 ### Screenshots
 
+2025-03-06
+![Screenshot](screenshots/screenshot20250306.jpg)
+
+
 2025-03-05
 ![Screenshot](screenshots/screenshot20250305.jpg)
 
