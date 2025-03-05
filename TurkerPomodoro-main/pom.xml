@@ -152,10 +152,18 @@
                                 <!-- ticksounds klasörünü oluştur (eğer yoksa) -->
                                 <mkdir dir="../release-jars/ticksounds/" />
 
-                                <!-- readme.txt dosyasını kopyala -->
+                                <!-- lisans izni olan bazi seslerin low quality donusturulmusleri -->
+                                <copy todir="../release-jars/ticksounds/">
+                                    <fileset dir="../ticksounds/">
+                                        <include name="*.wav"/>
+                                    </fileset>
+                                </copy>
+
+                                <!-- ornek sesler ve lisanslar ile ilgili readme.txt dosyasını kopyala -->
                                 <copy file="src/main/resources/ticksounds/readme.txt"
                                       todir="../release-jars/ticksounds/" />
 
+                                <!-- projenin jar dosyasini kopyala -->
                                 <copy file="target/${project.build.finalName}.jar"
                                       todir="../release-jars/" />
                             </target>
