@@ -49,6 +49,8 @@ import com.turkerozturk.jpanels.pomodoro.PomodoroAppPanel;
 //import com.turkerozturk.jpanels.textquotes.RandomTextDisplayPanel;
 import com.turkerozturk.jpanels.theme.ThemeSelectorPanel;
 //import com.turkerozturk.plugin.PanelPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -56,12 +58,19 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 
 public class ApplicationFrame extends JFrame {
+
+
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationFrame.class);
 
     public static final java.util.List<SoundController> soundControllers = new ArrayList<>();
 
@@ -147,6 +156,31 @@ public class ApplicationFrame extends JFrame {
         PomodoroAppPanel pomodoroApp = new PomodoroAppPanel();
         tabbedPanel.addTab("Pomodoro", pomodoroApp);
 
+        String binauralPanelJarLocation = "core/mtp-sound-binaural-beats-ext-1.0-SNAPSHOT.jar";
+        if (new File(binauralPanelJarLocation).exists()) {
+            String binauralPanelTitle = "plugin.sound.binaural.beats.title";
+            JPanel binauralPanel = PluginLoader.loadSpecificPanel(
+                    binauralPanelJarLocation
+                    , binauralPanelTitle);
+            tabbedPanel.addTab(bundle.getString(binauralPanelTitle), binauralPanel);
+        } else {
+            logger.info("Core Extension Not Found: " + binauralPanelJarLocation +
+                    ". You can download it from: https://github.com/turkerozturk/morethanpomodoro");
+
+        }
+
+        String noisePanelJarLocation = "core/mtp-sound-noise-generators-ext-1.0-SNAPSHOT.jar";
+        if (new File(noisePanelJarLocation).exists()) {
+            String noisePanelTitle = "plugin.sound.noise.generators.title";
+            JPanel noisePanel = PluginLoader.loadSpecificPanel(
+                    noisePanelJarLocation
+                    , noisePanelTitle);
+            tabbedPanel.addTab(bundle.getString(noisePanelTitle), noisePanel);
+        } else {
+            logger.info("Core Extension Not Found: " + noisePanelJarLocation +
+                    ". You can download it from: https://github.com/turkerozturk/morethanpomodoro");
+        }
+
 
         //JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
         /*
@@ -228,9 +262,9 @@ public class ApplicationFrame extends JFrame {
             tabbedPanel.addTab("Plugins", mainTabbedPane);
 
 
-
-
-    }
+        } else {
+            logger.info("\"extensions\" folder is empty. You can download the extensions from: https://github.com/turkerozturk/morethanpomodoro");
+        }
         // BITTI pluginlerin yuklenmesi
 
 
@@ -335,12 +369,18 @@ public class ApplicationFrame extends JFrame {
         //tabbedPanel.addTab(translate("tab.panel.settings.title"), applicationSettingsPanel);
 
         // AboutPanel aboutPanel = new AboutPanel();
-        String aboutPanelTitle = "plugin.about.title";
         String aboutPanelJarLocation = "core/mtp-about-ext-1.0-SNAPSHOT.jar";
-        JPanel aboutPanel = PluginLoader.loadSpecificPanel(
-                aboutPanelJarLocation
-                , aboutPanelTitle);
-        tabbedPanel.addTab(bundle.getString(aboutPanelTitle), aboutPanel);
+        if(new File(aboutPanelJarLocation).exists()) {
+            String aboutPanelTitle = "plugin.about.title";
+            JPanel aboutPanel = PluginLoader.loadSpecificPanel(
+                    aboutPanelJarLocation
+                    , aboutPanelTitle);
+            tabbedPanel.addTab(bundle.getString(aboutPanelTitle), aboutPanel);
+        } else {
+            logger.info("Core Extension Not Found: " + aboutPanelJarLocation +
+                    ". You can download it from: https://github.com/turkerozturk/morethanpomodoro");
+
+        }
 
         /*
         Integer tabIndex = getTabIndex(aboutPanelTitle, tabbedPanel);
