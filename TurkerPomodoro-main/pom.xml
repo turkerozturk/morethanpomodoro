@@ -136,7 +136,7 @@
                 </executions>
             </plugin>
 
-            <!-- Derlenen JAR'ı release-jars klasörüne kopyalama -->
+            <!-- Derlenen JAR'ı ve diger manual dosyalari release-jars klasörüne kopyalama -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -149,6 +149,13 @@
                         </goals>
                         <configuration>
                             <target>
+                                <!-- ticksounds klasörünü oluştur (eğer yoksa) -->
+                                <mkdir dir="../release-jars/ticksounds/" />
+
+                                <!-- readme.txt dosyasını kopyala -->
+                                <copy file="src/main/resources/ticksounds/readme.txt"
+                                      todir="../release-jars/ticksounds/" />
+
                                 <copy file="target/${project.build.finalName}.jar"
                                       todir="../release-jars/" />
                             </target>
