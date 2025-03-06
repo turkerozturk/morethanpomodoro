@@ -719,45 +719,38 @@ public class ApplicationFrame extends JFrame {
     private Dimension previousSize;
     private Point previousLocation;
 
+    private Point locationOffset;
+
     /**
      * pencereyi cok kucuk yapar
      */
     private void toggleCompactView() {
+        // Farkı saklayacak değişken
+
         if (toggleCompactViewButton.isSelected()) {
-            // Eski boyut ve konumu sakla
             previousSize = getSize();
             previousLocation = getLocation();
-
-
-
             mainPanel.remove(tabbedPanel);
 
-            Point location = toggleCompactViewButton.getLocationOnScreen(); // Ekran üzerindeki mutlak konumu al
-            setLocation(location);
-            //label.setText("X: " + location.x + ", Y: " + location.y);
-            // Sadece kontrol bar paneli içerecek şekilde pencereyi küçült
-            //setSize(new Dimension(previousSize.width, windowControlBarPanel.getHeight()));
-            setSize(new Dimension(windowControlBarPanel.getMinimumSize()));
+            Point location = toggleCompactViewButton.getLocationOnScreen();
+            // previousLocation ile location arasındaki farkı hesaplayalım
+            locationOffset = new Point(location.x - previousLocation.x, location.y - previousLocation.y);
 
-            //setLocationRelativeTo(null);
-            //System.out.println(windowControlBarPanel.getPreferredSize());
-            //getContentPane().add(toggleCompactViewButton);
+            setLocation(location);
+            setSize(new Dimension(windowControlBarPanel.getMinimumSize()));
             setAlwaysOnTop(true);
         } else {
-            // Eski boyut ve içeriği geri yükle
-            setLocation(previousLocation);
+            Point newLocation = toggleCompactViewButton.getLocationOnScreen();
 
+            // newLocation'a koordinat farkını uygulayarak yeni konumu belirleyelim
+            Point adjustedLocation = new Point(newLocation.x - locationOffset.x, newLocation.y - locationOffset.y);
+
+            setLocation(adjustedLocation);
             setSize(previousSize);
-            //setLocation(previousLocation);
-            //getContentPane().removeAll();
-            // Ana paneli geri ekle
-            //getContentPane().setLayout(new BorderLayout());
             mainPanel.add(tabbedPanel);
-
-
-            // Always on top kapat
             setAlwaysOnTop(false);
         }
+
 
         // İçeriği yenile
 
