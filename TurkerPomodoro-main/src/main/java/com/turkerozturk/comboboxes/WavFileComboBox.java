@@ -2,6 +2,9 @@ package com.turkerozturk.comboboxes;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Dimension;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -12,6 +15,9 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class WavFileComboBox extends JComboBox<WavFile> {
+
+    private static final Logger logger = LoggerFactory.getLogger(WavFileComboBox.class);
+
 
     public WavFileComboBox() {
         // Maksimum genişlik belirle (örnek 150px)
@@ -27,8 +33,14 @@ public class WavFileComboBox extends JComboBox<WavFile> {
         File currentDir = new File(System.getProperty("user.dir"));
         File ticksoundsFolder = new File(currentDir, "ticksounds");
         if (!ticksoundsFolder.exists() || !ticksoundsFolder.isDirectory()) {
-            System.out.println("ticksounds klasörü bulunamadı.");
-            return;
+            System.out.println("ticksounds klasörü bulunamadı. Oluşturuluyor...");
+
+            if (ticksoundsFolder.mkdirs()) {
+               // System.out.println("ticksounds klasörü başarıyla oluşturuldu.");
+            } else {
+                System.out.println("ticksounds klasörü oluşturulamadı!");
+                return;
+            }
         }
 
         // Sadece .wav uzantılı dosyalar filtreleniyor
@@ -59,6 +71,8 @@ public class WavFileComboBox extends JComboBox<WavFile> {
         for (File file : filesList) {
             addItem(createWavFile(file));
         }
+
+
     }
 
     // File'dan WavFile nesnesi oluşturur
