@@ -7,11 +7,15 @@ public class WavFile {
     private int sampleSizeInBits;
     private float sampleRate;
 
-    public WavFile(String fileName, int durationSec, int sampleSizeInBits, float sampleRate) {
+    private int channelCount;
+
+    public WavFile(String fileName, int durationSec, int sampleSizeInBits,
+                   float sampleRate, int channelCount) {
         this.fileName = fileName;
         this.durationSec = durationSec;
         this.sampleSizeInBits = sampleSizeInBits;
         this.sampleRate = sampleRate;
+        this.channelCount = channelCount;
     }
 
     public String getFileName() {
@@ -30,6 +34,10 @@ public class WavFile {
         return sampleRate;
     }
 
+    public int getChannelCount() {
+        return channelCount;
+    }
+
     @Override
     public String toString() {
         // Ekranda nasıl görünecek? Örn: "dosya (12 saniye, 16 bit, 44100 hertz)"
@@ -39,7 +47,7 @@ public class WavFile {
         if (dotIndex > 0) {
             baseName = fileName.substring(0, dotIndex);
         }
-        return String.format("%s (%d sec, %d bit, %.0f hertz)",
-                baseName, durationSec, sampleSizeInBits, sampleRate);
+        return String.format("%s (%d sec, %d bit, %.0f hertz, %d channels)",
+                baseName, durationSec, sampleSizeInBits, sampleRate, channelCount);
     }
 }

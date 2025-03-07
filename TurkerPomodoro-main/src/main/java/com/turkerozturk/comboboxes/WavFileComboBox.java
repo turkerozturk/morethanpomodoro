@@ -81,6 +81,7 @@ public class WavFileComboBox extends JComboBox<WavFile> {
         int durationSec = 0;
         int bits = 0;
         float rate = 0f;
+        int channelCount = 0;
 
         try (AudioInputStream ais = AudioSystem.getAudioInputStream(file)) {
             AudioFormat format = ais.getFormat();
@@ -93,12 +94,12 @@ public class WavFileComboBox extends JComboBox<WavFile> {
 
             bits = format.getSampleSizeInBits();
             rate = format.getSampleRate();
-
+            channelCount = format.getChannels();
         } catch (Exception e) {
             System.err.println("WAV özellikleri okunamadı: " + file.getName());
         }
 
-        return new WavFile(file.getName(), durationSec, bits, rate);
+        return new WavFile(file.getName(), durationSec, bits, rate, channelCount);
     }
 
     // Seçilen WAV dosyasının WavFile nesnesini almak
