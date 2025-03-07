@@ -55,9 +55,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -132,6 +130,10 @@ public class ApplicationFrame extends JFrame {
 
     public ApplicationFrame() {
 
+        locationOffset = getLocation();
+        previousSize = getSize();
+        previousLocation = getLocation();
+
         loadVariablesFromConfig();
 
 
@@ -145,7 +147,7 @@ public class ApplicationFrame extends JFrame {
         initializeApplicationFrame();
 
 
-
+        createAndShowGUI();
 
 
         tabbedPanel = new JTabbedPane();
@@ -558,6 +560,11 @@ public class ApplicationFrame extends JFrame {
         });
     }
 
+    AlwaysOnTopButton toggleAlwaysOnTopButton;
+
+    JButton resetFrameResolutionButton;
+    JButton changeResolutionButton;
+    JButton maximizeButton;
     /**
      * related with transparent frame
      */
@@ -621,7 +628,7 @@ public class ApplicationFrame extends JFrame {
         windowControlBarPanel.add(globalMuteButton);
 
         // Always On Top Butonu
-        AlwaysOnTopButton toggleAlwaysOnTopButton = new AlwaysOnTopButton();
+        toggleAlwaysOnTopButton = new AlwaysOnTopButton();
         windowControlBarPanel.add(toggleAlwaysOnTopButton);
 
         // Şeffaflık Ayar Slider'ı
@@ -636,7 +643,7 @@ public class ApplicationFrame extends JFrame {
 
 
         // Reset window dimension to its original config values.
-        JButton resetFrameResolutionButton = new JButton();
+        resetFrameResolutionButton = new JButton();
         FlatSVGIcon resetIcon = new FlatSVGIcon("svg/reset-resolution__tabler__refresh.svg", iconWidth, iconHeight);
         resetFrameResolutionButton.setIcon(resetIcon);
         resetFrameResolutionButton.setFocusable(false);
@@ -646,7 +653,7 @@ public class ApplicationFrame extends JFrame {
         windowControlBarPanel.add(resetFrameResolutionButton);
 
         // change_resolution__opuscapita__zoom_out_map.svg
-        JButton changeResolutionButton = new JButton();
+        changeResolutionButton = new JButton();
         FlatSVGIcon changeResolutionIcon = new FlatSVGIcon("svg/change_resolution__opuscapita__zoom_out_map.svg", iconWidth, iconHeight);
         changeResolutionButton.setIcon(changeResolutionIcon);
         changeResolutionButton.setFocusable(false);
@@ -670,7 +677,7 @@ public class ApplicationFrame extends JFrame {
         windowControlBarPanel.add(minimizeButton);
 
         // Maksimize / Normal Butonu
-        JButton maximizeButton = new JButton();
+        maximizeButton = new JButton();
         FlatSVGIcon maximizeIcon = new FlatSVGIcon("svg/maximize__iconduck__maximize-2.svg", iconWidth, iconHeight);
         maximizeButton.setIcon(maximizeIcon);
         maximizeButton.setFocusable(false);
@@ -732,23 +739,38 @@ public class ApplicationFrame extends JFrame {
             previousLocation = getLocation();
             mainPanel.remove(tabbedPanel);
 
-            Point location = toggleCompactViewButton.getLocationOnScreen();
+            Point locationOfCompactViewButton = toggleCompactViewButton.getLocationOnScreen();
             // previousLocation ile location arasındaki farkı hesaplayalım
-            locationOffset = new Point(location.x - previousLocation.x, location.y - previousLocation.y);
+            locationOffset = new Point(locationOfCompactViewButton.x - previousLocation.x, locationOfCompactViewButton.y - previousLocation.y);
 
-            setLocation(location);
+            setLocation(locationOfCompactViewButton);
             setSize(new Dimension(windowControlBarPanel.getMinimumSize()));
             setAlwaysOnTop(true);
+            toggleAlwaysOnTopButton.setSelected(true);
+            toggleAlwaysOnTopButton.setEnabled(false);
+
+            resetFrameResolutionButton.setEnabled(false);
+            changeResolutionButton.setEnabled(false);
+            maximizeButton.setEnabled(false);
+
         } else {
-            Point newLocation = toggleCompactViewButton.getLocationOnScreen();
+            Point locationOfCompactViewButton = toggleCompactViewButton.getLocationOnScreen();
 
             // newLocation'a koordinat farkını uygulayarak yeni konumu belirleyelim
-            Point adjustedLocation = new Point(newLocation.x - locationOffset.x, newLocation.y - locationOffset.y);
+            Point adjustedLocation = new Point(locationOfCompactViewButton.x - locationOffset.x, locationOfCompactViewButton.y - locationOffset.y);
 
             setLocation(adjustedLocation);
             setSize(previousSize);
             mainPanel.add(tabbedPanel);
             setAlwaysOnTop(false);
+            toggleAlwaysOnTopButton.setSelected(false);
+            toggleAlwaysOnTopButton.setEnabled(true);
+
+            resetFrameResolutionButton.setEnabled(true);
+            changeResolutionButton.setEnabled(true);
+            maximizeButton.setEnabled(true);
+
+
         }
 
 
@@ -891,6 +913,67 @@ public class ApplicationFrame extends JFrame {
 
 
 
+    private static TrayIcon trayIcon;
+
+    public void createAndShowGUI() {
+        if (!SystemTray.isSupported()) {
+            logger.info("System tray is not supported!");
+            return;
+        }
+
+        SystemTray tray = SystemTray.getSystemTray();
+        //Image image = Toolkit.getDefaultToolkit().getImage("icon.png"); // İkon dosyanı buraya koy
+        ImageIcon icon = new ImageIcon(getClass().getResource("/mtp-app-icon.png"));
+
+        PopupMenu popupMenu = new PopupMenu();
+
+        // Exit seçeneğini ekleyelim ve metni değiştirelim
+        MenuItem exitItem = new MenuItem("Exit Application"); // Eski "Close Window" yerine
+        exitItem.addActionListener(e -> System.exit(0));
+
+        // Yeni Menü Item: Reset Frame Resolution
+        MenuItem resetItem = new MenuItem("Reset Frame Resolution & Align Center");
+        resetItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (toggleCompactViewButton.isSelected()) {
+                    toggleCompactViewButton.setSelected(false);
+                }
+                toggleCompactView();
+
+                resetFrameResolution();
+
+
+                // Ekran boyutlarını al
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+                // Pencere boyutlarını al (Eğer JFrame'in adını frame olarak varsayarsak)
+                Dimension frameSize = getSize();
+
+                // Yeni konumu hesapla (Ekran ortasına al)
+                int centerX = (screenSize.width - frameSize.width) / 2;
+                int centerY = (screenSize.height - frameSize.height) / 2;
+
+                // Pencerenin yeni konumunu ayarla
+                setLocation(centerX, centerY);
+            }
+
+        });
+
+        // Menüye elemanları ekleyelim
+        popupMenu.add(resetItem);
+        popupMenu.add(exitItem);
+
+        trayIcon = new TrayIcon(icon.getImage(), "MoreThnaPomodoro", popupMenu);
+        trayIcon.setImageAutoSize(true);
+
+        try {
+            tray.add(trayIcon);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
 
