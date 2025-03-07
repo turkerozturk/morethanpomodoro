@@ -166,6 +166,7 @@ public class ApplicationFrame extends JFrame {
                     binauralPanelJarLocation
                     , binauralPanelTitle);
             tabbedPanel.addTab(bundle.getString(binauralPanelTitle), binauralPanel);
+            soundControllers.add((SoundController) binauralPanel);
         } else {
             logger.info("Core Extension Not Found: " + binauralPanelJarLocation +
                     ". You can download it from: https://github.com/turkerozturk/morethanpomodoro");
@@ -179,6 +180,8 @@ public class ApplicationFrame extends JFrame {
                     noisePanelJarLocation
                     , noisePanelTitle);
             tabbedPanel.addTab(bundle.getString(noisePanelTitle), noisePanel);
+            soundControllers.add((SoundController) noisePanel);
+
         } else {
             logger.info("Core Extension Not Found: " + noisePanelJarLocation +
                     ". You can download it from: https://github.com/turkerozturk/morethanpomodoro");
@@ -402,7 +405,6 @@ public class ApplicationFrame extends JFrame {
         soundControllers.add(playerPanel2);
         soundControllers.add(playerPanel3);
 */
-        //soundControllers.add(binauralPanel);
         //soundControllers.add(noisePanel);
 
         // TODO soundControllers.add(metronomePanel);
