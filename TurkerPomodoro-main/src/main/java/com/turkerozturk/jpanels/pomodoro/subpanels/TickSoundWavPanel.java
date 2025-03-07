@@ -96,6 +96,17 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
         this.add(btnGetSelection);
 
 
+        wavFileComboBox.addActionListener(e -> {
+            WavFile wavFile = wavFileComboBox.getSelectedWavFile();
+            // İstediğiniz işlemi yapın. Örneğin label'ı güncelleyin:
+            //jLabel.setText("Seçilen Dosya: " + fileName);
+            metronomePlayer.setWavFile(wavFile.getFileName());
+            metronomePlayer.setTickInterval(wavFile.getDurationSec());
+            //System.out.println(wavFile.getFileName() + " interval: " + wavFile.getDurationSec());
+        });
+
+
+
         // https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemoProject/src/components/SliderDemo.java
         tickSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, tickSoundVolume);
         tickSoundVolumeSlider.setMajorTickSpacing(10);
