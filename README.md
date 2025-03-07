@@ -82,6 +82,11 @@ https://github.com/turkerozturk/morethanpomodoro/commits/v1.0.0
 
 ### Screenshots
 
+
+2025-03-08
+![Screenshot](screenshots/screenshot20250308.jpg)
+
+
 2025-03-06
 ![Screenshot](screenshots/screenshot20250306.jpg)
 
@@ -134,4 +139,4 @@ https://iconduck.com/emojis/98115/top-with-upwards-arrow-above
 
 ## Project Duration:
 
-(2025-02-03 - 2025-03-05)
+(2025-02-03 - 2025-03-08)
