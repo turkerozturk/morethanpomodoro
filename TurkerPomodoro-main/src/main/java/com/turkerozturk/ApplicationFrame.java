@@ -409,10 +409,10 @@ public class ApplicationFrame extends JFrame {
 
         // TODO soundControllers.add(metronomePanel);
 
-        soundControllers.add(pomodoroApp.getTickSoundPanel());
+        soundControllers.add((SoundController) pomodoroApp.getTickSoundPanel());
         //soundControllers.add(pomodoroApp.getTickSoundMidiPanel());
 
-        soundControllers.add(pomodoroApp.getEndingSoundPanel());
+        soundControllers.add((SoundController) pomodoroApp.getEndingSoundPanel());
 
 
         // soundControllers.add(pomodoroPanel); // tick sound + ending sound
