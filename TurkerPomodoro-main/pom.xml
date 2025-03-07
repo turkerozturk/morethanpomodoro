@@ -163,6 +163,9 @@
                                 <copy file="src/main/resources/ticksounds/readme.txt"
                                       todir="../release-jars/ticksounds/" />
 
+                                <copy file="src/main/resources/tick.wav"
+                                      todir="../release-jars/ticksounds/" />
+
                                 <!-- projenin jar dosyasini kopyala -->
                                 <copy file="target/${project.build.finalName}.jar"
                                       todir="../release-jars/" />
