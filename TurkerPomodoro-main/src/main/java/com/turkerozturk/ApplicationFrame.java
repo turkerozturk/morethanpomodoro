@@ -52,17 +52,11 @@ import com.turkerozturk.jpanels.theme.ThemeSelectorPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
-import java.util.List;
 
 public class ApplicationFrame extends JFrame {
 
@@ -102,10 +96,12 @@ public class ApplicationFrame extends JFrame {
     LanguageManager bundle = LanguageManager.getInstance();
     ConfigManager props = ConfigManager.getInstance();
     private JToggleButton toggleCompactViewButton;
-    private int windowControlBarPanelHeight = 30;
+    private static final int WINDOW_CONTROL_BAR_PANEL_HEIGHT = 30;
+    private static final int COMPACT_VIEW_MINIMUM_SIZE = 590;
+
 
     private void loadVariablesFromConfig() {
-        frameWidth = Integer.parseInt(props.getProperty("frame.width", "700"));
+        frameWidth = Integer.parseInt(props.getProperty("frame.width", "700")); //
         frameHeight = Integer.parseInt(props.getProperty("frame.height", "350"));
         iconWidth = Integer.parseInt(props.getProperty("gui.icon.width"));
         iconHeight = Integer.parseInt(props.getProperty("gui.icon.height"));
@@ -151,7 +147,7 @@ public class ApplicationFrame extends JFrame {
 
 
         tabbedPanel = new JTabbedPane();
-        tabbedPanel.setPreferredSize(new Dimension(frameWidth - 50, frameHeight - windowControlBarPanelHeight));
+        tabbedPanel.setPreferredSize(new Dimension(frameWidth - 50, frameHeight - WINDOW_CONTROL_BAR_PANEL_HEIGHT));
         //tabbedPanel.setBackground(new Color(0, 0, 0, 10)); // RGBA (A=Alpha, şeffaflık)
         //this.setBackground(new Color(0, 0, 0, 0)); // RGBA (A=Alpha, şeffaflık)
         //mainPanel.setBackground(new Color(100, 0, 0, 30)); // RGBA (A=Alpha, şeffaflık)
@@ -544,6 +540,28 @@ public class ApplicationFrame extends JFrame {
      */
     private void enableFrameDrag(JPanel panel) {
         panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                panel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // İşaret parmağı kursörü
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                panel.setCursor(Cursor.getDefaultCursor()); // Dışına çıkınca varsayılana dön
+            }
+        });
+
+        // Panelin içindeki bileşenlerde varsayılan kursörü koruma
+        for (Component comp : panel.getComponents()) {
+            comp.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    comp.setCursor(Cursor.getDefaultCursor()); // İç bileşenlerde normal cursor
+                }
+            });
+        }
+
+        panel.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
             }
@@ -585,9 +603,9 @@ public class ApplicationFrame extends JFrame {
         // Üst panel (Kontrol Barı)
         windowControlBarPanel = new GradientPanel();
         windowControlBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        windowControlBarPanel.setPreferredSize(new Dimension(frameWidth, windowControlBarPanelHeight));
-        windowControlBarPanel.setMaximumSize(new Dimension(frameWidth, windowControlBarPanelHeight));
-        windowControlBarPanel.setMinimumSize(new Dimension(420, windowControlBarPanelHeight));
+        windowControlBarPanel.setPreferredSize(new Dimension(frameWidth, WINDOW_CONTROL_BAR_PANEL_HEIGHT));
+        windowControlBarPanel.setMaximumSize(new Dimension(frameWidth, WINDOW_CONTROL_BAR_PANEL_HEIGHT));
+        windowControlBarPanel.setMinimumSize(new Dimension(COMPACT_VIEW_MINIMUM_SIZE, WINDOW_CONTROL_BAR_PANEL_HEIGHT));
 
         //windowControlBarPanel.setBackground(new Color(50, 50, 50, 200)); // Hafif şeffaf arka plan
 
@@ -602,6 +620,8 @@ public class ApplicationFrame extends JFrame {
         toggleCompactViewButton.setToolTipText("Compact");
         toggleCompactViewButton.addActionListener(e -> toggleCompactView());
         windowControlBarPanel.add(toggleCompactViewButton);
+
+        windowControlBarPanel.add(new JLabel("--- More Than Pomodoro  ---"));
 
         // Theme Selector
         JButton themeSelectorButton = new JButton();
@@ -697,7 +717,6 @@ public class ApplicationFrame extends JFrame {
         closeButton.setToolTipText("Close Application");
         closeButton.addActionListener(e -> System.exit(0));
         windowControlBarPanel.add(closeButton);
-
 
 
 
