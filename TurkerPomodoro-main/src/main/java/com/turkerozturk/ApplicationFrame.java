@@ -98,6 +98,9 @@ public class ApplicationFrame extends JFrame {
     private JToggleButton toggleCompactViewButton;
     private static final int WINDOW_CONTROL_BAR_PANEL_HEIGHT = 30;
     private static final int COMPACT_VIEW_MINIMUM_SIZE = 590;
+    private JLabel opacityLabel;
+
+    private JLabel applicationNameLabel;
 
 
     private void loadVariablesFromConfig() {
@@ -106,6 +109,8 @@ public class ApplicationFrame extends JFrame {
         iconWidth = Integer.parseInt(props.getProperty("gui.icon.width"));
         iconHeight = Integer.parseInt(props.getProperty("gui.icon.height"));
 
+        opacityLabel = new JLabel("opacity:");
+        applicationNameLabel = new JLabel("--- More Than Pomodoro  ---");
     }
 
     private void initializeApplicationFrame() {
@@ -536,39 +541,32 @@ public class ApplicationFrame extends JFrame {
 
 
     /**
-     * related with transparent frame
+     * Panel ve içindeki JLabel'leri sürüklemek ve el kursörü göstermek için.
      */
     private void enableFrameDrag(JPanel panel) {
+        // 1) Panelin kendi MouseListener / MouseMotionListener'ları
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                panel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // İşaret parmağı kursörü
+                panel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // El işareti
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                panel.setCursor(Cursor.getDefaultCursor()); // Dışına çıkınca varsayılana dön
+                panel.setCursor(Cursor.getDefaultCursor()); // Varsayılan
             }
-        });
 
-        // Panelin içindeki bileşenlerde varsayılan kursörü koruma
-        for (Component comp : panel.getComponents()) {
-            comp.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    comp.setCursor(Cursor.getDefaultCursor()); // İç bileşenlerde normal cursor
-                }
-            });
-        }
-
-        panel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
+                // Tıklama noktasını kaydediyoruz
                 initialClick = e.getPoint();
             }
         });
 
         panel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
             public void mouseDragged(MouseEvent e) {
+                // Pencereyi sürüklemek için konum değişikliği hesaplama
                 int thisX = getLocation().x;
                 int thisY = getLocation().y;
 
@@ -578,7 +576,56 @@ public class ApplicationFrame extends JFrame {
                 setLocation(thisX + deltaX, thisY + deltaY);
             }
         });
+
+        // 2) Panel içindeki bileşenler: Sadece JLabel ise el kursörü + sürükleme eklenecek
+        for (Component comp : panel.getComponents()) {
+            if (comp instanceof JLabel) {
+                // JLabel'lerde de aynı dinleyiciler (el kursörü, sürükleme)
+                comp.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        comp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        comp.setCursor(Cursor.getDefaultCursor());
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        // Tıklama noktasını panele göre dönüştürmemiz gerekli
+                        Point converted = SwingUtilities.convertPoint(comp, e.getPoint(), panel);
+                        initialClick = converted;
+                    }
+                });
+
+                comp.addMouseMotionListener(new MouseMotionAdapter() {
+                    @Override
+                    public void mouseDragged(MouseEvent e) {
+                        // Sürükleme noktalarını yine panele göre dönüştürüyoruz
+                        Point converted = SwingUtilities.convertPoint(comp, e.getPoint(), panel);
+                        int thisX = getLocation().x;
+                        int thisY = getLocation().y;
+
+                        int deltaX = converted.x - initialClick.x;
+                        int deltaY = converted.y - initialClick.y;
+
+                        setLocation(thisX + deltaX, thisY + deltaY);
+                    }
+                });
+            } else {
+                // JLabel dışındaki bileşenler varsayılan kursöre sahip ve draggable değil
+                comp.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        comp.setCursor(Cursor.getDefaultCursor());
+                    }
+                });
+            }
+        }
     }
+
 
     AlwaysOnTopButton toggleAlwaysOnTopButton;
 
@@ -621,7 +668,7 @@ public class ApplicationFrame extends JFrame {
         toggleCompactViewButton.addActionListener(e -> toggleCompactView());
         windowControlBarPanel.add(toggleCompactViewButton);
 
-        windowControlBarPanel.add(new JLabel("--- More Than Pomodoro  ---"));
+        windowControlBarPanel.add(applicationNameLabel);
 
         // Theme Selector
         JButton themeSelectorButton = new JButton();
@@ -653,8 +700,9 @@ public class ApplicationFrame extends JFrame {
         toggleAlwaysOnTopButton = new AlwaysOnTopButton();
         windowControlBarPanel.add(toggleAlwaysOnTopButton);
 
+
         // Şeffaflık Ayar Slider'ı
-        windowControlBarPanel.add(new JLabel("opacity:"));
+        windowControlBarPanel.add(opacityLabel);
         JSlider opacitySlider = new JSlider(30, 100, (int) (opacityLevel * 100));
         opacitySlider.setPreferredSize(new Dimension(50, iconHeight));
         opacitySlider.addChangeListener(e -> {
