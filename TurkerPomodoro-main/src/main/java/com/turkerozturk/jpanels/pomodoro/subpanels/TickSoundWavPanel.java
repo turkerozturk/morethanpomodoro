@@ -28,6 +28,9 @@ import com.turkerozturk.initial.LanguageManager;
 import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 
 public class TickSoundWavPanel extends JPanel implements SoundController {
 
@@ -52,6 +55,10 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
 
     private final LanguageManager bundle = LanguageManager.getInstance();
     private final ConfigManager props = ConfigManager.getInstance();
+    private int randomTickParameter;
+    private int randomSilenceParameter;
+
+    JSpinner randomTickCountSpinner, randomSilenceCountSpinner;
 
 
     public TickSoundWavPanel() {
@@ -62,7 +69,8 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
 
 
         // Metronom ayarla
-        metronomePlayer = new MetronomePlayerWav(metronomeInterval, soundType, soundFileName);
+        metronomePlayer = new MetronomePlayerWav(metronomeInterval, soundType, soundFileName,
+                randomTickParameter, randomSilenceParameter);
         metronomePlayer.setRandomEnabled(isRandomTick);
 
 
@@ -76,13 +84,16 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
         //jLabel = new JLabel("tick inverval: " + metronomeInterval + "");
         //this.add(jLabel);
 
+        JPanel wavFileSelectorMainPanel = new JPanel();
+        wavFileSelectorMainPanel.setBorder(
+                BorderFactory.createTitledBorder("Select Tick Sound"));
 
         JPanel panelForComboBox = new JPanel();
         panelForComboBox.setLayout(new BoxLayout(panelForComboBox, BoxLayout.X_AXIS));
         WavFileComboBox wavFileComboBox = new WavFileComboBox();
         wavFileComboBox.populateComboBox();
         panelForComboBox.add(wavFileComboBox);
-        this.add(panelForComboBox);
+        wavFileSelectorMainPanel.add(panelForComboBox);
 
         JButton btnGetSelection = new JButton("Select");
         btnGetSelection.addActionListener(e -> {
@@ -93,7 +104,7 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
             metronomePlayer.setTickInterval(wavFile.getDurationSec());
             //System.out.println(wavFile.getFileName() + " interval: " + wavFile.getDurationSec());
         });
-        this.add(btnGetSelection);
+        wavFileSelectorMainPanel.add(btnGetSelection);
 
 
         wavFileComboBox.addActionListener(e -> {
@@ -105,7 +116,7 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
             //System.out.println(wavFile.getFileName() + " interval: " + wavFile.getDurationSec());
         });
 
-
+        this.add(wavFileSelectorMainPanel);
 
         // https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemoProject/src/components/SliderDemo.java
         tickSoundVolumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, tickSoundVolume);
@@ -125,6 +136,8 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
         toggleTickSoundButton = new JToggleButton(translate("sound.tick.mute.unmute"));
         muteee();
         toggleTickSoundButton.addActionListener(e -> muteUnmute());
+        this.add(toggleTickSoundButton);
+
 
         toggleRandomTickButton = new JToggleButton(translate("random.tick.on"));
         toggleRandomTickButton.setSelected(isRandomTick);
@@ -135,10 +148,72 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
         }
         toggleRandomTickButton.addActionListener(e -> toggleRandomTick());
 
-        this.add(toggleTickSoundButton);
-        this.add(toggleRandomTickButton);
+        // Spinner Model (sadece tıklayarak değişen, elle giriş yapılmayan)
+        SpinnerNumberModel spinnerModel1 = new SpinnerNumberModel(1, 1, 600, 1);
+        randomTickCountSpinner = new JSpinner(spinnerModel1);
+        disableTextEditing(randomTickCountSpinner);
+        randomTickCountSpinner.setValue(randomTickParameter);
 
 
+        SpinnerNumberModel spinnerModel2 = new SpinnerNumberModel(1, 1, 600, 1);
+        randomSilenceCountSpinner = new JSpinner(spinnerModel2);
+        disableTextEditing(randomSilenceCountSpinner);
+        randomSilenceCountSpinner.setValue(randomSilenceParameter);
+
+        if (isRandomTick) {
+            randomTickCountSpinner.setEnabled(true);
+            randomSilenceCountSpinner.setEnabled(true);
+        } else {
+            randomTickCountSpinner.setEnabled(false);
+            randomSilenceCountSpinner.setEnabled(false);
+        }
+
+        // Spinnerların değişimlerini dinleyen listener
+        ChangeListener changeListener = new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int value1 = (int) randomTickCountSpinner.getValue();
+                int value2 = (int) randomSilenceCountSpinner.getValue();
+                onSpinnerValueChanged(value1, value2);
+            }
+        };
+
+        randomTickCountSpinner.addChangeListener(changeListener);
+        randomSilenceCountSpinner.addChangeListener(changeListener);
+
+        // Panel oluşturup toggle butonu ve spinnerları yatay olarak hizalama
+        JPanel randomTickMainPanel = new JPanel();
+        randomTickMainPanel.setLayout(new BorderLayout());
+        randomTickMainPanel.setBorder(
+                BorderFactory.createTitledBorder("Random"));
+        JPanel gridPanel = new JPanel(new GridLayout(2, 2, 10, 5));
+        gridPanel.add(new JLabel("Ticks:"));
+        gridPanel.add(randomTickCountSpinner);
+        gridPanel.add(new JLabel("Silence:"));
+        gridPanel.add(randomSilenceCountSpinner);
+
+        randomTickMainPanel.add(toggleRandomTickButton, BorderLayout.NORTH);
+        randomTickMainPanel.add(gridPanel, BorderLayout.CENTER);
+
+
+        this.add(randomTickMainPanel);
+
+
+    }
+
+    // Elle değer girilmesini engelleyen metod
+    private void disableTextEditing(JSpinner spinner) {
+        JComponent editor = spinner.getEditor();
+        if (editor instanceof JSpinner.DefaultEditor) {
+            ((JSpinner.DefaultEditor) editor).getTextField().setEditable(false);
+        }
+    }
+
+    // Spinner değerleri değiştiğinde çalışacak metod
+    private void onSpinnerValueChanged(int value1, int value2) {
+        //System.out.println("Spinner 1: " + value1 + ", Spinner 2: " + value2);
+        metronomePlayer.setRandomTickParameter(value1);
+        metronomePlayer.setRandomSilenceParameter(value2);
     }
 
     private void loadConfigVariables() {
@@ -156,6 +231,8 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
             //tickSoundVolume = wavSoundVolume;
         }
 
+        randomTickParameter = Integer.parseInt(props.getProperty("pomodoro.tick.sound.random.max.sound"));
+        randomSilenceParameter = Integer.parseInt(props.getProperty("pomodoro.tick.sound.random.max.silence"));
 
 
     }
@@ -192,9 +269,13 @@ public class TickSoundWavPanel extends JPanel implements SoundController {
         if (toggleRandomTickButton.isSelected()) {
             metronomePlayer.setRandomEnabled(true);
             toggleRandomTickButton.setText(translate("random.tick.on"));
+            randomTickCountSpinner.setEnabled(true);
+            randomSilenceCountSpinner.setEnabled(true);
         } else {
             metronomePlayer.setRandomEnabled(false);
             toggleRandomTickButton.setText(translate("random.tick.off"));
+            randomTickCountSpinner.setEnabled(false);
+            randomSilenceCountSpinner.setEnabled(false);
         }
     }
 

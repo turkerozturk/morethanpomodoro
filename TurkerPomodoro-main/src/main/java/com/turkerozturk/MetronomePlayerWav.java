@@ -162,10 +162,16 @@ public class MetronomePlayerWav {
         this.tickInterval = seconds;
     }
 
-    public MetronomePlayerWav(int tickInterval, String soundType, String soundFile) {
+    int randomTickParameter;
+    int randomSilenceParameter;
+
+    public MetronomePlayerWav(int tickInterval, String soundType, String soundFile, int randomTickParameter, int randomSilenceParameter) {
+
         this.tickInterval = tickInterval;
         this.soundType = soundType != null ? soundType : "WAV";
         this.soundFile = soundFile != null ? soundFile : "tick.wav";
+        this.randomTickParameter = randomTickParameter;
+        this.randomSilenceParameter = randomSilenceParameter;
         resetRandomTicks();
     }
 
@@ -206,11 +212,12 @@ public class MetronomePlayerWav {
     }
 
     private void resetRandomTicks() {
-        int randomTickParameter = Integer.parseInt(props.getProperty("pomodoro.tick.sound.random.max.sound"));
-        int randomSilenceParameter = Integer.parseInt(props.getProperty("pomodoro.tick.sound.random.max.silence"));
+        // Eğer randomTickParameter sıfırsa, minimum 1 olarak ayarla
+        int safeTickParameter = (randomTickParameter > 0) ? randomTickParameter : 1;
+        remainingTicksToPlay = random.nextInt(safeTickParameter) + 1; // 1-10 arasında rastgele çalma süresi
 
-        remainingTicksToPlay = random.nextInt(randomTickParameter) + 1; // 1-10 arasında rastgele çalma süresi
-        remainingTicksToMute = (counter == 0) ? 0 : random.nextInt(randomSilenceParameter) + 1;  // İlk başta 0, sonrasında rastgele
+        int safeSilenceParameter = (randomSilenceParameter > 0) ? randomSilenceParameter : 1;
+        remainingTicksToMute = (counter == 0) ? 0 : random.nextInt(safeSilenceParameter) + 1;  // İlk başta 0, sonrasında rastgele
     }
 
     private void playSound() {
@@ -358,7 +365,23 @@ public class MetronomePlayerWav {
 
     }
 
-    /*
+    public int getRandomTickParameter() {
+        return randomTickParameter;
+    }
+
+    public void setRandomTickParameter(int randomTickParameter) {
+        this.randomTickParameter = randomTickParameter;
+    }
+
+    public int getRandomSilenceParameter() {
+        return randomSilenceParameter;
+    }
+
+    public void setRandomSilenceParameter(int randomSilenceParameter) {
+        this.randomSilenceParameter = randomSilenceParameter;
+    }
+
+/*
     public static void main(String[] args) throws InterruptedException {
         MetronomePlayer metronome = new MetronomePlayer(5, "WAV", "beep.wav", true);
 
