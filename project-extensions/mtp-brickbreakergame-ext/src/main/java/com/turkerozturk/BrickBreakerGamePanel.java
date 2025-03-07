@@ -159,10 +159,18 @@ public class BrickBreakerGamePanel extends JPanel implements PanelPlugin {
         isRunning = false;
         timer.stop();
         adjustSizes();
-        dx = 3;
+
+        // Rastgele bir yatay yön belirleyelim.
+        dx = (Math.random() < 0.5) ? Math.random() * -3 : Math.random() * 3;
+
+        // Dikey yönümüzü yine -3 yapalım (yukarı doğru)
+        // ama isterseniz rastgeleleştirebilirsiniz:
+        // dy = (Math.random() < 0.5) ? -3 : 3;
         dy = -3;
+
         repaint();
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
