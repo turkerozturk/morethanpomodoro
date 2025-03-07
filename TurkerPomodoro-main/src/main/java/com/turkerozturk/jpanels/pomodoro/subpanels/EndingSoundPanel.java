@@ -86,7 +86,9 @@ public class EndingSoundPanel extends JPanel implements SoundController {
     public void changeEndingSoundVolume() {
         if (!endingSoundVolumeSlider.getValueIsAdjusting()) {
             endingSoundVolume = endingSoundVolumeSlider.getValue();
-            playFrequencyBeep();
+            if(isEndingSoundEnabled) {
+                playFrequencyBeep();
+            }
         }
     }
 
