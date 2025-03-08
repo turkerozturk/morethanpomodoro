@@ -20,10 +20,15 @@
  */
 package com.turkerozturk;
 
+import com.turkerozturk.initial.ConfigManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Random;
@@ -55,8 +60,13 @@ public class AnalogClock extends JPanel {
     // Bu paneli sonradan taşıyacağımız pencere (ayrı frame)
     private JFrame floatFrame;
 
+    private boolean isMatrixEffectEnabled = true;
+    private MatrixEffectVariation matrixEffectVariation = MatrixEffectVariation.VARIATION_1_AND_2;
+
+    private boolean isBottomShadowEnabled = true;
+
     // Properties loaded from config.properties
-   // ConfigManager props = ConfigManager.getInstance();
+    ConfigManager props = ConfigManager.getInstance();
 
     public AnalogClock() {
         loadConfig();
@@ -141,6 +151,13 @@ public class AnalogClock extends JPanel {
         secondHandColor = getColor(KEY_SECOND_HAND, Color.RED);
         numbersColor    = getColor(KEY_NUMBERS, Color.BLACK);
 
+        int variationValue = Integer.parseInt(props.getProperty("analog.clock.matrix.effect.variation", "0"));
+        matrixEffectVariation = MatrixEffectVariation.fromInt(variationValue);
+
+        isMatrixEffectEnabled = Integer.parseInt(props.getProperty("analog.clock.is.matrix.effect.enabled")) == 1;
+        isBottomShadowEnabled = Integer.parseInt(props.getProperty("analog.clock.is.bottom.shadow.enabled")) == 1;
+
+
     }
 
     /**
@@ -149,7 +166,7 @@ public class AnalogClock extends JPanel {
      * Renk değeri "#RRGGBB" formatında olmalıdır.
      */
     private Color getColor(String key, Color defaultColor) {
-        String colorStr = null;//props.getProperty(key);
+        String colorStr = props.getProperty(key);
         if (colorStr != null) {
             if(!colorStr.trim().isEmpty()) {
                 try {
@@ -168,8 +185,8 @@ public class AnalogClock extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(
+        Graphics2D g2dForAnalogClock = (Graphics2D) g.create();
+        g2dForAnalogClock.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -181,14 +198,18 @@ public class AnalogClock extends JPanel {
         float scaleFactor = Math.min(w, h) / 400f;
         // SVG, orijinde değil ortalanmış olsun diye panelin ortasına çeviriyoruz
         // (opsiyonel: tam sol üst köşeden de başlayabilirsin)
-        g2.translate((w - 400 * scaleFactor) / 2.0, (h - 400 * scaleFactor) / 2.0);
-        g2.scale(scaleFactor, scaleFactor);
+        g2dForAnalogClock.translate((w - 400 * scaleFactor) / 2.0, (h - 400 * scaleFactor) / 2.0);
+        g2dForAnalogClock.scale(scaleFactor, scaleFactor);
+
+        if (isBottomShadowEnabled) {
+            drawBottomShadow(g2dForAnalogClock);
+        }
 
         // --- 2) SVG’den gelen çizimleri “elle” Java2D ile yap ---
 
         // 2.1 Arka plan dikdörtgeni (#f0f0f0)
-        g2.setColor(backgroundColor); // 0xf0f0f0
-        g2.fillRect(0, 0, 400, 400);
+        g2dForAnalogClock.setColor(backgroundColor); // 0xf0f0f0
+        g2dForAnalogClock.fillRect(0, 0, 400, 400);
 
         // 2.2 Saatin dış çerçevesi (radial gradient)
         //    center = (200,200), radius = 180
@@ -204,16 +225,16 @@ public class AnalogClock extends JPanel {
             };
             RadialGradientPaint outerRingPaint =
                     new RadialGradientPaint(center, radius, dist, colors);
-            g2.setPaint(outerRingPaint);
+            g2dForAnalogClock.setPaint(outerRingPaint);
 
             Ellipse2D outerCircle = new Ellipse2D.Float(
                     200 - radius, 200 - radius, radius * 2, radius * 2);
-            g2.fill(outerCircle);
+            g2dForAnalogClock.fill(outerCircle);
 
             // Kenar çizgisi
-            g2.setColor(circleColor); // 0x555555
-            g2.setStroke(new BasicStroke(2f));
-            g2.draw(outerCircle);
+            g2dForAnalogClock.setColor(circleColor); // 0x555555
+            g2dForAnalogClock.setStroke(new BasicStroke(2f));
+            g2dForAnalogClock.draw(outerCircle);
         }
 
         // 2.3 Saat yüzeyi (beyaz -> gri radial gradient)
@@ -227,15 +248,15 @@ public class AnalogClock extends JPanel {
             };
             RadialGradientPaint facePaint =
                     new RadialGradientPaint(center, radius, dist, colors);
-            g2.setPaint(facePaint);
+            g2dForAnalogClock.setPaint(facePaint);
 
             Ellipse2D faceCircle = new Ellipse2D.Float(
                     200 - radius, 200 - radius, radius * 2, radius * 2);
-            g2.fill(faceCircle);
+            g2dForAnalogClock.fill(faceCircle);
 
-            g2.setColor(new Color(0xdddddd));
-            g2.setStroke(new BasicStroke(2f));
-            g2.draw(faceCircle);
+            g2dForAnalogClock.setColor(new Color(0xdddddd));
+            g2dForAnalogClock.setStroke(new BasicStroke(2f));
+            g2dForAnalogClock.draw(faceCircle);
         }
 
         // 2.4 Dakika ve saat çizgileri
@@ -243,45 +264,45 @@ public class AnalogClock extends JPanel {
         //     hourMarks:   (x1=200,y1=30) -> (200,55), stroke=#333333, width=4
         //     Her 5 dakikada bir hourMark, diğerinde minuteMark
         for (int i = 0; i < 60; i++) {
-            AffineTransform old = g2.getTransform();
+            AffineTransform old = g2dForAnalogClock.getTransform();
             double angle = Math.toRadians(i * 6); // i=0..59, 6 derece aralıklı
-            g2.rotate(angle, 200, 200);
+            g2dForAnalogClock.rotate(angle, 200, 200);
 
             if (i % 5 == 0) {
                 // hour mark
-                g2.setColor(new Color(0x333333));
-                g2.setStroke(new BasicStroke(4f));
-                g2.drawLine(200, 30, 200, 55);
+                g2dForAnalogClock.setColor(new Color(0x333333));
+                g2dForAnalogClock.setStroke(new BasicStroke(4f));
+                g2dForAnalogClock.drawLine(200, 30, 200, 55);
             } else {
                 // minute mark
-                g2.setColor(new Color(0x666666));
-                g2.setStroke(new BasicStroke(2f));
-                g2.drawLine(200, 40, 200, 50);
+                g2dForAnalogClock.setColor(new Color(0x666666));
+                g2dForAnalogClock.setStroke(new BasicStroke(2f));
+                g2dForAnalogClock.drawLine(200, 40, 200, 50);
             }
-            g2.setTransform(old);
+            g2dForAnalogClock.setTransform(old);
         }
 
         // 2.5 Saat rakamları (SVG’deki gibi konumlar ve döndürmeler)
-        g2.setColor(numbersColor); // 0x333333
-        g2.setFont(new Font("Arial", Font.PLAIN, 24));
+        g2dForAnalogClock.setColor(numbersColor); // 0x333333
+        g2dForAnalogClock.setFont(new Font("Arial", Font.PLAIN, 24));
 
         // Düz yazılan 12, 3, 6, 9
-        drawCenteredString(g2, "12", 200, 72);
-        drawCenteredString(g2, "6",  200, 323);
-        drawCenteredString(g2, "3",  330, 198);
-        drawCenteredString(g2, "9",   71, 198);
+        drawCenteredString(g2dForAnalogClock, "12", 200, 72);
+        drawCenteredString(g2dForAnalogClock, "6",  200, 323);
+        drawCenteredString(g2dForAnalogClock, "3",  330, 198);
+        drawCenteredString(g2dForAnalogClock, "9",   71, 198);
 
         // Ara rakamlar (1,2,4,5,7,8,10,11) – her biri yerleştirilip ayrıca döndürülmüş
         //  Örnek: <text x="270" y="105" transform="rotate(30,270,105)">1</text>
         //  Java2D’de aynı etkiyi elde etmek için:
-        drawRotatedString(g2, "1",  264, 88,  30);
-        drawRotatedString(g2, "2",  311, 136,  60);
-        drawRotatedString(g2, "4",  308, 263, -60);
-        drawRotatedString(g2, "5",  263, 306, -30);
-        drawRotatedString(g2, "7",  139, 307,  30);
-        drawRotatedString(g2, "8",  94, 262,  60);
-        drawRotatedString(g2, "10", 88, 137, -60);
-        drawRotatedString(g2, "11", 136, 89, -30);
+        drawRotatedString(g2dForAnalogClock, "1",  264, 88,  30);
+        drawRotatedString(g2dForAnalogClock, "2",  311, 136,  60);
+        drawRotatedString(g2dForAnalogClock, "4",  308, 263, -60);
+        drawRotatedString(g2dForAnalogClock, "5",  263, 306, -30);
+        drawRotatedString(g2dForAnalogClock, "7",  139, 307,  30);
+        drawRotatedString(g2dForAnalogClock, "8",  94, 262,  60);
+        drawRotatedString(g2dForAnalogClock, "10", 88, 137, -60);
+        drawRotatedString(g2dForAnalogClock, "11", 136, 89, -30);
 
         // 2.6 Akrep & Yelkovan & Saniye (Dinamik çizim)
         //     – Burada SVG’deki sabit path yerine, LocalTime’dan açı hesaplayarak çiziyoruz.
@@ -300,43 +321,34 @@ public class AnalogClock extends JPanel {
         double minuteLength = 90;  // ~ %70 of radius=120
         double secondLength = 100; // ~ %80 of radius=120
 
+
+
         // Akrep
-        g2.setStroke(new BasicStroke(6f));
-        g2.setColor(hourHandColor);
-        drawHand(g2, 200, 200, hourAngle, hourLength);
+        g2dForAnalogClock.setStroke(new BasicStroke(6f));
+        g2dForAnalogClock.setColor(hourHandColor);
+        drawHand(g2dForAnalogClock, 200, 200, hourAngle, hourLength);
 
         // Yelkovan
-        g2.setStroke(new BasicStroke(4f));
-        g2.setColor(minuteHandColor);
-        drawHand(g2, 200, 200, minuteAngle, minuteLength);
+        g2dForAnalogClock.setStroke(new BasicStroke(4f));
+        g2dForAnalogClock.setColor(minuteHandColor);
+        drawHand(g2dForAnalogClock, 200, 200, minuteAngle, minuteLength);
 
         // Saniye (istersen kaldır)
-        g2.setStroke(new BasicStroke(2f));
-        g2.setColor(secondHandColor);
-        drawHand(g2, 200, 200, secondAngle, secondLength);
+        g2dForAnalogClock.setStroke(new BasicStroke(2f));
+        g2dForAnalogClock.setColor(secondHandColor);
+        drawHand(g2dForAnalogClock, 200, 200, secondAngle, secondLength);
 
         // 2.7 Saatin ortasındaki küçük dairesel merkez
-        g2.setColor(new Color(0x666666));
-        g2.fillOval(200 - 5, 200 - 5, 10, 10);
-        g2.setColor(new Color(0x333333));
-        g2.setStroke(new BasicStroke(2f));
-        g2.drawOval(200 - 5, 200 - 5, 10, 10);
+        g2dForAnalogClock.setColor(new Color(0x666666));
+        g2dForAnalogClock.fillOval(200 - 5, 200 - 5, 10, 10);
+        g2dForAnalogClock.setColor(new Color(0x333333));
+        g2dForAnalogClock.setStroke(new BasicStroke(2f));
+        g2dForAnalogClock.drawOval(200 - 5, 200 - 5, 10, 10);
 
-        // 2.8 Gölge efekti: <ellipse cx="200" cy="400" rx="150" ry="20" fill="rgba(0,0,0,0.2)" transform="translate(0, -20)" />
-        //     => Java2D’de: ellipse merkez(200,380), rx=150, ry=20
-        {
-            Ellipse2D shadow = new Ellipse2D.Float(
-                    200 - 150,   // x = 50
-                    380 - 20,    // y = 360
-                    300,         // width = 2×rx
-                    40           // height= 2×ry
-            );
-            g2.setColor(new Color(0, 0, 0, 50)); // 50 ~ %20 opaklık
-            g2.fill(shadow);
-        }
 
-        // Transform ve g2 serbest
-        g2.dispose();
+
+        // Transform ve g2dForAnalogClock serbest
+        g2dForAnalogClock.dispose();
 
         // BASLA matrix animasyonu icin
         // SVG merkez (200,200) --> panel merkez:
@@ -347,8 +359,8 @@ public class AnalogClock extends JPanel {
         float clockRadius = 180 * scaleFactor;  // Saatin dış çerçevesi, SVG'de radius=180
 
         // Matrix efekti isteniyorsa...
-        if (matrixEffectEnabled) {
-            Graphics2D g2d = (Graphics2D) g.create();
+        if (isMatrixEffectEnabled) {
+            Graphics2D g2dForMatrixAnimation = (Graphics2D) g.create();
 
             // Panelin tamamını kaplayan dikdörtgen
             Area panelArea = new Area(new Rectangle(0, 0, w, h));
@@ -366,25 +378,39 @@ public class AnalogClock extends JPanel {
             panelArea.subtract(new Area(clockArea));
 
             // Artık panelArea, saatin dışındaki bölge
-            g2d.setClip(panelArea);
+            g2dForMatrixAnimation.setClip(panelArea);
 
             // İsterseniz önce bu dış bölgeyi boyayabilirsiniz (örn. siyah):
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(0, 0, w, h);
+            g2dForMatrixAnimation.setColor(Color.BLACK);
+            g2dForMatrixAnimation.fillRect(0, 0, w, h);
 
             // Ardından Matrix efektini çiz
-            drawMatrixEffectVariation2(g2d, w, h);
-            //drawMatrixEffectVariation1(g2d, w, h);
+            switch (matrixEffectVariation) {
+                case NONE:
+                    break;
+                case VARIATION_1:
+                    drawMatrixEffectVariation1(g2dForMatrixAnimation, w, h);
+                    break;
+                case VARIATION_2:
+                    drawMatrixEffectVariation2(g2dForMatrixAnimation, w, h);
+                    break;
+                case VARIATION_1_AND_2:
+                    drawMatrixEffectVariation1(g2dForMatrixAnimation, w, h);
+                    drawMatrixEffectVariation2(g2dForMatrixAnimation, w, h);
+                    break;
+            }
+
+
             // basla sadece matrix variation2 için
-            if (matrixEffectEnabled) {
+            //if (matrixEffectEnabled) {
                 // Eğer henüz sütunlar oluşturulmadıysa (panel boyutu 0x0 iken) init et
                 if (columns.isEmpty() && w > 0 && h > 0) {
                     initColumns(w, h);
                 }
                 updateColumns();
-            }
+            //}
             // bitti sadece matrix variation2 için
-            g2d.dispose();
+            g2dForMatrixAnimation.dispose();
         }
         // BITTI matrix animasyonu icin
 
@@ -392,7 +418,41 @@ public class AnalogClock extends JPanel {
 
     }
 
-    boolean matrixEffectEnabled = true;
+    private void drawBottomShadow(Graphics2D g2dForAnalogClock) {
+        // 2.8 Gölge efekti: <ellipse cx="200" cy="400" rx="150" ry="20" fill="rgba(0,0,0,0.2)" transform="translate(0, -20)" />
+        //     => Java2D’de: ellipse merkez(200,380), rx=150, ry=20
+        {
+            // Elips tanımı (gölge)
+            Ellipse2D shadow = new Ellipse2D.Float(
+                    200 - 150,   // x = 50
+                    380 - 15,    // y = 360
+                    300,         // width = 2×rx
+                    25           // height= 2×ry
+            );
+
+            // Degrade merkezi ve yarıçap
+            Point2D center = new Point2D.Float(200, 380);
+            float radius = 150; // Elipsin yatay yarıçapı kadar
+
+            // Degrade ayarları:
+            // fraction 0 --> (merkez) siyah
+            // fraction 1 --> (dış) tamamen şeffaf
+            float[] dist = {0f, 0.4f, 1f};
+            Color[] colors = {
+                    new Color(0, 0, 0, 255),  // merkez (bir renk)
+                    new Color(99, 99, 99, 150),  // merkez (bir renk)
+
+                    new Color(0, 0, 0, 0)     // dış kısım (transparent)
+            };
+
+            RadialGradientPaint rgp = new RadialGradientPaint(center, radius, dist, colors);
+
+            // Degrade boyamasını ayarla ve elipsi doldur
+            g2dForAnalogClock.setPaint(rgp);
+            g2dForAnalogClock.fill(shadow);
+        }
+    }
+
 
     // Yardımcı fonksiyonlar
 
@@ -431,7 +491,7 @@ public class AnalogClock extends JPanel {
     // Basit test
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("SVG Clock Panel");
+            JFrame frame = new JFrame("MoreThanPomodoro Clock Panel");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(450, 450);
 
@@ -689,6 +749,23 @@ public class AnalogClock extends JPanel {
     //private boolean matrixEffectEnabled = true;
     private final java.util.List<MatrixColumn> columns = new ArrayList<>();
     private final Random rand = new Random();
+
+    private enum MatrixEffectVariation {
+        NONE, VARIATION_1, VARIATION_2, VARIATION_1_AND_2;
+
+        public static MatrixEffectVariation fromInt(int value) {
+            switch (value) {
+                case 1:
+                    return VARIATION_1;
+                case 2:
+                    return VARIATION_2;
+                case 3:
+                    return VARIATION_1_AND_2;
+                default:
+                    return NONE; // Geçersiz değerler için güvenli varsayılan dönüş
+            }
+        }
+    }
 
 
 
