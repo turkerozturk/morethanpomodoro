@@ -20,13 +20,13 @@
  */
 package com.turkerozturk;
 
-import com.turkerozturk.initial.ConfigManager;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class AnalogClock extends JPanel {
 
@@ -56,7 +56,7 @@ public class AnalogClock extends JPanel {
     private JFrame floatFrame;
 
     // Properties loaded from config.properties
-    ConfigManager props = ConfigManager.getInstance();
+   // ConfigManager props = ConfigManager.getInstance();
 
     public AnalogClock() {
         loadConfig();
@@ -65,10 +65,42 @@ public class AnalogClock extends JPanel {
         Timer timer = new Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                /*
+                // basla sadece matrix variation2 için
+                if (matrixEffectEnabled) {
+                    // Eğer henüz sütunlar oluşturulmadıysa (panel boyutu 0x0 iken) init et
+                    if (columns.isEmpty() && getWidth() > 0 && getHeight() > 0) {
+                        initColumns(getWidth(), getHeight());
+                    }
+                    updateColumns();
+                }
+                // bitti sadece matrix variation2 için
+                */
+
                 repaint();
             }
+
+
+
+
+
         });
         timer.start();
+
+        // basla sadece matrix variation2 için
+        // Panelin constructor'ında (veya uygun bir yerde) ekleyebilirsiniz:
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // Panelin yeni genişlik/yüksekliği belli olduğunda
+                // columns listesini sıfırlayıp yeniden oluşturabilirsiniz:
+                columns.clear();
+                initColumns(getWidth(), getHeight());
+            }
+        });
+        // bitti sadece matrix variation2 için
+
 
 
         // Paneli yeni pencereye taşıma butonu
@@ -117,7 +149,7 @@ public class AnalogClock extends JPanel {
      * Renk değeri "#RRGGBB" formatında olmalıdır.
      */
     private Color getColor(String key, Color defaultColor) {
-        String colorStr = props.getProperty(key);
+        String colorStr = null;//props.getProperty(key);
         if (colorStr != null) {
             if(!colorStr.trim().isEmpty()) {
                 try {
@@ -341,8 +373,17 @@ public class AnalogClock extends JPanel {
             g2d.fillRect(0, 0, w, h);
 
             // Ardından Matrix efektini çiz
-            drawMatrixEffect(g2d, w, h);
-
+            drawMatrixEffectVariation2(g2d, w, h);
+            //drawMatrixEffectVariation1(g2d, w, h);
+            // basla sadece matrix variation2 için
+            if (matrixEffectEnabled) {
+                // Eğer henüz sütunlar oluşturulmadıysa (panel boyutu 0x0 iken) init et
+                if (columns.isEmpty() && w > 0 && h > 0) {
+                    initColumns(w, h);
+                }
+                updateColumns();
+            }
+            // bitti sadece matrix variation2 için
             g2d.dispose();
         }
         // BITTI matrix animasyonu icin
@@ -485,12 +526,14 @@ public class AnalogClock extends JPanel {
     }
 
 
+    /*
     // Sınıf içinde ekleyin:
     private int matrixSlowCounter = 0;
     private final int MATRIX_SLOW_FACTOR = 1; // kaç tetiklemede bir güncellesin
-
+    */
 
     /**
+     * BU VARYASYON SADECE TEK METODDAN OLUSUYOR.
      * Panelin tamamına (ya da istediğiniz bir bölgeye) akan
      * "Matrix" tarzı yeşil karakterler çizer.
      *
@@ -498,7 +541,7 @@ public class AnalogClock extends JPanel {
      * @param w  panel genişliği
      * @param h  panel yüksekliği
      */
-    private void drawMatrixEffect(Graphics2D g2, int w, int h) {
+    private void drawMatrixEffectVariation1(Graphics2D g2, int w, int h) {
         // 1) Grafik ayarları (font, renk, vs.)
         g2.setFont(new Font("Monospaced", Font.PLAIN, 25));
         g2.setColor(new Color(0x33CC33)); // Matrix yeşili (istenirse alpha da eklenebilir)
@@ -527,5 +570,126 @@ public class AnalogClock extends JPanel {
         // 3) Gerçek animasyon için Timer ile "düşen" konumları güncelleyip repaint etmeniz gerekli.
         //    Bu örnek sadece her repaint'te rastgele bir görsel verir.
     }
+
+
+
+
+    /**
+     * BU VARYASYON AŞAĞIDAN İTİBAREN BİRKAÇ METODDAN OLUŞUYOR.
+     * Bu metod, columns listesindeki sütunları dolaşarak
+     * her bir karakteri (x, y) konumunda yeşil olarak çizer.
+     */
+    private void drawMatrixEffectVariation2(Graphics2D g2, int panelWidth, int panelHeight) {
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        g2.setColor(Color.GREEN);
+
+        for (MatrixColumn col : columns) {
+            col.draw(g2);
+        }
+    }
+
+    /**
+     * Basit sütun (column) sınıfı. Sütun x konumunda,
+     * bir dizi y konumuna sahip karakterden oluşuyor.
+     */
+    private class MatrixColumn {
+        private int x;
+        private java.util.List<CharPos> chars = new ArrayList<>();
+        private int panelHeight;
+
+        public MatrixColumn(int x, int panelHeight) {
+            this.x = x;
+            this.panelHeight = panelHeight;
+        }
+
+        public void initRandomChars(int height) {
+            // Sütunu yukarıdan aşağıya, CHAR_SPACING aralıklarla karakter dizelim
+            // Y pozisyonları -height ile +height arasında dağılabilir,
+            // böylece bazıları ilk anda ekranda, bazıları yukarıdan gelecek.
+            int maxCount = height / CHAR_SPACING + 5;
+            for (int i = 0; i < maxCount; i++) {
+                int yPos = -rand.nextInt(height); // rastgele yukarıdan başlat
+                char c = randomKatakana();
+                chars.add(new CharPos(c, yPos));
+            }
+        }
+
+        /**
+         * Her adımda y pozisyonlarını SPEED kadar artır.
+         * Ekran altına düşenler en üste yeniden, yeni karakterle dönsün.
+         */
+        public void scrollDown(int speed) {
+            for (CharPos cp : chars) {
+                cp.y += speed;
+                if (cp.y > panelHeight) {
+                    // En alta inen karakter en başa dönsün
+                    cp.y = -CHAR_SPACING;
+                    cp.c = randomKatakana();
+                }
+            }
+        }
+
+        public void draw(Graphics2D g2) {
+            for (CharPos cp : chars) {
+                g2.drawString(String.valueOf(cp.c), x, cp.y);
+            }
+        }
+
+        private char randomKatakana() {
+            // 0x30A0 ~ 0x30FF arasında rastgele bir karakter
+            return (char) (0x30A0 + rand.nextInt(0x30FF - 0x30A0));
+        }
+    }
+
+    /**
+     * Sütundaki her bir karakterin konum bilgisi
+     */
+    private static class CharPos {
+        char c;
+        int y;
+        public CharPos(char c, int y) {
+            this.c = c;
+            this.y = y;
+        }
+    }
+
+
+    /**
+     * Sütunları (MatrixColumn) oluşturur. Panelin genişliğini dikkate alarak,
+     * saat çemberinin kapladığı merkez bölge hariç soldan sağa sütunlar diziyoruz.
+     */
+    private void initColumns(int panelWidth, int panelHeight) {
+        columns.clear();
+
+        // Sütunları 0'dan panelWidth'e kadar COLUMN_WIDTH adımlarla oluştur
+        for (int x = 0; x < panelWidth; x += COLUMN_WIDTH) {
+            MatrixColumn col = new MatrixColumn(x, panelHeight);
+            col.initRandomChars(panelHeight);
+            columns.add(col);
+        }
+    }
+
+    /**
+     * Her timer adımında tüm sütunları aşağı doğru kaydır ve
+     * ekran dışına çıkan karakterleri yeniden en üste ekle.
+     */
+    private void updateColumns() {
+        for (MatrixColumn col : columns) {
+            col.scrollDown(SPEED);
+        }
+    }
+
+
+    private static final int CLOCK_SIZE = 360; // Merkezdeki "saat" çemberinin çapı
+    private static final int CHAR_SPACING = 18; // Karakterler arasındaki düşey mesafe
+    private static final int COLUMN_WIDTH = 18; // Sütunlar arası mesafe
+    private static final int SPEED = 1;         // Her adımda kaç piksel hareket etsin (yavaşlatmak için küçük tutun)
+    private static final int TIMER_DELAY = 50;  // 50 ms (soru gereği değiştirmiyoruz)
+
+    //private boolean matrixEffectEnabled = true;
+    private final java.util.List<MatrixColumn> columns = new ArrayList<>();
+    private final Random rand = new Random();
+
+
 
 }
