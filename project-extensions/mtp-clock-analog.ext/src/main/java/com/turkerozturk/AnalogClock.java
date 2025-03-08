@@ -234,22 +234,22 @@ public class AnalogClock extends JPanel {
         g2.setFont(new Font("Arial", Font.PLAIN, 24));
 
         // Düz yazılan 12, 3, 6, 9
-        drawCenteredString(g2, "12", 200, 78);
-        drawCenteredString(g2, "6",  200, 322);
-        drawCenteredString(g2, "3",  322, 206);
-        drawCenteredString(g2, "9",   78, 206);
+        drawCenteredString(g2, "12", 200, 72);
+        drawCenteredString(g2, "6",  200, 323);
+        drawCenteredString(g2, "3",  330, 198);
+        drawCenteredString(g2, "9",   71, 198);
 
         // Ara rakamlar (1,2,4,5,7,8,10,11) – her biri yerleştirilip ayrıca döndürülmüş
         //  Örnek: <text x="270" y="105" transform="rotate(30,270,105)">1</text>
         //  Java2D’de aynı etkiyi elde etmek için:
-        drawRotatedString(g2, "1",  270, 105,  30);
-        drawRotatedString(g2, "2",  298, 136,  60);
-        drawRotatedString(g2, "4",  298, 264, -60);
-        drawRotatedString(g2, "5",  270, 295, -30);
-        drawRotatedString(g2, "7",  130, 295,  30);
-        drawRotatedString(g2, "8",  102, 264,  60);
-        drawRotatedString(g2, "10", 102, 136, -60);
-        drawRotatedString(g2, "11", 130, 105, -30);
+        drawRotatedString(g2, "1",  264, 88,  30);
+        drawRotatedString(g2, "2",  311, 136,  60);
+        drawRotatedString(g2, "4",  308, 263, -60);
+        drawRotatedString(g2, "5",  263, 306, -30);
+        drawRotatedString(g2, "7",  139, 307,  30);
+        drawRotatedString(g2, "8",  94, 262,  60);
+        drawRotatedString(g2, "10", 88, 137, -60);
+        drawRotatedString(g2, "11", 136, 89, -30);
 
         // 2.6 Akrep & Yelkovan & Saniye (Dinamik çizim)
         //     – Burada SVG’deki sabit path yerine, LocalTime’dan açı hesaplayarak çiziyoruz.
