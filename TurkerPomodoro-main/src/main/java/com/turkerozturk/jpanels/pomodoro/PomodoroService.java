@@ -20,7 +20,7 @@
  */
 package com.turkerozturk.jpanels.pomodoro;
 
-import com.turkerozturk.AnotherNoiseGenerator;
+//import com.turkerozturk.AnotherNoiseGenerator;
 import com.turkerozturk.initial.ConfigManager;
 import com.turkerozturk.initial.LanguageManager;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class PomodoroService {
         STOPPED, PAUSED, PLAYING;
     }
 
-    AnotherNoiseGenerator audioSynthesizer;
+    //AnotherNoiseGenerator audioSynthesizer;
 
     // Süreler dakika cinsinden; GUI üzerinden spinner ile ayarlanır.
     private int workDurationMinutes;
@@ -175,10 +175,10 @@ public class PomodoroService {
             reset();
         }
 
-        if(getActiveTimerType().equals(PomodoroTimerType.SHORT_BREAK)) {
-            audioSynthesizer = new AnotherNoiseGenerator();
-            audioSynthesizer.play((int) shortBreakDurationMinutes * 60 * 1000);
-        }
+        //if(getActiveTimerType().equals(PomodoroTimerType.SHORT_BREAK)) {
+            //audioSynthesizer = new AnotherNoiseGenerator();
+            //audioSynthesizer.play((int) shortBreakDurationMinutes * 60 * 1000);
+        //}
 
         timer = new Timer();
         currentTask = new TimerTask() {
@@ -211,9 +211,9 @@ public class PomodoroService {
         if(timer != null) {
             timer.cancel();
         }
-        if(audioSynthesizer != null) {
-            audioSynthesizer.stop();
-        }
+        //if(audioSynthesizer != null) {
+        //    audioSynthesizer.stop();
+        // }
     }
 
     // Aktif zamanlayıcıyı başlangıç değerine resetler.
