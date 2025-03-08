@@ -150,6 +150,14 @@ public class ApplicationFrame extends JFrame {
 
         createAndShowGUI();
 
+        // Mouse listener ekleyerek pencereyi kenarlara dock edelim
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                dockToEdges();
+            }
+        });
+
 
         tabbedPanel = new JTabbedPane();
         tabbedPanel.setPreferredSize(new Dimension(frameWidth - 50, frameHeight - WINDOW_CONTROL_BAR_PANEL_HEIGHT));
@@ -1045,6 +1053,41 @@ public class ApplicationFrame extends JFrame {
     }
 
 
+    private static final int SNAP_DISTANCE = 20; // Kenara yapışma mesafesi
+
+
+    private void dockToEdges() {
+        // Tüm ekranları al
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] screens = ge.getScreenDevices();
+
+        for (GraphicsDevice screen : screens) {
+            Rectangle screenBounds = screen.getDefaultConfiguration().getBounds();
+            Point windowLocation = getLocation();
+
+            int newX = windowLocation.x;
+            int newY = windowLocation.y;
+
+            // Sol kenara yapışma
+            if (Math.abs(windowLocation.x - screenBounds.x) < SNAP_DISTANCE) {
+                newX = screenBounds.x;
+            }
+            // Sağ kenara yapışma
+            if (Math.abs((windowLocation.x + getWidth()) - (screenBounds.x + screenBounds.width)) < SNAP_DISTANCE) {
+                newX = screenBounds.x + screenBounds.width - getWidth();
+            }
+            // Üst kenara yapışma
+            if (Math.abs(windowLocation.y - screenBounds.y) < SNAP_DISTANCE) {
+                newY = screenBounds.y;
+            }
+            // Alt kenara yapışma
+            if (Math.abs((windowLocation.y + getHeight()) - (screenBounds.y + screenBounds.height)) < SNAP_DISTANCE) {
+                newY = screenBounds.y + screenBounds.height - getHeight();
+            }
+
+            setLocation(newX, newY);
+        }
+    }
 
 }
 
