@@ -80,6 +80,8 @@ public class NoisePanel extends JPanel implements SoundController, PanelPlugin {
         noiseGenerator.setVolume(volumeSlider.getValue());
 
         anotherNoiseGenerator = new AnotherNoiseGenerator();
+        anotherNoiseGenerator.setVolume(volumeSlider.getValue());
+        anotherNoiseGenerator.stop(); // setVolume icinde play var cunku. acilista calmamasi icin.
 
         playStopButton.addActionListener(new ActionListener() {
             @Override
@@ -92,11 +94,16 @@ public class NoisePanel extends JPanel implements SoundController, PanelPlugin {
             }
         });
 
-        volumeSlider.addChangeListener(e ->
-                noiseGenerator.setVolume(volumeSlider.getValue()
-                 //       noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f
 
-        ));
+
+        volumeSlider.addChangeListener(e -> {
+            int volumeValue = volumeSlider.getValue();
+            noiseGenerator.setVolume(volumeValue);
+            anotherNoiseGenerator.setVolume(volumeValue);
+        });
+
+
+
 
         noiseTypeComboBox.addActionListener(e -> changeNoise());
     }

@@ -53,6 +53,14 @@ public class AnotherNoiseGenerator {
     private final double ampAlpha = 0.0005; // modülasyon hızı
 
     /**
+     * Kullanıcının belirlediği ses seviyesi (dB tabanlı amplitude).
+     * 1.0 => 0 dB, daha küçük değerler negatif dB, daha büyük değerler pozitif dB
+     * şeklinde düşünebilirsiniz.
+     */
+    private double volume;
+    //private volatile double volume = 50;
+
+    /**
      * Sesi başlatır.
      */
     public void play() {
@@ -77,11 +85,11 @@ public class AnotherNoiseGenerator {
                     for (int i = 0; i < bufferSamples; i++) {
                         // Temel Schumann sinüsü
                         double baseSine = Math.sin(sinePhase);
-                        // İkinci ve üçüncü harmonikler (temel frekansın katları)
+                        // İkinci ve üçüncü harmonikler
                         double secondHarmonic = Math.sin(2 * sinePhase);
                         double thirdHarmonic = Math.sin(3 * sinePhase);
 
-                        // Harmonik karışım; ağırlıklar isteğe bağlı ayarlanabilir
+                        // Harmonik karışım
                         double harmonicValue = baseSine * 0.5 + secondHarmonic * 0.3 + thirdHarmonic * 0.2;
 
                         // Fazı güncelle
@@ -90,27 +98,30 @@ public class AnotherNoiseGenerator {
                             sinePhase -= twoPi;
                         }
 
-                        // Su akışı benzeri gürültü: düşük geçiren filtreli rastgele gürültü
-                        if (random.nextDouble() < 0.005) { // yaklaşık her 200 örnekte bir
-                            waterTarget = (random.nextDouble() * 2.0) - 1.0; // -1 ile +1 arası
+                        // Su akışı benzeri gürültü
+                        if (random.nextDouble() < 0.005) {
+                            waterTarget = (random.nextDouble() * 2.0) - 1.0; // -1..+1
                         }
                         waterNoise += (waterTarget - waterNoise) * waterAlpha;
 
-                        // Amplitüd modülasyonu: yavaş rastgele hedefe doğru geçiş
+                        // Amplitüd modülasyonu
                         if (random.nextDouble() < 0.001) {
-                            ampTarget = 0.7 + (random.nextDouble() * 0.6); // 0.7 ile 1.3 arası
+                            ampTarget = 0.7 + (random.nextDouble() * 0.6); // 0.7..1.3
                         }
                         ampMod += (ampTarget - ampMod) * ampAlpha;
 
-                        // Sinyalleri karıştır: harmonik bileşen ile su gürültüsü
+                        // Sinyalleri karıştır
                         double sampleValue = (harmonicValue * 0.7 + waterNoise * 0.3) * ampMod;
+
+                        // Kullanıcı ses seviyesi (volume) ile çarparak son değeri belirle
+                        sampleValue *= volume;
 
                         // 16-bit PCM değerine ölçekle
                         int intSample = (int) (sampleValue * 32767);
                         if (intSample > 32767) intSample = 32767;
                         if (intSample < -32768) intSample = -32768;
 
-                        // Little-endian: önce düşük bayt sonra yüksek bayt
+                        // Little-endian: önce düşük bayt
                         buffer[2 * i] = (byte) (intSample & 0xFF);
                         buffer[2 * i + 1] = (byte) ((intSample >> 8) & 0xFF);
                     }
@@ -146,16 +157,14 @@ public class AnotherNoiseGenerator {
 
     /**
      * Demo için main metodu.
-     * Argüman olarak dakika cinsinden süre bekler.
-     * Örneğin: java AudioSynthesizer 5  --> 5 dakika oynatır.
      */
     public static void main(String[] args) {
-        int minutes = 5; // varsayılan 1 dakika
+        int minutes = 5; // varsayılan 5 dakika
         if (args.length > 0) {
             try {
                 minutes = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                System.out.println("Geçersiz süre, varsayılan 1 dakika kullanılacak.");
+                System.out.println("Geçersiz süre, varsayılan 5 dakika kullanılacak.");
             }
         }
         System.out.println("Oynatma süresi: " + minutes + " dakika.");
@@ -173,13 +182,11 @@ public class AnotherNoiseGenerator {
         System.out.println("Oynatma durdu.");
     }
 
-
-    // Mevcut play() metodunuzun yanına ekleyin:
+    /**
+     * Belirli süre çalıp duran ek metot.
+     */
     public void play(long durationMillis) {
-        // Öncelikle sesi başlatıyoruz:
         play();  // mevcut play() metodu thread'i başlatıyor
-
-        // Ayrı bir thread'de belirli süre sonra stop() metodunu çağırıyoruz.
         new Thread(() -> {
             try {
                 Thread.sleep(durationMillis);
@@ -188,6 +195,39 @@ public class AnotherNoiseGenerator {
             }
             stop();
         }).start();
+    }
+
+    /**
+     * 0..100 aralığındaki slider değerini,
+     * -80 dB .. 0 dB aralığında bir genliğe (amplitude) dönüştürür.
+     */
+    /*
+    public void setVolume(float volumeSliderValue) {
+        // 1) 0..100 --> 0..1
+        float linearVolume = volumeSliderValue / 100.0f;
+        if (linearVolume < 0.0f) linearVolume = 0.0f;
+        if (linearVolume > 1.0f) linearVolume = 1.0f;
+
+        // 2) dB aralığı
+        float minDb = -80.0f;
+        float maxDb = 0.0f;
+        float dB = minDb + (maxDb - minDb) * linearVolume;
+
+        // 3) dB değerini genliğe çevir
+        double amplitude = Math.pow(10.0, dB / 20.0);
+
+        // 4) Artık volume, dB dönüştürülmüş amplitude
+        this.volume = amplitude;
+
+    }
+    */
+
+    public double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(double volume) {
+        this.volume = volume;
     }
 
 
