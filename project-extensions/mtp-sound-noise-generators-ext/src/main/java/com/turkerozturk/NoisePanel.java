@@ -55,7 +55,15 @@ public class NoisePanel extends JPanel implements SoundController, PanelPlugin {
         //noiseTypeComboBox = new JComboBox<>(new String[]{"White Noise", "Brown Noise", "Pink Noise", "Another Noise"});
         noiseTypeComboBox = new JComboBox<>(NoiseType.values());
         playStopButton = new JToggleButton("Play");
-        volumeSlider = new JSlider(0, 100, 50);
+        volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, initialVolume);
+
+        volumeSlider.setMajorTickSpacing(10);
+        volumeSlider.setMinorTickSpacing(1);
+        volumeSlider.setPaintTicks(true);
+        volumeSlider.setPaintLabels(true);
+        volumeSlider.setBorder(
+                BorderFactory.createTitledBorder(
+                        bundle.getString("slider.noise.generator.loudness")));
         volumeSlider.setValue(initialVolume);
 
         JPanel controlPanel = new JPanel();
@@ -68,7 +76,9 @@ public class NoisePanel extends JPanel implements SoundController, PanelPlugin {
         add(controlPanel, BorderLayout.NORTH);
 
         noiseGenerator = new NoiseGenerator();
-        noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f);
+        //noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f);
+        noiseGenerator.setVolume(volumeSlider.getValue());
+
         anotherNoiseGenerator = new AnotherNoiseGenerator();
 
         playStopButton.addActionListener(new ActionListener() {
@@ -83,7 +93,8 @@ public class NoisePanel extends JPanel implements SoundController, PanelPlugin {
         });
 
         volumeSlider.addChangeListener(e ->
-                noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f
+                noiseGenerator.setVolume(volumeSlider.getValue()
+                 //       noiseGenerator.setVolume(volumeSlider.getValue() / 100.0f
 
         ));
 

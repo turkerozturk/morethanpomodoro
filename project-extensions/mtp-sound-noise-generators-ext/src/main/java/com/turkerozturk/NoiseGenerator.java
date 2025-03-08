@@ -73,8 +73,29 @@ public class NoiseGenerator {
         }
     }
 
-    public void setVolume(float volume) {
-        this.volume = volume;
+    /**
+     * 0..100 aralığındaki slider değerine göre,
+     * -80 dB ile 0 dB arasında hesaplanan
+     * uygun bir genliğe (amplitude) dönüştürür.
+     */
+    public void setVolume(float volumeSliderValue) {
+        // 0..100 --> 0..1 aralığına çek
+        float linearVolume = volumeSliderValue / 100.0f;
+        if (linearVolume < 0.0f) linearVolume = 0.0f;
+        if (linearVolume > 1.0f) linearVolume = 1.0f;
+
+        // dB aralığı
+        float minDb = -80.0f;
+        float maxDb = 0.0f;
+
+        // lineer [0..1] --> dB [minDb..maxDb]
+        float dB = minDb + (maxDb - minDb) * linearVolume;
+
+        // dB değerini genliğe (amplitude) çevir
+        float amplitude = (float) Math.pow(10.0, dB / 20.0);
+
+        // Sonuç: 0.0..1 civarında, sesin gerçek genlik değeri
+        this.volume = amplitude;
     }
 
     private void generateNoise(byte[] buffer, String noiseType, Random random) {
@@ -110,7 +131,9 @@ public class NoiseGenerator {
 
     private void adjustVolume(byte[] buffer) {
         for (int i = 0; i < buffer.length; i++) {
-            buffer[i] *= volume;
+            // float ile çarptıktan sonra byte’e daraltıyoruz.
+            // Özellikle 8-bit formatta aşırıya kaçmaz.
+            buffer[i] = (byte) (buffer[i] * volume);
         }
     }
 }
