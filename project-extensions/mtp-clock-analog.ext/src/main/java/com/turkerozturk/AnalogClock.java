@@ -356,6 +356,14 @@ public class AnalogClock extends JPanel {
         });
     }
 
+    // Aşağıdaki gibi güncelleyerek, getSize() ile alınan genişlik ve yükseklik değerlerinden en küçük olanı hem genişlik hem yükseklik olarak döndürebilirsiniz:
+    @Override
+    public Dimension getPreferredSize() {
+        int minSize = Math.min(getWidth(), getHeight());
+        return new Dimension(minSize, minSize);
+    }
+
+
     /**
      * Paneli bulunduğu yerden çıkarıp yeni bir frame'e ekler.
      * Yeni frame "Always on top" olacak ve modal olmayacaktır.
@@ -396,6 +404,9 @@ public class AnalogClock extends JPanel {
         // Paneli yeni frame'e ekle
         floatFrame.getContentPane().setLayout(new BorderLayout());
         floatFrame.getContentPane().add(this, BorderLayout.CENTER);
+
+        //floatFrame.getContentPane().setSize(350,350);
+
 
         floatFrame.pack();
         floatFrame.setLocationRelativeTo(null);  // Ekran ortasına koy
