@@ -305,7 +305,53 @@ public class AnalogClock extends JPanel {
 
         // Transform ve g2 serbest
         g2.dispose();
+
+        // BASLA matrix animasyonu icin
+        // SVG merkez (200,200) --> panel merkez:
+        float offsetX = (w - 400 * scaleFactor) / 2.0f;
+        float offsetY = (h - 400 * scaleFactor) / 2.0f;
+        float centerX = offsetX + 200 * scaleFactor;
+        float centerY = offsetY + 200 * scaleFactor;
+        float clockRadius = 180 * scaleFactor;  // Saatin dış çerçevesi, SVG'de radius=180
+
+        // Matrix efekti isteniyorsa...
+        if (matrixEffectEnabled) {
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            // Panelin tamamını kaplayan dikdörtgen
+            Area panelArea = new Area(new Rectangle(0, 0, w, h));
+
+            // Saatin dış çemberinin panel koordinatları
+            // (merkez (centerX, centerY), yarıçap = clockRadius)
+            Ellipse2D clockArea = new Ellipse2D.Double(
+                    centerX - clockRadius,
+                    centerY - clockRadius,
+                    clockRadius * 2,
+                    clockRadius * 2
+            );
+
+            // Daireyi alanın içinden çıkart
+            panelArea.subtract(new Area(clockArea));
+
+            // Artık panelArea, saatin dışındaki bölge
+            g2d.setClip(panelArea);
+
+            // İsterseniz önce bu dış bölgeyi boyayabilirsiniz (örn. siyah):
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(0, 0, w, h);
+
+            // Ardından Matrix efektini çiz
+            drawMatrixEffect(g2d, w, h);
+
+            g2d.dispose();
+        }
+        // BITTI matrix animasyonu icin
+
+
+
     }
+
+    boolean matrixEffectEnabled = true;
 
     // Yardımcı fonksiyonlar
 
@@ -439,8 +485,47 @@ public class AnalogClock extends JPanel {
     }
 
 
+    // Sınıf içinde ekleyin:
+    private int matrixSlowCounter = 0;
+    private final int MATRIX_SLOW_FACTOR = 1; // kaç tetiklemede bir güncellesin
 
 
+    /**
+     * Panelin tamamına (ya da istediğiniz bir bölgeye) akan
+     * "Matrix" tarzı yeşil karakterler çizer.
+     *
+     * @param g2 Graphics2D nesnesi
+     * @param w  panel genişliği
+     * @param h  panel yüksekliği
+     */
+    private void drawMatrixEffect(Graphics2D g2, int w, int h) {
+        // 1) Grafik ayarları (font, renk, vs.)
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 25));
+        g2.setColor(new Color(0x33CC33)); // Matrix yeşili (istenirse alpha da eklenebilir)
 
+        // 2) Bu örnekte, "kolon kolon" akan karakterler varsayalım.
+        //    (Gerçek kullanımda bunları class seviyesindeki ArrayList / dizi
+        //     şeklinde saklayıp Timer ile sürekli güncellersiniz.)
+        //    Aşağıda her bir kolon için rastgele karakterleri "y" konumlarına çiziyormuşuz gibi düşünelim.
+
+        // Sabit sütun aralığı
+        int columnWidth = 20;
+        for (int x = 0; x < w; x += columnWidth) {
+            // Her kolonda rasgele karakter sayısı/konumları varmış gibi simüle edelim
+            int numberOfChars = 5 + (int)(Math.random() * 10); // 5-15 arası satır
+            for (int i = 0; i < numberOfChars; i++) {
+                // Rastgele bir unicode karakter üret (örnek olarak 0x30A0-0x30FF arası Japonca Katakana gibi)
+                char randomChar = (char) (0x30A0 + (int)(Math.random() * 96));
+                // Y pozisyonu (bu çizimde rastgele, ama siz animasyonda sabit artış yapacaksınız)
+                int y = (int)(Math.random() * (h));
+
+                // Çizim
+                g2.drawString(String.valueOf(randomChar), x, y);
+            }
+        }
+
+        // 3) Gerçek animasyon için Timer ile "düşen" konumları güncelleyip repaint etmeniz gerekli.
+        //    Bu örnek sadece her repaint'te rastgele bir görsel verir.
+    }
 
 }
