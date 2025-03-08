@@ -62,12 +62,13 @@
         -->
 
         <!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi -->
-        <dependency>
-            <groupId>com.googlecode.soundlibs</groupId>
-            <artifactId>mp3spi</artifactId>
-            <version>1.9.5.4</version>
-        </dependency>
-
+        <!-- DUPLICATE DEPENDENCY. UNCOMMENT IF YOU WANT TO COMPILE THIS MP3 PLAYER AS STANDALONE APP WITHOUT THE PARENT POM.
+                <dependency>
+                    <groupId>com.googlecode.soundlibs</groupId>
+                    <artifactId>mp3spi</artifactId>
+                    <version>1.9.5.4</version>
+                </dependency>
+        -->
 
         <!-- https://mvnrepository.com/artifact/org.mobicents.external.fmj/tritonus_share -->
         <dependency>
