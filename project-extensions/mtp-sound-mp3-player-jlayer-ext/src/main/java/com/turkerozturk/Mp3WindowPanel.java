@@ -47,6 +47,7 @@ package com.turkerozturk;
  *  --- End Apache License Notice ---
  */
 import com.turkerozturk.initial.ExtensionCategory;
+import com.turkerozturk.initial.jpanels.sound.controller.SoundController;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
@@ -78,7 +79,7 @@ import java.util.logging.Logger;
 /**
  * @author Dwi Fadhil Didit
  */
-public class Mp3WindowPanel extends JPanel implements PanelPlugin {
+public class Mp3WindowPanel extends JPanel implements PanelPlugin, SoundController {
 
     private double volume = 0.1;
 
@@ -513,7 +514,7 @@ public class Mp3WindowPanel extends JPanel implements PanelPlugin {
         jButton2.setText("MUTE");
         jButton2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButton2ActionPerformed();
             }
         });
 
@@ -625,7 +626,7 @@ public class Mp3WindowPanel extends JPanel implements PanelPlugin {
                 "Tentang Pengembang", 1);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
-    private void jButton2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButton2ActionPerformed() {//GEN-FIRST:event_jButton2ActionPerformed
         try {
             if (volume != 0) {
                 player.setVolume(0.0);
@@ -729,6 +730,21 @@ public class Mp3WindowPanel extends JPanel implements PanelPlugin {
     @Override
     public String getExtensionDescription() {
         return null;
+    }
+
+    @Override
+    public void mute() {
+        jButton2ActionPerformed();
+    }
+
+    @Override
+    public void unmute() {
+        jButton2ActionPerformed();
+    }
+
+    @Override
+    public boolean isMuted() {
+        return false;
     }
     // End of variables declaration//GEN-END:variables
 }

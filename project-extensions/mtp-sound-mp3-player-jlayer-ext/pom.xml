@@ -133,7 +133,7 @@
                         <configuration>
                             <target>
                                 <copy file="target/${project.build.finalName}.jar"
-                                      todir="../../release-jars/extensions/" />
+                                      todir="../../release-jars/core/" />
                             </target>
                         </configuration>
                     </execution>

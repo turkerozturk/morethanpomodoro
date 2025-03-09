@@ -197,6 +197,21 @@ public class ApplicationFrame extends JFrame {
         }
 
 
+        String mp3PanelJarLocation = "core/mtp-sound-mp3-player-jlayer-ext-1.0-SNAPSHOT.jar";
+        if (new File(mp3PanelJarLocation).exists()) {
+            String mp3PanelTitle = "plugin.sound.mp3.player.jlayer.title";
+            JPanel mp3Panel = PluginLoader.loadSpecificPanel(
+                    mp3PanelJarLocation
+                    , mp3PanelTitle);
+            tabbedPanel.addTab(bundle.getString(mp3PanelTitle), mp3Panel);
+            soundControllers.add((SoundController) mp3Panel);
+
+        } else {
+            logger.info("Core Extension Not Found: " + noisePanelJarLocation +
+                    ". You can download it from: https://github.com/turkerozturk/morethanpomodoro");
+        }
+
+
         //JTabbedPane jTabbedPaneForNoises = new JTabbedPane();
         /*
         BinauralPanel binauralPanel = new BinauralPanel();
