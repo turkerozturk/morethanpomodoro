@@ -43,6 +43,14 @@ public class AnalogClock extends JPanel {
     private static final String KEY_SECOND_HAND = "analog.clock.secondHand";
     private static final String KEY_NUMBERS = "analog.clock.numbers";
 
+    private static final String KEY_MATRIX_EFFECT_VARIATION = "analog.clock.matrix.effect.variation";
+    private static final String KEY_MATRIX_EFFECT_ENABLED = "analog.clock.is.matrix.effect.enabled";
+    private static final String KEY_BOTTOM_SHADOW_ENABLED = "analog.clock.is.bottom.shadow.enabled";
+
+
+
+
+
     // Colors
     private Color backgroundColor;
     private Color circleColor;
@@ -133,7 +141,7 @@ public class AnalogClock extends JPanel {
         });
 
 
-
+        setComponentPopupMenu(createPopupMenu());
     }
 
 
@@ -151,11 +159,11 @@ public class AnalogClock extends JPanel {
         secondHandColor = getColor(KEY_SECOND_HAND, Color.RED);
         numbersColor    = getColor(KEY_NUMBERS, Color.BLACK);
 
-        int variationValue = Integer.parseInt(props.getProperty("analog.clock.matrix.effect.variation", "0"));
+        int variationValue = Integer.parseInt(props.getProperty(KEY_MATRIX_EFFECT_VARIATION, "0"));
         matrixEffectVariation = MatrixEffectVariation.fromInt(variationValue);
 
-        isMatrixEffectEnabled = Integer.parseInt(props.getProperty("analog.clock.is.matrix.effect.enabled")) == 1;
-        isBottomShadowEnabled = Integer.parseInt(props.getProperty("analog.clock.is.bottom.shadow.enabled")) == 1;
+        isMatrixEffectEnabled = Integer.parseInt(props.getProperty(KEY_MATRIX_EFFECT_ENABLED)) == 0;
+        isBottomShadowEnabled = Integer.parseInt(props.getProperty(KEY_BOTTOM_SHADOW_ENABLED)) == 1;
 
 
     }
@@ -766,6 +774,102 @@ public class AnalogClock extends JPanel {
             }
         }
     }
+
+    /**
+     * Sağ tıklama menüsünü oluşturur ve panel üzerine ekler.
+     */
+    private JPopupMenu createPopupMenu() {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem fullscreenItem = new JMenuItem("Fullscreen");
+        JMenuItem dockUndockItem = new JMenuItem("Dock/Undock");
+        JMenuItem offItem = new JMenuItem("Off");
+        JMenuItem basicItem = new JMenuItem("Basic");
+        JMenuItem normalItem = new JMenuItem("Normal");
+        JMenuItem variation1Item = new JMenuItem("Variation1");
+        JMenuItem variation2Item = new JMenuItem("Variation2");
+        JMenuItem variation1and2Item = new JMenuItem("Variation1 and 2");
+
+        // Listener'ları bağla (içleri boş, sadece fullscreen aktif)
+        fullscreenItem.addActionListener(e -> toggleFullscreen());
+        dockUndockItem.addActionListener(e -> dockUndockAction());
+        offItem.addActionListener(e -> offAction());
+        basicItem.addActionListener(e -> basicAction());
+        normalItem.addActionListener(e -> normalAction());
+        variation1Item.addActionListener(e -> variation1Action());
+        variation2Item.addActionListener(e -> variation2Action());
+        variation1and2Item.addActionListener(e -> variation1And2Action());
+
+        popupMenu.add(fullscreenItem);
+        popupMenu.add(dockUndockItem);
+        popupMenu.add(offItem);
+        popupMenu.add(basicItem);
+        popupMenu.add(normalItem);
+        popupMenu.add(variation1Item);
+        popupMenu.add(variation2Item);
+        popupMenu.add(variation1and2Item);
+
+        return popupMenu;
+    }
+
+    /**
+     * Fullscreen modunu aç/kapat.
+     */
+    private void toggleFullscreen() {
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+        Frame frame = (Frame) SwingUtilities.getWindowAncestor(this);
+
+        if (!isFullscreen) {
+            // Fullscreen moduna geç
+            previousBounds = getBounds(); // Önceki pencere boyutunu sakla
+            frame.dispose();
+            frame.setUndecorated(true); // Çerçevesiz pencere yap
+            setVisible(true);
+            gd.setFullScreenWindow((Frame) SwingUtilities.getWindowAncestor(this));
+        } else {
+            // Fullscreen modundan çık
+            gd.setFullScreenWindow(null);
+            frame.dispose();
+            frame.setUndecorated(false);
+            setBounds(previousBounds); // Önceki boyuta geri dön
+            setVisible(true);
+        }
+
+        isFullscreen = !isFullscreen;
+    }
+
+    private boolean isFullscreen = false;
+    private Rectangle previousBounds; // Fullscreen öncesi pencere konumunu saklar
+
+    // Diğer menü öğeleri için boş metotlar
+    private void dockUndockAction() { /* TODO: Dock/Undock işlemi */ }
+    private void offAction() {
+        matrixEffectVariation = MatrixEffectVariation.NONE;
+    }
+    private void basicAction() {
+        isMatrixEffectEnabled = false;
+        matrixEffectVariation = MatrixEffectVariation.NONE;
+
+    }
+    private void normalAction() {
+        isMatrixEffectEnabled = false;
+        matrixEffectVariation = MatrixEffectVariation.NONE;
+
+    }
+    private void variation1Action() {
+        isMatrixEffectEnabled = true;
+        matrixEffectVariation = MatrixEffectVariation.VARIATION_1;
+    }
+    private void variation2Action() {
+        isMatrixEffectEnabled = true;
+        matrixEffectVariation = MatrixEffectVariation.VARIATION_2;
+    }
+    private void variation1And2Action() {
+        isMatrixEffectEnabled = true;
+        matrixEffectVariation = MatrixEffectVariation.VARIATION_1_AND_2;
+    }
+
 
 
 
