@@ -18,6 +18,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/gpl-3.0.en.html>.
  */
+/*
+ * This file is part of the MoreThanPomodoro project.
+ * Please refer to the project's README.md file for additional details.
+ * https://github.com/turkerozturk/morethanpomodoro
+ *
+ * Copyright (c) 2025 Turker Ozturk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/gpl-3.0.en.html>.
+ */
 package com.turkerozturk.thirdparty;
 /*
  * This file is copied from the Musicplayer project
@@ -46,8 +66,9 @@ package com.turkerozturk.thirdparty;
  *  limitations under the License.
  *  --- End Apache License Notice ---
  */
-import javazoom.jlgui.basicplayer.BasicPlayerException;
+
 import com.turkerozturk.thirdparty.utils.BackgroundExecutor;
+import javazoom.jlgui.basicplayer.BasicPlayerException;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -55,10 +76,10 @@ import java.awt.event.MouseListener;
 
 public class SeekBar extends JProgressBar {
 
-    AudioPlayer p = AudioPlayer.getInstance();
+    //AudioPlayer p = AudioPlayer.getInstance();
 
-    //private int lastSeekVal = 0; //relative to the seekbar value
-    //private int lastSeekSec = 0; //relative to the player value (passed sec)
+    private int lastSeekVal = 0; //relative to the seekbar value
+    private int lastSeekSec = 0; //relative to the player value (passed sec)
     //This value in necessary because BasicPlayer resets it's returned progress
     //each time we use seek. The value should reset when we open a new song
     private int updatedValue = 0; //sharing between different scopes
@@ -70,12 +91,12 @@ public class SeekBar extends JProgressBar {
      * @param totalVal in seconds
      */
     public void updateSeekBar(long progress, float totalVal) {
-        if (p.isSeeking())
-            return;
+        // if (p.isSeeking())             return;
         BackgroundExecutor.get().execute(new UpdatingTask(progress, totalVal));
         setValue(updatedValue);
         //log("Seek val : "+n + " " + lp +" t:" + totalVal + " sl:" + seekLenght);
     }
+
 
     /**
      * Task used for updating the seek value in another thread.
@@ -118,8 +139,7 @@ public class SeekBar extends JProgressBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (p.isSeeking())
-                    return;
+                //  if (p.isSeeking())                     return;
                 float val = ((float) e.getX() / getWidth()) * getMaximum();
                 returnValueToPlayer(val);
                 setValue((int) val);
@@ -167,11 +187,12 @@ public class SeekBar extends JProgressBar {
         public void run() {
             //AudioPlayer p = AudioPlayer.getInstance(); //Static call using singleton
             float relVal = val / getMaximum();
-            int newSongPos = (int) (relVal * p.getAudioDurationSeconds());
+            // int newSongPos = (int) (relVal * p.getAudioDurationSeconds());
             //lastSeekVal = getValue();
             //lastSeekSec = newSongPos; //Given the position in microseconds
-            p.setLastSeekPositionInMs(newSongPos * 1000000);
+            //  p.setLastSeekPositionInMs(newSongPos * 1000000);
             //what's the seek value in bytes?
+            /*
             long seekvalue = (long) ((float) newSongPos * p.getAudioFrameRate() * p.getAudioFrameSize());
             try {
                 p.seek(seekvalue);
@@ -179,26 +200,26 @@ public class SeekBar extends JProgressBar {
                 log("Error with calculated seek value");
                 e.printStackTrace();
             }
+            */
         }
     }
 /////////////////////////
-    /*
-	public void resetLastSeek()
-	{
-		lastSeekVal = 0;
-		lastSeekSec = 0;
-	}*/
+
+    public void resetLastSeek() {
+        lastSeekVal = 0;
+        lastSeekSec = 0;
+    }
 
     /**
      * The returned value refears to seconds
      *
      * @return
      */
-	/*
-	public int getLastSeekSec()
-	{
-		return lastSeekSec;
-	}*/
+
+    public int getLastSeekSec() {
+        return lastSeekSec;
+    }
+
     private void log(String str) {
         System.out.println("SeekBar] " + str);
     }

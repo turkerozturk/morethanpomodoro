@@ -26,6 +26,51 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf-extras -->
+        <!--
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>3.5.4</version>
+        </dependency>
+
+        -->
+
+        <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf -->
+  <!--      <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.5.4</version>
+        </dependency>
+-->
+        <!-- https://mvnrepository.com/artifact/net.jthink/jaudiotagger -->
+        <!--
+
+<dependency>
+    <groupId>net.jthink</groupId>
+    <artifactId>jaudiotagger</artifactId>
+    <version>3.0.1</version>
+</dependency>
+-->
+
+
+        <!-- https://github.com/carlanton/m3u8-parser -->
+        <!-- https://mvnrepository.com/artifact/io.lindstrom/m3u8-parser -->
+        <!--
+        <dependency>
+            <groupId>io.lindstrom</groupId>
+            <artifactId>m3u8-parser</artifactId>
+            <version>0.28</version>
+        </dependency>
+        -->
+
+        <!-- https://github.com/iheartradio/open-m3u8 -->
+        <dependency>
+            <groupId>com.iheartradio.m3u8</groupId>
+            <artifactId>open-m3u8</artifactId>
+            <version>0.2.4</version>
+        </dependency>
+
         <dependency>
             <groupId>javazoom</groupId>
             <artifactId>jlayer</artifactId>
