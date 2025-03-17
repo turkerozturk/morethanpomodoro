@@ -39,10 +39,17 @@ public class ConfigManager {
                     props.load(isr);
                 }
             } else {
-                throw new RuntimeException("config.properties not found in resources!");
+                System.out.println("config.properties not found in resources!");
+
+                // throw new RuntimeException("config.properties not found in resources!");
+
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error loading default config.properties", e);
+            System.out.println("config.properties not found in resources!");
+
+            e.printStackTrace();
+
+            // throw new RuntimeException("Error loading default config.properties", e);
         }
 
 
