@@ -1,0 +1,3 @@
+[submodule "project-extensions/mtp-personal-topics-tracker-ext"]
+	path = project-extensions/mtp-personal-topics-tracker-ext
+	url = https://github.com/turkerozturk/PersonalTopicsTrackerWithCalendar.git
