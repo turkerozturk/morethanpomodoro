@@ -76,11 +76,13 @@ public class AnalogClock extends JPanel {
     // Properties loaded from config.properties
     ConfigManager props = ConfigManager.getInstance();
 
+    Timer timer;
+
     public AnalogClock() {
         loadConfig();
 
         // Her 50 ms’de bir repaini tetikleyerek canlı saat efekti
-        Timer timer = new Timer(50, new ActionListener() {
+        timer = new Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -134,7 +136,7 @@ public class AnalogClock extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) { // Çift tıklama kontrolü
-                   // System.out.println("hello");
+                    // System.out.println("hello");
                     popOutPanel();
                 }
             }
@@ -162,8 +164,20 @@ public class AnalogClock extends JPanel {
         int variationValue = Integer.parseInt(props.getProperty(KEY_MATRIX_EFFECT_VARIATION, "0"));
         matrixEffectVariation = MatrixEffectVariation.fromInt(variationValue);
 
-        isMatrixEffectEnabled = Integer.parseInt(props.getProperty(KEY_MATRIX_EFFECT_ENABLED)) == 0;
-        isBottomShadowEnabled = Integer.parseInt(props.getProperty(KEY_BOTTOM_SHADOW_ENABLED)) == 1;
+        String v = props.getProperty(KEY_MATRIX_EFFECT_ENABLED);
+        if(v != null) {
+            isMatrixEffectEnabled = Integer.parseInt(v) == 0;
+        } else {
+            isMatrixEffectEnabled = true;
+        }
+
+        String v2 = props.getProperty(KEY_BOTTOM_SHADOW_ENABLED);
+        if(v2 != null) {
+            isBottomShadowEnabled = Integer.parseInt(v2) == 1;
+        } else {
+            isBottomShadowEnabled = true;
+        }
+
 
 
     }
@@ -411,11 +425,11 @@ public class AnalogClock extends JPanel {
 
             // basla sadece matrix variation2 için
             //if (matrixEffectEnabled) {
-                // Eğer henüz sütunlar oluşturulmadıysa (panel boyutu 0x0 iken) init et
-                if (columns.isEmpty() && w > 0 && h > 0) {
-                    initColumns(w, h);
-                }
-                updateColumns();
+            // Eğer henüz sütunlar oluşturulmadıysa (panel boyutu 0x0 iken) init et
+            if (columns.isEmpty() && w > 0 && h > 0) {
+                initColumns(w, h);
+            }
+            updateColumns();
             //}
             // bitti sadece matrix variation2 için
             g2dForMatrixAnimation.dispose();
@@ -775,6 +789,7 @@ public class AnalogClock extends JPanel {
         }
     }
 
+    JMenuItem offItem;
     /**
      * Sağ tıklama menüsünü oluşturur ve panel üzerine ekler.
      */
@@ -783,7 +798,7 @@ public class AnalogClock extends JPanel {
 
         JMenuItem fullscreenItem = new JMenuItem("Fullscreen");
         JMenuItem dockUndockItem = new JMenuItem("Dock/Undock");
-        JMenuItem offItem = new JMenuItem("Off");
+        offItem = new JMenuItem("Off");
         JMenuItem basicItem = new JMenuItem("Basic");
         JMenuItem normalItem = new JMenuItem("Normal");
         JMenuItem variation1Item = new JMenuItem("Variation1");
@@ -844,8 +859,17 @@ public class AnalogClock extends JPanel {
 
     // Diğer menü öğeleri için boş metotlar
     private void dockUndockAction() { /* TODO: Dock/Undock işlemi */ }
+
+
     private void offAction() {
         matrixEffectVariation = MatrixEffectVariation.NONE;
+        if(timer.isRunning()) {
+            timer.stop();
+            offItem.setText("On (Resume)");
+        } else {
+            timer.start();
+            offItem.setText("Off (Stop)");
+        }
     }
     private void basicAction() {
         isMatrixEffectEnabled = false;
@@ -874,3 +898,4 @@ public class AnalogClock extends JPanel {
 
 
 }
+
