@@ -40,6 +40,7 @@
         <module>project-extensions/mtp-about-ext</module>
         <module>project-extensions/mtp-sound-mp3-player-jlayer-ext</module>
         <module>project-extensions/mtp-advanced-calculator-ext</module>
+        <module>project-extensions/mtp-personal-topics-tracker-ext</module>
     </modules>
 
 
